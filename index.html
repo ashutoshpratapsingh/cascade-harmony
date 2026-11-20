@@ -14,14 +14,19 @@
       user-select: none;
     }
 
-    body {
+    html, body {
       font-family: 'Quicksand', 'Plus Jakarta Sans', sans-serif;
       background: #06110c;
       color: #e2f1e7;
       overflow: hidden;
-      touch-action: none;
-      height: 100vh;
+      touch-action: manipulation;
+      height: 100%;
+      height: -webkit-fill-available;
+      height: 100dvh;
+      max-height: 100dvh;
       width: 100vw;
+      margin: 0;
+      padding: 0;
     }
 
     /* Water Pond Ambient */
@@ -84,25 +89,25 @@
     }
   </style>
 </head>
-<body id="appBody" class="zen-pond flex flex-col justify-between items-center p-2 md:p-3 transition-colors duration-700">
+<body id="appBody" class="zen-pond flex flex-col justify-between items-center px-2 py-1 md:p-3 h-full max-h-[100dvh] w-full overflow-hidden select-none transition-colors duration-700">
 
   <!-- KOI FISH SHADOW IN POND -->
   <div class="koi-1 absolute w-36 h-12 rounded-full bg-emerald-400 blur-2xl pointer-events-none"></div>
 
   <!-- TOP HEADER HUD (Level, Target Progress, Score, ASMR) -->
-  <header class="w-full max-w-md mx-auto flex items-center justify-between z-20 px-3 py-1.5 bg-emerald-950/40 backdrop-blur-md rounded-2xl border border-emerald-800/40 shadow-xl">
+  <header class="w-full max-w-md mx-auto flex items-center justify-between z-20 px-2.5 py-1 bg-emerald-950/60 backdrop-blur-md rounded-xl border border-emerald-800/40 shadow-md">
     <!-- LEVEL & GOAL ICON -->
-    <div class="flex items-center gap-2">
-      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-700 flex items-center justify-center shadow-lg text-lg">
+    <div class="flex items-center gap-1.5">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-700 flex items-center justify-center shadow text-base">
         🪷
       </div>
       <div>
-        <div class="flex items-center gap-1.5 text-[9px] uppercase tracking-widest text-emerald-400 font-extrabold">
-          <span id="levelLabel">LEVEL 1</span>
+        <div class="flex items-center gap-1 text-[8px] uppercase tracking-widest text-emerald-400 font-extrabold leading-none">
+          <span id="levelLabel">LVL 1</span>
           <span class="text-slate-600">•</span>
-          <span id="feverBadge" class="text-amber-300 hidden animate-pulse">🔥 ZEN FEVER</span>
+          <span id="feverBadge" class="text-amber-300 hidden animate-pulse">🔥 FEVER</span>
         </div>
-        <h1 class="text-xs md:text-sm font-extrabold tracking-wide text-white flex items-center gap-1">
+        <h1 class="text-xs font-black tracking-wide text-white leading-tight">
           CASCADE <span class="text-emerald-400 font-light">HARMONY</span>
         </h1>
       </div>
@@ -110,53 +115,52 @@
 
     <!-- LEVEL GOAL PROGRESS BAR -->
     <div class="flex flex-col items-center">
-      <div class="flex items-center gap-1.5 text-[9px] font-extrabold text-amber-300">
+      <div class="flex items-center gap-1 text-[8px] font-extrabold text-amber-300 leading-none">
         <span>TARGET:</span>
         <span id="levelGoalText">0 / 8 POPS</span>
       </div>
-      <div class="w-24 h-1.5 bg-black/60 rounded-full overflow-hidden border border-emerald-800/60 mt-0.5">
+      <div class="w-20 h-1.5 bg-black/70 rounded-full overflow-hidden border border-emerald-800/60 mt-0.5">
         <div id="goalProgressBar" class="h-full bg-gradient-to-r from-emerald-400 to-amber-400 transition-all duration-300" style="width: 0%"></div>
       </div>
     </div>
 
     <!-- SCORE & ASMR AUDIO TOGGLE -->
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5">
       <div class="text-right">
-        <div class="text-[8px] uppercase tracking-wider text-emerald-400/80 font-bold">Zen Score</div>
-        <div id="scoreVal" class="text-sm md:text-base font-black text-emerald-200 tabular-nums">0</div>
+        <div class="text-[7px] uppercase tracking-wider text-emerald-400/80 font-bold leading-none">Score</div>
+        <div id="scoreVal" class="text-xs sm:text-sm font-black text-emerald-200 tabular-nums leading-none mt-0.5">0</div>
       </div>
-      <button id="soundToggle" class="p-1.5 px-2 rounded-xl bg-emerald-900/40 hover:bg-emerald-800/60 border border-emerald-700/50 text-emerald-300 text-xs transition active:scale-95 shadow">
+      <button id="soundToggle" class="p-1 px-1.5 rounded-lg bg-emerald-900/50 hover:bg-emerald-800/60 border border-emerald-700/50 text-emerald-300 text-[10px] font-bold transition active:scale-95 shadow">
         🔊 ASMR
       </button>
     </div>
   </header>
 
   <!-- QUICK 1-SENTENCE GOAL BANNER + HELP -->
-  <div class="w-full max-w-md mx-auto mt-1 z-20">
-    <div class="bg-black/60 border border-emerald-700/50 rounded-xl px-3 py-1.5 flex items-center justify-between text-xs backdrop-blur-md shadow-lg">
-      <div class="flex items-center gap-2">
-        <span class="text-base">🎯</span>
-        <div class="leading-tight">
-          <span class="text-amber-300 font-extrabold text-[11px] block">THE ADDICTIVE GOAL:</span>
-          <span class="text-slate-300 text-[10px]">Stack <strong>4 matching stones</strong> in any column $\rightarrow$ They <strong>POP into lotus chimes!</strong></span>
-        </div>
+  <div class="w-full max-w-md mx-auto z-20 my-0.5">
+    <div class="bg-black/60 border border-emerald-700/40 rounded-xl px-2.5 py-1 flex items-center justify-between text-xs backdrop-blur-md shadow">
+      <div class="flex items-center gap-1.5 leading-tight">
+        <span class="text-xs">🎯</span>
+        <span class="text-[10px] text-slate-200">
+          Match <strong>4 same colors</strong> ➔ <strong class="text-amber-300">POP!</strong> Stones leap sideways!
+        </span>
       </div>
-      <button id="howToPlayBtn" class="p-1 px-2.5 rounded-lg bg-amber-900/50 hover:bg-amber-800 border border-amber-600/60 text-amber-300 text-[10px] font-bold active:scale-95 transition">
+      <button id="howToPlayBtn" class="p-0.5 px-2 rounded-lg bg-amber-950/60 hover:bg-amber-900 border border-amber-600/50 text-amber-300 text-[9px] font-bold active:scale-95 transition">
         RULES ❓
       </button>
     </div>
   </div>
 
-  <!-- COMBO & HARMONY BANNER (Center Overlay) -->
-  <div id="comboBanner" class="h-7 flex items-center justify-center z-20 pointer-events-none">
-    <div id="comboText" class="text-xs font-extrabold uppercase tracking-widest text-amber-300 bg-black/80 border border-amber-500/50 px-3.5 py-1 rounded-full shadow-2xl hidden">
+  <!-- COMBO & HARMONY BANNER (Floating Center Overlay) -->
+  <div id="comboBanner" class="absolute top-16 left-0 right-0 flex items-center justify-center z-30 pointer-events-none">
+    <div id="comboText" class="text-xs font-extrabold uppercase tracking-widest text-amber-300 bg-black/90 border border-amber-400 px-3 py-1 rounded-full shadow-2xl hidden">
       ✨ COMBO 2 • HARMONY CHIME
     </div>
   </div>
 
   <!-- MAIN PLAY BOARD: 6 VERTICAL WATER COLUMNS (Canvas) -->
-  <main class="relative w-full max-w-md flex-1 my-0.5 flex items-center justify-center">
-    <div id="boardContainer" class="relative w-full h-full max-h-[62vh] aspect-[6/7] bg-[#0c1912]/90 rounded-3xl overflow-hidden border-2 border-emerald-800/60 shadow-[0_0_50px_rgba(4,120,87,0.2)] p-2 flex flex-col justify-between">
+  <main class="relative w-full max-w-md flex-1 min-h-0 my-0.5 flex items-center justify-center overflow-hidden">
+    <div id="boardContainer" class="relative h-full max-h-full aspect-[6/7] w-auto max-w-full bg-[#0c1912]/95 rounded-2xl overflow-hidden border-2 border-emerald-800/60 shadow-[0_0_30px_rgba(4,120,87,0.25)] p-1 flex flex-col justify-between">
       
       <!-- COLUMN MATCH BEACONS (Highlights columns where dropping causes a match!) -->
       <div id="matchBeacons" class="absolute inset-0 grid grid-cols-6 pointer-events-none z-8">
@@ -196,39 +200,39 @@
   </main>
 
   <!-- TACTICAL BOOSTERS BAR (Hammer & Magnet Vortex) -->
-  <div class="w-full max-w-md mx-auto z-20 flex items-center justify-between px-2 py-1">
-    <div class="text-[9px] uppercase tracking-widest text-emerald-400 font-extrabold flex items-center gap-1">
-      <span>⚡ ZEN BOOSTERS:</span>
+  <div class="w-full max-w-md mx-auto z-20 flex items-center justify-between px-2 py-0.5">
+    <div class="text-[8px] sm:text-[9px] uppercase tracking-widest text-emerald-400 font-extrabold flex items-center gap-1">
+      <span>⚡ BOOSTERS:</span>
     </div>
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1.5">
       <!-- HAMMER BOOSTER -->
-      <button id="hammerBtn" title="Shatter any single stone that blocks your stack" class="px-2.5 py-1 rounded-xl bg-amber-950/70 hover:bg-amber-900 border border-amber-600/60 text-amber-300 text-[10px] font-extrabold flex items-center gap-1 active:scale-95 transition shadow">
-        <span>🔨 ZEN HAMMER</span>
-        <span id="hammerCount" class="px-1.5 py-0.2 bg-amber-800 rounded-full text-[9px] text-white">2</span>
+      <button id="hammerBtn" title="Shatter any single stone that blocks your stack" class="px-2 py-0.5 rounded-lg bg-amber-950/80 hover:bg-amber-900 border border-amber-600/60 text-amber-300 text-[9px] sm:text-[10px] font-extrabold flex items-center gap-1 active:scale-95 transition shadow">
+        <span>🔨 HAMMER</span>
+        <span id="hammerCount" class="px-1.5 py-0.2 bg-amber-800 rounded-full text-[8px] text-white">2</span>
       </button>
 
       <!-- MAGNET VORTEX BOOSTER -->
-      <button id="magnetBtn" title="Pull all matching colors across the board together" class="px-2.5 py-1 rounded-xl bg-blue-950/70 hover:bg-blue-900 border border-blue-500/60 text-blue-300 text-[10px] font-extrabold flex items-center gap-1 active:scale-95 transition shadow">
-        <span>🧲 MAGNET PULL</span>
-        <span id="magnetCount" class="px-1.5 py-0.2 bg-blue-800 rounded-full text-[9px] text-white">1</span>
+      <button id="magnetBtn" title="Pull all matching colors across the board together" class="px-2 py-0.5 rounded-lg bg-blue-950/80 hover:bg-blue-900 border border-blue-500/60 text-blue-300 text-[9px] sm:text-[10px] font-extrabold flex items-center gap-1 active:scale-95 transition shadow">
+        <span>🧲 MAGNET</span>
+        <span id="magnetCount" class="px-1.5 py-0.2 bg-blue-800 rounded-full text-[8px] text-white">1</span>
       </button>
     </div>
   </div>
 
   <!-- BOTTOM PIECE SELECTION TRAY: 3 Stack Pieces (From Block Blast) -->
-  <footer class="w-full max-w-md mx-auto z-20 flex flex-col items-center gap-1 p-2 bg-emerald-950/40 backdrop-blur-md rounded-2xl border border-emerald-800/40">
-    <div class="text-[9px] uppercase tracking-widest text-emerald-300 font-extrabold flex items-center gap-1">
-      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-      <span>1. TAP A STONE STACK</span>
+  <footer class="w-full max-w-md mx-auto z-20 flex flex-col items-center gap-1 px-2 py-1.5 bg-emerald-950/60 backdrop-blur-md rounded-2xl border border-emerald-800/40">
+    <div class="text-[8px] sm:text-[9px] uppercase tracking-widest text-emerald-300 font-extrabold flex items-center gap-1">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+      <span>1. PICK STACK</span>
       <span>➔</span>
       <span>2. TAP COLUMN TO DROP</span>
     </div>
 
     <!-- 3 SPAWNED PIECES -->
-    <div id="pieceTray" class="w-full grid grid-cols-3 gap-2.5">
-      <button data-piece="0" class="piece-slot relative h-20 rounded-2xl bg-[#0e2017] border-2 border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-1 shadow-lg transition active:scale-95 cursor-pointer"></button>
-      <button data-piece="1" class="piece-slot relative h-20 rounded-2xl bg-[#0e2017] border-2 border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-1 shadow-lg transition active:scale-95 cursor-pointer"></button>
-      <button data-piece="2" class="piece-slot relative h-20 rounded-2xl bg-[#0e2017] border-2 border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-1 shadow-lg transition active:scale-95 cursor-pointer"></button>
+    <div id="pieceTray" class="w-full grid grid-cols-3 gap-2">
+      <button data-piece="0" class="piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-0.5 shadow transition active:scale-95 cursor-pointer"></button>
+      <button data-piece="1" class="piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-0.5 shadow transition active:scale-95 cursor-pointer"></button>
+      <button data-piece="2" class="piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-0.5 shadow transition active:scale-95 cursor-pointer"></button>
     </div>
   </footer>
 
@@ -474,6 +478,21 @@
       return { stones };
     }
 
+    // SEED INITIAL STARTER STONES FOR INSTANT VISUAL BEAUTY & IMMEDIATE MATCH HOOK
+    function seedStarterStones() {
+      STATE.columns = Array.from({ length: COLS }, () => []);
+      // Col 0: Sapphire (Blue)
+      STATE.columns[0].push(PALETTE[0]);
+      // Col 1: Ruby (Red)
+      STATE.columns[1].push(PALETTE[1]);
+      // Col 2: Sapphire (Blue) - ready to bridge with Col 0!
+      STATE.columns[2].push(PALETTE[0]);
+      // Col 4: Emerald (Green)
+      STATE.columns[4].push(PALETTE[2]);
+      // Col 5: Emerald (Green) - ready to bridge!
+      STATE.columns[5].push(PALETTE[2]);
+    }
+
     function refillTray() {
       for (let i = 0; i < 3; i++) {
         if (!STATE.trayPieces[i]) {
@@ -496,22 +515,29 @@
         const piece = STATE.trayPieces[idx];
         slot.innerHTML = "";
         if (!piece) {
-          slot.className = "piece-slot relative h-20 rounded-2xl bg-[#09150f] border border-emerald-950/40 opacity-20 pointer-events-none";
+          slot.className = "piece-slot relative h-14 sm:h-16 rounded-xl bg-[#09150f] border border-emerald-950/40 opacity-20 pointer-events-none";
           return;
         }
 
         const isSelected = STATE.selectedPieceIdx === idx;
         slot.className = isSelected
-          ? "piece-slot relative h-20 rounded-2xl bg-[#142d20] border-2 border-emerald-300 shadow-[0_0_20px_rgba(52,211,153,0.35)] flex flex-col items-center justify-center gap-1 scale-105 transition"
-          : "piece-slot relative h-20 rounded-2xl bg-[#0e2017] border-2 border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-1 shadow-lg transition active:scale-95";
+          ? "piece-slot relative h-14 sm:h-16 rounded-xl bg-[#142f21] border-2 border-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.35)] flex flex-col items-center justify-center gap-0.5 scale-102 transition cursor-pointer"
+          : "piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-0.5 shadow transition active:scale-95 cursor-pointer";
+
+        if (isSelected) {
+          const badge = document.createElement("span");
+          badge.className = "absolute -top-2 px-1.5 py-0.2 bg-amber-400 text-black font-black text-[7px] sm:text-[8px] rounded-full uppercase tracking-tighter shadow";
+          badge.innerText = "READY ⬇️";
+          slot.appendChild(badge);
+        }
 
         piece.stones.forEach(stone => {
           const pill = document.createElement("div");
-          pill.className = "w-10 h-4 rounded-full border shadow-sm transition-all";
+          pill.className = "w-8 h-3 sm:w-10 sm:h-3.5 rounded-full border shadow-sm transition-all";
           if (stone.isRainbow) {
             pill.style.background = "linear-gradient(90deg, #f43f5e, #fbbf24, #10b981, #38bdf8, #a855f7)";
             pill.style.borderColor = "#ffffff";
-            pill.innerHTML = `<span class="block text-[7px] text-center font-black text-black">WILD</span>`;
+            pill.innerHTML = `<span class="block text-[6px] text-center font-black text-black">WILD</span>`;
           } else {
             pill.style.background = `linear-gradient(180deg, ${stone.glow} 0%, ${stone.bg} 100%)`;
             pill.style.borderColor = stone.light;
@@ -865,7 +891,7 @@
       document.getElementById("levelLabel").innerText = `LEVEL ${STATE.level}`;
       document.getElementById("levelGoalText").innerText = `0 / ${STATE.targetPops} POPS`;
       document.getElementById("goalProgressBar").style.width = "0%";
-      STATE.columns = Array.from({ length: COLS }, () => []);
+      seedStarterStones();
       refillTray();
       showComboBanner(`🌟 LEVEL ${STATE.level} UNLOCKED! REWARDS: +1 HAMMER, +1 MAGNET! 🌟`, "text-amber-300");
     });
@@ -1125,6 +1151,7 @@
     document.getElementById("closeHowToBtn").addEventListener("click", () => modal.classList.add("hidden"));
 
     // START FIRST GAME
+    seedStarterStones();
     refillTray();
     requestAnimationFrame(gameLoop);
   </script>
