@@ -73,17 +73,29 @@
       animation: screenShakeAnim 0.28s ease-in-out;
     }
 
-    /* Hand Tutorial Glide Animation */
-    @keyframes tutorialGlide {
-      0% { transform: translate(0, 0) scale(1); opacity: 0; }
-      15% { transform: translate(0, 0) scale(1.1); opacity: 1; }
-      35% { transform: translate(0, -50px) scale(0.95); opacity: 1; }
-      70% { transform: translate(40px, -130px) scale(1); opacity: 1; }
-      85% { transform: translate(40px, -130px) scale(0.85); opacity: 1; }
-      100% { transform: translate(40px, -130px) scale(1); opacity: 0; }
+    /* Hand Tutorial Animations */
+    @keyframes handTapBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.15); }
     }
-    .tutorial-glide {
-      animation: tutorialGlide 3.0s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    .hand-tap {
+      animation: handTapBounce 0.9s ease-in-out infinite;
+    }
+
+    @keyframes beaconBeam {
+      0%, 100% { opacity: 0.35; filter: drop-shadow(0 0 6px #fbbf24); }
+      50% { opacity: 0.75; filter: drop-shadow(0 0 18px #fbbf24); }
+    }
+    .beacon-beam {
+      animation: beaconBeam 1.1s ease-in-out infinite;
+    }
+
+    @keyframes arrowBounceDown {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+    .arrow-bounce-down {
+      animation: arrowBounceDown 0.8s ease-in-out infinite;
     }
 
     /* Pulse scale for piece selection */
@@ -207,18 +219,58 @@
 
       <!-- MAIN ANIMATED CANVAS -->
       <canvas id="gameCanvas" class="w-full h-full pointer-events-none z-5"></canvas>
+    </div>
+  </main>
 
-      <!-- ONBOARDING HAND TUTORIAL -->
-      <div id="tutorialOverlay" class="absolute inset-0 pointer-events-none z-30 transition-opacity duration-300">
-        <div id="tutorialHandContainer" class="absolute bottom-6 left-1/4 flex flex-col items-center tutorial-glide">
-          <div class="bg-black/90 text-amber-300 text-[10px] font-black px-2.5 py-1 rounded-full border border-amber-400 shadow-xl whitespace-nowrap mb-0.5 animate-pulse">
-            👆 TAP OR DRAG TO COL 2!
+  <!-- ============================================ -->
+  <!-- INTERACTIVE FTUE GUIDED TUTORIAL WITH SKIP   -->
+  <!-- ============================================ -->
+  <div id="tutorialOverlay" class="fixed inset-0 pointer-events-none z-40 flex flex-col justify-between p-2.5 transition-opacity duration-300">
+    <!-- TOP TUTORIAL BAR: Status Badge + 1-Tap SKIP BUTTON -->
+    <div class="w-full max-w-md mx-auto flex items-center justify-between pt-1">
+      <div class="flex items-center gap-1.5 bg-black/90 border border-amber-400/80 px-2.5 py-1 rounded-full shadow-2xl backdrop-blur-md">
+        <span class="text-xs">💡</span>
+        <span class="text-[9px] font-black text-amber-300 uppercase tracking-wider">BEGINNER GUIDE</span>
+      </div>
+      <!-- 1-TAP SKIP BUTTON -->
+      <button id="skipTutorialBtn" class="pointer-events-auto flex items-center gap-1 bg-black/90 hover:bg-black active:scale-95 border-2 border-amber-400/90 px-3 py-1 rounded-full text-amber-300 hover:text-white text-[10px] font-black uppercase tracking-wider shadow-2xl transition cursor-pointer">
+        <span>SKIP</span>
+        <span>⏭️</span>
+      </button>
+    </div>
+
+    <!-- CENTER BOARD GUIDANCE (Step 2: Column 2 Spotlight & Bouncing Arrow) -->
+    <div id="tutStep2" class="relative w-full max-w-md mx-auto flex-1 flex items-center justify-center my-0.5 hidden">
+      <div class="relative h-full aspect-[6/7] w-auto max-w-full">
+        <!-- Golden Spotlight over Column 2 (Left 16.66%, Width 16.66%) -->
+        <div class="absolute inset-y-0 left-[16.66%] w-[16.66%] bg-gradient-to-b from-amber-400/35 via-emerald-400/15 to-transparent border-x-2 border-amber-300/80 beacon-beam flex flex-col items-center justify-start pt-8">
+          <div class="bg-black/95 text-amber-300 text-[9px] font-black px-2 py-1 rounded-full border border-amber-400 shadow-2xl whitespace-nowrap mb-2 animate-pulse flex items-center gap-1">
+            <span>2️⃣ TAP COL 2 TO DROP & POP!</span>
           </div>
-          <span class="text-3xl filter drop-shadow-[0_0_8px_rgba(251,191,36,0.9)]">👆</span>
+          <div class="text-3xl filter drop-shadow-[0_0_12px_rgba(251,191,36,1)] arrow-bounce-down">
+            👇
+          </div>
+          <div class="mt-4 text-xs font-black text-amber-300 animate-pulse tracking-widest">
+            ⬇️ ⬇️ ⬇️
+          </div>
         </div>
       </div>
     </div>
-  </main>
+
+    <!-- BOTTOM TRAY GUIDANCE (Step 1: Pointing at Slot 0 Sapphire) -->
+    <div id="tutStep1" class="w-full max-w-md mx-auto pb-14 sm:pb-16">
+      <div class="relative w-full grid grid-cols-3 gap-2">
+        <div class="relative flex flex-col items-center">
+          <div class="bg-black/95 text-amber-300 text-[9px] font-black px-2.5 py-1 rounded-full border-2 border-amber-400 shadow-2xl whitespace-nowrap mb-1 animate-pulse flex items-center gap-1">
+            <span>1️⃣ TAP THIS SAPPHIRE STACK!</span>
+          </div>
+          <div class="text-3xl filter drop-shadow-[0_0_12px_rgba(251,191,36,1)] hand-tap">
+            👇
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- FLOATING DRAG AVATAR (Follows touch/pointer when dragging) -->
   <div id="dragAvatar" class="fixed pointer-events-none z-50 hidden -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 scale-110 drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)]"></div>
@@ -1195,7 +1247,29 @@
       showComboBanner(`WELCOME TO LEVEL ${STATE.level}!`, "text-amber-300");
     });
 
-    // TUTORIAL HELPERS
+    // TUTORIAL HELPERS (Interactive Guided FTUE)
+    function updateTutorialUI() {
+      const tut = document.getElementById("tutorialOverlay");
+      if (!tut) return;
+      if (!STATE.tutorialActive) {
+        tut.classList.add("hidden");
+        return;
+      }
+      tut.classList.remove("hidden");
+      tut.style.opacity = "1";
+
+      const step1El = document.getElementById("tutStep1");
+      const step2El = document.getElementById("tutStep2");
+
+      if (STATE.tutorialStep === 1) {
+        if (step1El) step1El.classList.remove("hidden");
+        if (step2El) step2El.classList.add("hidden");
+      } else if (STATE.tutorialStep === 2) {
+        if (step1El) step1El.classList.add("hidden");
+        if (step2El) step2El.classList.remove("hidden");
+      }
+    }
+
     function dismissTutorial() {
       if (!STATE.tutorialActive) return;
       STATE.tutorialActive = false;
@@ -1600,6 +1674,12 @@
           renderTrayUI();
           updateMatchBeacons();
 
+          // Advance tutorial step 1 -> step 2
+          if (STATE.tutorialActive && STATE.tutorialStep === 1) {
+            STATE.tutorialStep = 2;
+            updateTutorialUI();
+          }
+
           dragStartX = e.clientX;
           dragStartY = e.clientY;
           hasMovedThreshold = false;
@@ -1793,11 +1873,23 @@
       showComboBanner("LEVEL RESTARTED! FRESH POND 🪷", "text-emerald-300");
     });
 
+    // TUTORIAL SKIP BUTTON LISTENER
+    const skipBtn = document.getElementById("skipTutorialBtn");
+    if (skipBtn) {
+      skipBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        sound.init();
+        dismissTutorial();
+        showComboBanner("TUTORIAL SKIPPED — FREE PLAY MODE! 🪷", "text-emerald-300");
+      });
+    }
+
     // START FIRST GAME
     setTargetsForLevel(1);
     seedStarterStones();
     refillTray();
     setupInputSystem();
+    updateTutorialUI();
     requestAnimationFrame(gameLoop);
   </script>
 </body>
