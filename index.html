@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>CASCADE HARMONY — The Zen Gravity Puzzle</title>
   <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
   <style>
@@ -12,14 +12,15 @@
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
+      -webkit-user-select: none;
     }
 
     html, body {
       font-family: 'Quicksand', 'Plus Jakarta Sans', sans-serif;
-      background: #06110c;
+      background: #040d09;
       color: #e2f1e7;
       overflow: hidden;
-      touch-action: manipulation;
+      touch-action: none; /* Prevents unwanted pull-to-refresh or page bouncing on mobile */
       height: 100%;
       height: -webkit-fill-available;
       height: 100dvh;
@@ -29,9 +30,9 @@
       padding: 0;
     }
 
-    /* Water Pond Ambient */
+    /* Pond Water Background */
     .zen-pond {
-      background: radial-gradient(circle at 50% 30%, #10261c 0%, #091711 50%, #040a07 100%);
+      background: radial-gradient(circle at 50% 25%, #0e271c 0%, #081912 50%, #030806 100%);
     }
 
     /* Zen Fever Glow */
@@ -40,49 +41,21 @@
       box-shadow: inset 0 0 80px rgba(52, 211, 153, 0.25);
     }
 
-    /* Floating Koi Shadow Animation */
+    /* Koi Fish Ambient */
     @keyframes koiSwim1 {
-      0% { transform: translate(-80px, 120px) rotate(45deg); opacity: 0; }
-      15% { opacity: 0.18; }
-      85% { opacity: 0.18; }
-      100% { transform: translate(500px, 450px) rotate(55deg); opacity: 0; }
+      0% { transform: translate(-80px, 100px) rotate(40deg); opacity: 0; }
+      15% { opacity: 0.16; }
+      85% { opacity: 0.16; }
+      100% { transform: translate(450px, 420px) rotate(50deg); opacity: 0; }
     }
     .koi-1 {
-      animation: koiSwim1 24s ease-in-out infinite;
-    }
-
-    /* Water Ripple Ring */
-    @keyframes waterRipple {
-      0% { transform: scale(0.2); opacity: 0.8; }
-      100% { transform: scale(3.2); opacity: 0; }
-    }
-    .ripple-ring {
-      animation: waterRipple 1.4s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
-    }
-
-    /* Column Match Pulse */
-    @keyframes beaconPulse {
-      0%, 100% { opacity: 0.3; filter: brightness(100%); }
-      50% { opacity: 0.85; filter: brightness(150%); }
-    }
-    .match-beacon {
-      animation: beaconPulse 0.9s ease-in-out infinite;
-    }
-
-    /* Combo Pulse */
-    @keyframes comboPop {
-      0% { transform: scale(0.6) translateY(12px); opacity: 0; }
-      40% { transform: scale(1.18) translateY(-4px); opacity: 1; }
-      100% { transform: scale(1) translateY(0); opacity: 1; }
-    }
-    .combo-active {
-      animation: comboPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+      animation: koiSwim1 22s ease-in-out infinite;
     }
 
     /* Floating Score Popup */
     @keyframes floatUp {
-      0% { transform: translateY(0) scale(0.8); opacity: 1; }
-      100% { transform: translateY(-40px) scale(1.1); opacity: 0; }
+      0% { transform: translateY(0) scale(0.85); opacity: 1; }
+      100% { transform: translateY(-44px) scale(1.1); opacity: 0; }
     }
     .float-score {
       animation: floatUp 1.2s ease-out forwards;
@@ -104,22 +77,22 @@
     @keyframes tutorialGlide {
       0% { transform: translate(0, 0) scale(1); opacity: 0; }
       15% { transform: translate(0, 0) scale(1.1); opacity: 1; }
-      35% { transform: translate(0, -60px) scale(0.95); opacity: 1; }
-      70% { transform: translate(45px, -140px) scale(1); opacity: 1; }
-      85% { transform: translate(45px, -140px) scale(0.85); opacity: 1; }
-      100% { transform: translate(45px, -140px) scale(1); opacity: 0; }
+      35% { transform: translate(0, -50px) scale(0.95); opacity: 1; }
+      70% { transform: translate(40px, -130px) scale(1); opacity: 1; }
+      85% { transform: translate(40px, -130px) scale(0.85); opacity: 1; }
+      100% { transform: translate(40px, -130px) scale(1); opacity: 0; }
     }
     .tutorial-glide {
-      animation: tutorialGlide 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      animation: tutorialGlide 3.0s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
 
-    /* Glowing Stone Pulse for Anticipation */
-    @keyframes anticipationPulse {
-      0%, 100% { filter: drop-shadow(0 0 4px #fbbf24); }
-      50% { filter: drop-shadow(0 0 16px #fbbf24) brightness(1.25); }
+    /* Pulse scale for piece selection */
+    @keyframes pulseSelect {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
     }
-    .anticipation-stone {
-      animation: anticipationPulse 0.8s ease-in-out infinite;
+    .slot-selected {
+      animation: pulseSelect 1.8s ease-in-out infinite;
     }
   </style>
 </head>
@@ -128,8 +101,8 @@
   <!-- KOI FISH SHADOW IN POND -->
   <div class="koi-1 absolute w-36 h-12 rounded-full bg-emerald-400 blur-2xl pointer-events-none"></div>
 
-  <!-- TOP HEADER HUD (Level, Target Progress, Score, ASMR) -->
-  <header class="w-full max-w-md mx-auto flex items-center justify-between z-20 px-2.5 py-1 bg-emerald-950/60 backdrop-blur-md rounded-xl border border-emerald-800/40 shadow-md">
+  <!-- TOP HEADER HUD (Level, Targets, Score, ASMR, Specs) -->
+  <header class="w-full max-w-md mx-auto flex items-center justify-between z-20 px-2.5 py-1 bg-emerald-950/70 backdrop-blur-md rounded-xl border border-emerald-800/40 shadow-md">
     <!-- LEVEL & GOAL ICON -->
     <div class="flex items-center gap-1.5">
       <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-700 flex items-center justify-center shadow text-base">
@@ -147,15 +120,15 @@
       </div>
     </div>
 
-    <!-- LEVEL TARGET GOALS (Royal Match / Candy Crush style) -->
+    <!-- LEVEL TARGET GOALS (Royal Match style collection targets) -->
     <div id="targetsContainer" class="flex items-center gap-1.5">
-      <div id="targetPill1" class="flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border border-sky-400/60 shadow transition-transform">
-        <span class="w-3 h-3 rounded-full bg-sky-400 shadow-[0_0_8px_#38bdf8] inline-block animate-pulse"></span>
-        <span id="targetCount1" class="text-[9px] font-black text-sky-200">0/6</span>
+      <div id="targetPill1" class="flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border border-sky-400/70 shadow transition-transform">
+        <span class="w-3 h-3 rounded-full bg-sky-400 shadow-[0_0_8px_#38bdf8] inline-block"></span>
+        <span id="targetCount1" class="text-[9px] font-black text-sky-200">0/4</span>
       </div>
-      <div id="targetPill2" class="flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border border-rose-400/60 shadow transition-transform">
+      <div id="targetPill2" class="flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border border-rose-400/70 shadow transition-transform">
         <span class="w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e] inline-block"></span>
-        <span id="targetCount2" class="text-[9px] font-black text-rose-200">0/6</span>
+        <span id="targetCount2" class="text-[9px] font-black text-rose-200">0/4</span>
       </div>
     </div>
 
@@ -179,8 +152,8 @@
     <div class="bg-black/60 border border-emerald-700/40 rounded-xl px-2.5 py-1 flex items-center justify-between text-xs backdrop-blur-md shadow">
       <div class="flex items-center gap-1.5 leading-tight">
         <span class="text-xs">🎯</span>
-        <span class="text-[10px] text-slate-200">
-          Match <strong>4 same gems</strong> in a column ➔ <strong class="text-amber-300">POP!</strong> Collect target gems above!
+        <span id="goalBannerText" class="text-[10px] text-slate-200">
+          Match <strong>4 same gems</strong> in any column ➔ <strong class="text-amber-300">POP!</strong> Target gems fly to goal!
         </span>
       </div>
       <button id="howToPlayBtn" class="p-0.5 px-2 rounded-lg bg-amber-950/60 hover:bg-amber-900 border border-amber-600/50 text-amber-300 text-[9px] font-bold active:scale-95 transition">
@@ -189,7 +162,7 @@
     </div>
   </div>
 
-  <!-- COMBO & HARMONY BANNER (Floating Center Overlay) -->
+  <!-- FLOATING COMBO BANNER -->
   <div id="comboBanner" class="absolute top-16 left-0 right-0 flex items-center justify-center z-30 pointer-events-none">
     <div id="comboText" class="text-xs font-extrabold uppercase tracking-widest text-amber-300 bg-black/90 border border-amber-400 px-3 py-1 rounded-full shadow-2xl hidden">
       ✨ COMBO 2 • HARMONY CHIME
@@ -198,7 +171,7 @@
 
   <!-- MAIN PLAY BOARD: 6 VERTICAL WATER COLUMNS (Canvas) -->
   <main class="relative w-full max-w-md flex-1 min-h-0 my-0.5 flex items-center justify-center overflow-hidden">
-    <div id="boardContainer" class="relative h-full max-h-full aspect-[6/7] w-auto max-w-full bg-[#0c1912]/95 rounded-2xl overflow-hidden border-2 border-emerald-800/60 shadow-[0_0_30px_rgba(4,120,87,0.25)] p-1 flex flex-col justify-between">
+    <div id="boardContainer" class="relative h-full max-h-full aspect-[6/7] w-auto max-w-full bg-[#0b1711]/95 rounded-2xl overflow-hidden border-2 border-emerald-800/60 shadow-[0_0_30px_rgba(4,120,87,0.25)] p-0.5 flex flex-col justify-between cursor-pointer">
       
       <!-- COLUMN MATCH BEACONS (Highlights columns where dropping causes a match!) -->
       <div id="matchBeacons" class="absolute inset-0 grid grid-cols-6 pointer-events-none z-8">
@@ -210,35 +183,35 @@
         <div data-beacon="5" class="beacon-slot"></div>
       </div>
 
-      <!-- COLUMN TAP TARGETS (6 Columns) -->
+      <!-- COLUMN TAP TARGETS (6 Full-Height Touch Zones) -->
       <div id="columnsHeader" class="absolute inset-0 grid grid-cols-6 z-10 pointer-events-auto">
-        <button data-col="0" class="col-tap-btn hover:bg-emerald-500/10 active:bg-emerald-400/20 transition-colors border-r border-emerald-950/40 flex flex-col justify-between p-1 items-center">
+        <div data-col="0" class="col-tap-zone border-r border-emerald-950/30 flex flex-col justify-start p-1 items-center hover:bg-emerald-400/5 active:bg-emerald-400/20 transition-colors">
           <span class="text-[9px] font-bold text-emerald-400/60 mt-0.5">COL 1</span>
-        </button>
-        <button data-col="1" class="col-tap-btn hover:bg-emerald-500/10 active:bg-emerald-400/20 transition-colors border-r border-emerald-950/40 flex flex-col justify-between p-1 items-center">
+        </div>
+        <div data-col="1" class="col-tap-zone border-r border-emerald-950/30 flex flex-col justify-start p-1 items-center hover:bg-emerald-400/5 active:bg-emerald-400/20 transition-colors">
           <span class="text-[9px] font-bold text-emerald-400/60 mt-0.5">COL 2</span>
-        </button>
-        <button data-col="2" class="col-tap-btn hover:bg-emerald-500/10 active:bg-emerald-400/20 transition-colors border-r border-emerald-950/40 flex flex-col justify-between p-1 items-center">
+        </div>
+        <div data-col="2" class="col-tap-zone border-r border-emerald-950/30 flex flex-col justify-start p-1 items-center hover:bg-emerald-400/5 active:bg-emerald-400/20 transition-colors">
           <span class="text-[9px] font-bold text-emerald-400/60 mt-0.5">COL 3</span>
-        </button>
-        <button data-col="3" class="col-tap-btn hover:bg-emerald-500/10 active:bg-emerald-400/20 transition-colors border-r border-emerald-950/40 flex flex-col justify-between p-1 items-center">
+        </div>
+        <div data-col="3" class="col-tap-zone border-r border-emerald-950/30 flex flex-col justify-start p-1 items-center hover:bg-emerald-400/5 active:bg-emerald-400/20 transition-colors">
           <span class="text-[9px] font-bold text-emerald-400/60 mt-0.5">COL 4</span>
-        </button>
-        <button data-col="4" class="col-tap-btn hover:bg-emerald-500/10 active:bg-emerald-400/20 transition-colors border-r border-emerald-950/40 flex flex-col justify-between p-1 items-center">
+        </div>
+        <div data-col="4" class="col-tap-zone border-r border-emerald-950/30 flex flex-col justify-start p-1 items-center hover:bg-emerald-400/5 active:bg-emerald-400/20 transition-colors">
           <span class="text-[9px] font-bold text-emerald-400/60 mt-0.5">COL 5</span>
-        </button>
-        <button data-col="5" class="col-tap-btn hover:bg-emerald-500/10 active:bg-emerald-400/20 transition-colors flex flex-col justify-between p-1 items-center">
+        </div>
+        <div data-col="5" class="col-tap-zone flex flex-col justify-start p-1 items-center hover:bg-emerald-400/5 active:bg-emerald-400/20 transition-colors">
           <span class="text-[9px] font-bold text-emerald-400/60 mt-0.5">COL 6</span>
-        </button>
+        </div>
       </div>
 
       <!-- MAIN ANIMATED CANVAS -->
       <canvas id="gameCanvas" class="w-full h-full pointer-events-none z-5"></canvas>
 
-      <!-- ONBOARDING HAND TUTORIAL (Animated visual guide for first move) -->
+      <!-- ONBOARDING HAND TUTORIAL -->
       <div id="tutorialOverlay" class="absolute inset-0 pointer-events-none z-30 transition-opacity duration-300">
-        <div class="absolute bottom-5 left-1/3 flex flex-col items-center tutorial-glide">
-          <div class="bg-black/90 text-amber-300 text-[9px] font-black px-2 py-0.5 rounded-full border border-amber-400 shadow-xl whitespace-nowrap mb-0.5 animate-pulse">
+        <div id="tutorialHandContainer" class="absolute bottom-6 left-1/4 flex flex-col items-center tutorial-glide">
+          <div class="bg-black/90 text-amber-300 text-[10px] font-black px-2.5 py-1 rounded-full border border-amber-400 shadow-xl whitespace-nowrap mb-0.5 animate-pulse">
             👆 TAP OR DRAG TO COL 2!
           </div>
           <span class="text-3xl filter drop-shadow-[0_0_8px_rgba(251,191,36,0.9)]">👆</span>
@@ -271,19 +244,17 @@
   </div>
 
   <!-- BOTTOM PIECE SELECTION TRAY: 3 Stack Pieces (From Block Blast) -->
-  <footer class="w-full max-w-md mx-auto z-20 flex flex-col items-center gap-1 px-2 py-1.5 bg-emerald-950/60 backdrop-blur-md rounded-2xl border border-emerald-800/40">
+  <footer class="w-full max-w-md mx-auto z-20 flex flex-col items-center gap-1 px-2 py-1.5 bg-emerald-950/70 backdrop-blur-md rounded-2xl border border-emerald-800/40">
     <div class="text-[8px] sm:text-[9px] uppercase tracking-widest text-emerald-300 font-extrabold flex items-center gap-1">
       <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-      <span>1. PICK STACK</span>
-      <span>➔</span>
-      <span>2. TAP COLUMN TO DROP</span>
+      <span id="trayInstruction">1. TAP PIECE ➔ 2. TAP COLUMN TO DROP</span>
     </div>
 
     <!-- 3 SPAWNED PIECES -->
     <div id="pieceTray" class="w-full grid grid-cols-3 gap-2">
-      <button data-piece="0" class="piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-0.5 shadow transition active:scale-95 cursor-pointer"></button>
-      <button data-piece="1" class="piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-0.5 shadow transition active:scale-95 cursor-pointer"></button>
-      <button data-piece="2" class="piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-0.5 shadow transition active:scale-95 cursor-pointer"></button>
+      <div data-piece="0" class="piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 flex flex-col items-center justify-center gap-0.5 shadow transition cursor-pointer" style="touch-action: none;"></div>
+      <div data-piece="1" class="piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 flex flex-col items-center justify-center gap-0.5 shadow transition cursor-pointer" style="touch-action: none;"></div>
+      <div data-piece="2" class="piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 flex flex-col items-center justify-center gap-0.5 shadow transition cursor-pointer" style="touch-action: none;"></div>
     </div>
   </footer>
 
@@ -329,83 +300,72 @@
         <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-emerald-900/60">
           <span class="text-xl">1️⃣</span>
           <div>
-            <strong class="text-emerald-300 block text-xs">Pick a Stone Stack</strong>
-            <span class="text-slate-300 text-[11px]">Select 1 of the 3 stone stacks in your hand below. Look out for the glowing <strong>Rainbow Prism</strong> wildcard!</span>
+            <strong class="text-emerald-300 block text-xs">Pick a Stone Stack (Block Blast DNA)</strong>
+            <span class="text-slate-300 text-[11px]">Choose 1 of the 3 multi-stone pieces from your tray. Look for the glowing <strong>Rainbow Wildcard</strong>!</span>
           </div>
         </div>
 
         <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-emerald-900/60">
           <span class="text-xl">2️⃣</span>
           <div>
-            <strong class="text-emerald-300 block text-xs">Drop into any Column</strong>
-            <span class="text-slate-300 text-[11px]">Tap a column to drop. The glowing <strong>✨ MATCH!</strong> beacons show you where matching colors are waiting!</span>
+            <strong class="text-emerald-300 block text-xs">Drop into any Column (Screw Jam DNA)</strong>
+            <span class="text-slate-300 text-[11px]">Tap or drag into a column. Gravity drops the stones into the water tube with soothing ASMR plops!</span>
           </div>
         </div>
 
         <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-emerald-900/60">
           <span class="text-xl">3️⃣</span>
           <div>
-            <strong class="text-amber-300 block text-xs">The Magnetic Leap & 4-POP!</strong>
-            <span class="text-slate-300 text-[11px]">Matching neighbor colors <strong>magnetically FLY across columns into one stack!</strong> 4 of the same color = <strong>POP!</strong> Upper stones tumble down in domino chain reactions!</span>
+            <strong class="text-amber-300 block text-xs">Magnetic Merging & 4-POP! (Hexa Sort DNA)</strong>
+            <span class="text-slate-300 text-[11px]">Matching neighbor colors <strong>magnetically FLY across columns into one stack!</strong> When a stack hits 4 matching stones = <strong>POP!</strong> Gems blossom into the goal counter above!</span>
           </div>
         </div>
       </div>
 
-      <button id="closeHowToBtn" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-black font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition active:scale-95">
-        GOT IT! PLAY NOW ➔
+      <button id="closeHowToBtn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow">
+        GOT IT — LET'S PLAY ➔
       </button>
     </div>
   </div>
 
   <!-- ============================================ -->
-  <!-- "STUDIO DESIGN SPECS & PITCH" MODAL         -->
+  <!-- "STUDIO SPECS" MODAL (Pitch Documentation)   -->
   <!-- ============================================ -->
-  <div id="specsModal" class="absolute inset-0 bg-black/90 z-50 flex items-center justify-center p-3 backdrop-blur-md hidden">
-    <div class="max-w-md w-full max-h-[88vh] bg-[#0c1a13] border-2 border-amber-400/90 rounded-3xl p-4 shadow-2xl flex flex-col justify-between overflow-y-auto space-y-3">
-      <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2">
+  <div id="specsModal" class="absolute inset-0 bg-black/92 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
+    <div class="max-w-md w-full max-h-[90vh] overflow-y-auto bg-[#09150f] border-2 border-amber-400/80 rounded-3xl p-5 shadow-2xl space-y-3.5 text-left text-xs">
+      <div class="flex items-center justify-between border-b border-amber-500/30 pb-2">
         <div class="flex items-center gap-2">
-          <span class="text-2xl">👑</span>
-          <div>
-            <h2 class="text-xs sm:text-sm font-black text-amber-300 uppercase tracking-wide">
-              Studio Pitch & Design Specs
-            </h2>
-            <div class="text-[9px] text-emerald-400 font-bold">Cascade Harmony: Zen Flow • Commercial Overview</div>
-          </div>
+          <span class="text-xl">👑</span>
+          <h2 class="text-sm font-black text-amber-300 uppercase tracking-wider">Cascade Harmony — Studio Specs</h2>
         </div>
-        <button id="closeSpecsBtn" class="text-slate-400 hover:text-white text-xl font-black px-2 leading-none">&times;</button>
+        <button id="closeSpecsBtn" class="text-slate-400 hover:text-white text-base font-bold">✕</button>
       </div>
 
-      <div class="space-y-2 text-[11px] text-slate-200">
-        <!-- 1. The Core Innovation -->
+      <div class="space-y-3 text-[11px] text-slate-200">
+        <!-- 1. The 3-Game Hybrid Breeding Thesis -->
         <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
-          <strong class="text-amber-300 block text-xs mb-0.5">1. The Market Innovation (100% Unique)</strong>
-          <span>Existing vertical drop games (Drop 7, 2048 Drop) trap pieces in isolated silos. <strong>Cascade Harmony removes the walls</strong>: stones physically leap sideways through the air between columns, pulling the floor from under upper stones to spark automatic domino cascades!</span>
-        </div>
-
-        <!-- 2. The 3-in-1 Genetic Matrix -->
-        <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
-          <strong class="text-emerald-300 block text-xs mb-0.5">2. The 3-in-1 Genetic Hybrid Matrix</strong>
-          <ul class="list-disc pl-4 space-y-1 text-slate-300 text-[10px]">
-            <li><strong>Block Blast:</strong> 3-piece hand tray, cascading domino combos, and full horizontal row clears.</li>
-            <li><strong>Screw Jam:</strong> Vertical gravity column drop physics, tactile weight, and tactical blockers/boosters.</li>
-            <li><strong>Hexa Sort:</strong> Airborne magnetic stack jumping with tactile ASMR feedback.</li>
-          </ul>
-        </div>
-
-        <!-- 3. Audience & Session Psychology -->
-        <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
-          <strong class="text-teal-300 block text-xs mb-0.5">3. Target Audience: Adults 30+</strong>
-          <span>High-stress working adults and commuters seeking <strong>calming yet high-dopamine mental relaxation</strong>. No stress timers, single-thumb drag-or-tap play, water ripples, and procedural Tibetan singing bowl chords (pentatonic C4-C5 scale).</span>
-        </div>
-
-        <!-- 4. Monetization & Retention Hooks -->
-        <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
-          <strong class="text-amber-400 block text-xs mb-0.5">4. Retention & Commercial Monetization</strong>
+          <strong class="text-emerald-400 block text-xs mb-0.5">1. The 3-Game Breeding Formula</strong>
           <ul class="list-disc pl-4 space-y-0.5 text-slate-300 text-[10px]">
-            <li><strong>Skill Boosters:</strong> Zen Hammer (single block smash) & Magnet Vortex (board pull) earned via 3x combos or rewarded ads.</li>
-            <li><strong>Live-Ops:</strong> Koi Pond Garden customizer & Daily Zen Domino Challenges.</li>
-            <li><strong>High-Conversion Ad Placements:</strong> Rewarded extra moves & cosmetic stone themes.</li>
+            <li><strong>Block Blast Hand Mechanic:</strong> 3 pre-spawned multi-stone pieces forced to fit into finite slots.</li>
+            <li><strong>Screw Jam Gravity Pins:</strong> Vertical tubes with top-layer locks, domino tumble cascades, and goal boxes.</li>
+            <li><strong>Hexa Sort Magnetic Flight:</strong> High-satisfaction tile leaps between adjacent stacks merging into 4-pops.</li>
           </ul>
+        </div>
+
+        <!-- 2. Target Demographic -->
+        <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
+          <strong class="text-emerald-400 block text-xs mb-0.5">2. Target Audience & Commercial Viability</strong>
+          <p class="text-[10px] text-slate-300 leading-relaxed">
+            Ages 30+ adults seeking high-tactility, stress-relief gaming with tactical depth. Replaces stressful timers with relaxing pentatonic chime feedback.
+          </p>
+        </div>
+
+        <!-- 3. Unique Selling Proposition -->
+        <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
+          <strong class="text-emerald-400 block text-xs mb-0.5">3. Why it stands out on the App Store</strong>
+          <p class="text-[10px] text-slate-300 leading-relaxed">
+            Solves the dead-end puzzle trap: instead of losing when a column fills up, placing a matching stone near it pulls stones out to trigger a multi-column blossom clear!
+          </p>
         </div>
       </div>
 
@@ -418,21 +378,20 @@
   <script>
     /**
      * CASCADE HARMONY — PRO EDITION
-     * - The 3-in-1 Hybrid (Block Blast 3-Piece Hand + Screw Jam Gravity + Hexa Sort Magnetic Tile Flight)
-     * - Rainbow Prism Wildcard Stone (matches ALL colors!)
-     * - Tactical Boosters: Zen Hammer (shatter single block) & Magnet Vortex (board-wide pull)
-     * - Dynamic Level Progression with 3-Star Celebrations
-     * - Zen Fever Mode (double points on 3x combos)
-     * - Procedural Pentatonic Web Audio with Singing Bowls & Kalimba
+     * - The 3-in-1 Hybrid: Block Blast (Hand) + Screw Jam (Gravity Pins) + Hexa Sort (Magnetic Tile Flight)
+     * - Bulletproof Mobile Touch & Drag Gestures (No scroll capture, no pointer suppression)
+     * - Attractor Magnetic Merging (Placed stack pulls matching neighbors into 4-pops)
+     * - Royal Match Level Collection Goals with Flying Gem FX
+     * - Procedural Pentatonic Web Audio ASMR Engine
      */
 
-    // PALETTE OF POLISHED RIVER STONES + SPECIAL RAINBOW GEM
+    // PALETTE OF POLISHED RIVER GEMS + RAINBOW WILDCARD
     const PALETTE = [
       { id: 'sapphire', name: 'Sapphire', bg: '#0284c7', glow: '#38bdf8', light: '#bae6fd', note: 261.63 }, // C4
-      { id: 'amber', name: 'Amber', bg: '#d97706', glow: '#f59e0b', light: '#fef3c7', note: 293.66 },       // D4
-      { id: 'jade', name: 'Jade', bg: '#059669', glow: '#10b981', light: '#a7f3d0', note: 329.63 },         // E4
-      { id: 'amethyst', name: 'Amethyst', bg: '#7c3aed', glow: '#8b5cf6', light: '#ddd6fe', note: 392.00 }, // G4
-      { id: 'rose', name: 'Rose Quartz', bg: '#e11d48', glow: '#f43f5e', light: '#fecdd3', note: 440.00 }    // A4
+      { id: 'rose', name: 'Ruby', bg: '#e11d48', glow: '#f43f5e', light: '#fecdd3', note: 293.66 },        // D4
+      { id: 'jade', name: 'Jade', bg: '#059669', glow: '#10b981', light: '#a7f3d0', note: 329.63 },        // E4
+      { id: 'amber', name: 'Amber', bg: '#d97706', glow: '#f59e0b', light: '#fef3c7', note: 392.00 },      // G4
+      { id: 'amethyst', name: 'Amethyst', bg: '#7c3aed', glow: '#8b5cf6', light: '#ddd6fe', note: 440.00 }   // A4
     ];
 
     const RAINBOW_STONE = {
@@ -442,10 +401,10 @@
       glow: '#ffffff',
       light: '#ffffff',
       isRainbow: true,
-      note: 523.25 // High C5
+      note: 523.25
     };
 
-    // ASMR PROCEDURAL AUDIO ENGINE
+    // ASMR AUDIO ENGINE
     class ZenAudioEngine {
       constructor() {
         this.ctx = null;
@@ -454,7 +413,10 @@
       }
 
       init() {
-        if (this.ctx) return;
+        if (this.ctx) {
+          if (this.ctx.state === 'suspended') this.ctx.resume();
+          return;
+        }
         try {
           const AudioCtx = window.AudioContext || window.webkitAudioContext;
           if (AudioCtx) {
@@ -468,7 +430,9 @@
 
       toggleMute() {
         this.muted = !this.muted;
-        if (this.master) this.master.gain.setValueAtTime(this.muted ? 0 : 0.75, this.ctx.currentTime);
+        if (this.master && this.ctx) {
+          this.master.gain.setValueAtTime(this.muted ? 0 : 0.75, this.ctx.currentTime);
+        }
         return !this.muted;
       }
 
@@ -478,9 +442,9 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(620, now);
-        osc.frequency.exponentialRampToValueAtTime(320, now + 0.11);
-        gain.gain.setValueAtTime(0.32, now);
+        osc.frequency.setValueAtTime(580, now);
+        osc.frequency.exponentialRampToValueAtTime(280, now + 0.12);
+        gain.gain.setValueAtTime(0.3, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
         osc.connect(gain);
         gain.connect(this.master);
@@ -499,13 +463,13 @@
         osc.frequency.setValueAtTime(noteFreq, now);
 
         gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(0.35, now + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+        gain.gain.linearRampToValueAtTime(0.32, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
 
         osc.connect(gain);
         gain.connect(this.master);
         osc.start(now);
-        osc.stop(now + 1.25);
+        osc.stop(now + 1.15);
       }
 
       playBloomChord() {
@@ -517,11 +481,11 @@
           osc.type = "sine";
           osc.frequency.setValueAtTime(freq, now + idx * 0.04);
           gain.gain.setValueAtTime(0.2, now + idx * 0.04);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 1.6);
           osc.connect(gain);
           gain.connect(this.master);
           osc.start(now + idx * 0.04);
-          osc.stop(now + 1.9);
+          osc.stop(now + 1.7);
         });
       }
 
@@ -544,29 +508,34 @@
 
     const sound = new ZenAudioEngine();
 
-    // GAME STATE
+    // GAME STATE & CONSTANTS
     const COLS = 6;
     const ROWS = 7;
+
     const STATE = {
       level: 1,
       targets: {
-        gem1: { id: 'sapphire', name: 'Sapphire', current: 0, required: 6, color: '#38bdf8' },
-        gem2: { id: 'rose', name: 'Rose Quartz', current: 0, required: 6, color: '#f43f5e' }
+        gem1: { id: 'sapphire', name: 'Sapphire', current: 0, required: 4, color: '#38bdf8' },
+        gem2: { id: 'rose', name: 'Ruby', current: 0, required: 4, color: '#f43f5e' }
       },
       score: 0,
       combo: 0,
       feverActive: false,
       hammers: 2,
       magnets: 1,
-      activeBooster: null, // 'hammer' or null
+      activeBooster: null,
 
       columns: Array.from({ length: COLS }, () => []),
       trayPieces: [null, null, null],
       selectedPieceIdx: 0,
+      lastDropCol: null,
       hoveredCol: null,
       isDragging: false,
       dragPieceIdx: null,
       tutorialActive: true,
+      tutorialStep: 1,
+      isResolving: false, // Prevents input overlap while cascades are resolving
+
       animatingStones: [],
       flyingGems: [],
       ripples: [],
@@ -574,34 +543,34 @@
       scorePopups: []
     };
 
+    // LEVEL INITIALIZATION & TARGETS
     function setTargetsForLevel(lvl) {
       if (lvl === 1) {
         STATE.targets = {
-          gem1: { id: 'sapphire', name: 'Sapphire', current: 0, required: 6, color: '#38bdf8' },
-          gem2: { id: 'rose', name: 'Rose Quartz', current: 0, required: 6, color: '#f43f5e' }
+          gem1: { id: 'sapphire', name: 'Sapphire', current: 0, required: 4, color: '#38bdf8' },
+          gem2: { id: 'rose', name: 'Ruby', current: 0, required: 4, color: '#f43f5e' }
         };
       } else if (lvl === 2) {
         STATE.targets = {
-          gem1: { id: 'jade', name: 'Jade', current: 0, required: 8, color: '#10b981' },
-          gem2: { id: 'amethyst', name: 'Amethyst', current: 0, required: 8, color: '#a855f7' }
+          gem1: { id: 'jade', name: 'Jade', current: 0, required: 6, color: '#10b981' },
+          gem2: { id: 'amethyst', name: 'Amethyst', current: 0, required: 6, color: '#8b5cf6' }
         };
       } else {
         STATE.targets = {
-          gem1: { id: 'sapphire', name: 'Sapphire', current: 0, required: 10, color: '#38bdf8' },
-          gem2: { id: 'golden_seal', name: 'Golden Seal', current: 0, required: 1, color: '#fbbf24' }
+          gem1: { id: 'sapphire', name: 'Sapphire', current: 0, required: 8, color: '#38bdf8' },
+          gem2: { id: 'amber', name: 'Amber', current: 0, required: 8, color: '#f59e0b' }
         };
       }
 
+      document.getElementById("levelLabel").innerText = `LVL ${lvl}`;
       const p1 = document.getElementById("targetPill1");
       const p2 = document.getElementById("targetPill2");
       if (p1) {
-        p1.className = "flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border shadow transition-transform";
         p1.style.borderColor = STATE.targets.gem1.color;
         p1.querySelector("span").style.background = STATE.targets.gem1.color;
         p1.querySelector("span").style.boxShadow = `0 0 8px ${STATE.targets.gem1.color}`;
       }
       if (p2) {
-        p2.className = "flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border shadow transition-transform";
         p2.style.borderColor = STATE.targets.gem2.color;
         p2.querySelector("span").style.background = STATE.targets.gem2.color;
         p2.querySelector("span").style.boxShadow = `0 0 8px ${STATE.targets.gem2.color}`;
@@ -633,64 +602,52 @@
       }
     }
 
-    function spawnFlyingTargetGems(startX, startY, stone, count) {
-      const isT1 = stone.id === STATE.targets.gem1.id;
-      const isT2 = stone.id === STATE.targets.gem2.id;
-      if (!isT1 && !isT2 && !stone.isRainbow) return;
+    // LEVEL 1 GOLDEN SETUP (Teaches the 3 Bred Mechanics in 10 Seconds)
+    function seedStarterStones() {
+      STATE.columns = Array.from({ length: COLS }, () => []);
 
-      const targetEl = isT1 ? document.getElementById("targetPill1") : document.getElementById("targetPill2");
-      const targetRect = targetEl ? targetEl.getBoundingClientRect() : { left: canvas.width / 2, top: 20 };
-      const canvasRect = canvas.getBoundingClientRect();
-      const destX = targetRect.left - canvasRect.left + 24;
-      const destY = targetRect.top - canvasRect.top + 12;
-
-      for (let i = 0; i < count; i++) {
-        STATE.flyingGems.push({
-          x: startX,
-          y: startY,
-          startX: startX,
-          startY: startY,
-          destX: destX,
-          destY: destY,
-          color: stone.isRainbow ? '#facc15' : (stone.glow || '#38bdf8'),
-          progress: -i * 0.08,
-          onArrive: () => {
-            sound.playChime((stone.note || 440) * 1.35, 2);
-            if (targetEl) {
-              targetEl.classList.add("scale-115");
-              setTimeout(() => targetEl.classList.remove("scale-115"), 180);
-            }
-          }
-        });
+      if (STATE.level === 1) {
+        // Golden Onboarding Setup:
+        // Col 0: 2 Sapphires
+        // Col 1: Empty (Attractor Target)
+        // Col 2: 1 Sapphire
+        // Col 3: Empty
+        // Col 4: 2 Rubies
+        // Col 5: 1 Ruby
+        STATE.columns[0] = [PALETTE[0], PALETTE[0]];
+        STATE.columns[2] = [PALETTE[0]];
+        STATE.columns[4] = [PALETTE[1], PALETTE[1]];
+        STATE.columns[5] = [PALETTE[1]];
+      } else if (STATE.level === 2) {
+        // Rainbow Wildcard Showcase
+        STATE.columns[0] = [PALETTE[2], PALETTE[2]]; // Jade
+        STATE.columns[1] = [RAINBOW_STONE];          // Rainbow
+        STATE.columns[2] = [PALETTE[2]];             // Jade
+        STATE.columns[4] = [PALETTE[4], PALETTE[4]]; // Amethyst
+        STATE.columns[5] = [PALETTE[4]];             // Amethyst
+      } else {
+        // Higher Levels: Rich multi-color setup
+        STATE.columns[0] = [PALETTE[0], PALETTE[3]];
+        STATE.columns[1] = [PALETTE[1]];
+        STATE.columns[2] = [PALETTE[0], PALETTE[0]];
+        STATE.columns[3] = [PALETTE[2]];
+        STATE.columns[4] = [PALETTE[1], PALETTE[1]];
+        STATE.columns[5] = [PALETTE[3]];
       }
     }
 
-    function dismissTutorial() {
-      if (!STATE.tutorialActive) return;
-      STATE.tutorialActive = false;
-      const tut = document.getElementById("tutorialOverlay");
-      if (tut) {
-        tut.style.opacity = "0";
-        setTimeout(() => tut.classList.add("hidden"), 300);
-      }
-    }
-
-    function triggerJuice() {
-      const b = document.getElementById("boardContainer");
-      if (b) {
-        b.classList.remove("screen-shake");
-        void b.offsetWidth; // force DOM reflow
-        b.classList.add("screen-shake");
-      }
-      if (window.navigator && window.navigator.vibrate) {
-        try { window.navigator.vibrate([28, 16, 40]); } catch(e) {}
-      }
-    }
-
-    // GENERATE TRAY PIECE (WITH CHANCE FOR RAINBOW WILD PIECE!)
+    // SPAWN PIECES FOR TRAY
     function generateTrayPiece() {
-      // 8% chance for Rainbow Wild Stone!
-      if (Math.random() < 0.08) {
+      if (STATE.level === 1 && STATE.tutorialActive) {
+        if (STATE.tutorialStep === 1) {
+          return { stones: [PALETTE[0]] }; // Guaranteed 1 Sapphire to trigger Col 2 magnetic pop!
+        } else if (STATE.tutorialStep === 2) {
+          return { stones: [PALETTE[1]] }; // Guaranteed 1 Ruby to trigger Col 5 magnetic pop!
+        }
+      }
+
+      // 10% chance for Rainbow Wildcard
+      if (Math.random() < 0.10) {
         return { stones: [RAINBOW_STONE] };
       }
 
@@ -698,7 +655,7 @@
       const stones = [];
       const primaryColor = PALETTE[Math.floor(Math.random() * PALETTE.length)];
       for (let i = 0; i < size; i++) {
-        if (Math.random() < 0.75) {
+        if (Math.random() < 0.7) {
           stones.push(primaryColor);
         } else {
           stones.push(PALETTE[Math.floor(Math.random() * PALETTE.length)]);
@@ -707,49 +664,21 @@
       return { stones };
     }
 
-    // SEED INITIAL STARTER STONES FOR INSTANT VISUAL BEAUTY & IMMEDIATE MATCH HOOK
-    function seedStarterStones() {
-      STATE.columns = Array.from({ length: COLS }, () => []);
-      
-      if (STATE.level === 1) {
-        // Level 1: Instant Onboarding setup (Column 1 is primed for a 3-way leap!)
-        STATE.columns[0].push(PALETTE[0]); // Sapphire
-        STATE.columns[1].push(PALETTE[1]); // Ruby
-        STATE.columns[2].push(PALETTE[0]); // Sapphire
-        STATE.columns[4].push(PALETTE[2]); // Emerald
-        STATE.columns[5].push(PALETTE[2]); // Emerald
-      } else if (STATE.level === 2) {
-        // Level 2: Rainbow Wildcard Gem in pond!
-        STATE.columns[0].push(PALETTE[3]); // Amethyst
-        STATE.columns[1].push(RAINBOW_STONE); // Rainbow Wildcard
-        STATE.columns[2].push(PALETTE[4]); // Rose Quartz
-        STATE.columns[4].push(PALETTE[1]); // Amber
-        STATE.columns[5].push(PALETTE[1]); // Amber
-      } else {
-        // Level 3+: Golden Lotus Seal (Screw Jam DNA Obstacle!)
-        const GOLDEN_SEAL = {
-          id: 'golden_seal',
-          name: 'Golden Lotus Seal',
-          bg: '#92400e',
-          glow: '#f59e0b',
-          light: '#fef3c7',
-          isObstacle: true,
-          note: 349.23
-        };
-        STATE.columns[2].push(GOLDEN_SEAL);
-        STATE.columns[0].push(PALETTE[0]);
-        STATE.columns[1].push(PALETTE[0]);
-        STATE.columns[3].push(PALETTE[2]);
-        STATE.columns[4].push(PALETTE[2]);
-      }
-    }
-
     function refillTray() {
-      for (let i = 0; i < 3; i++) {
-        if (!STATE.trayPieces[i]) {
-          STATE.trayPieces[i] = generateTrayPiece();
+      if (STATE.level === 1 && STATE.tutorialActive && STATE.tutorialStep === 1) {
+        STATE.trayPieces = [
+          { stones: [PALETTE[0]] }, // Sapphire
+          { stones: [PALETTE[1]] }, // Ruby
+          { stones: [PALETTE[0], PALETTE[1]] } // Sapphire + Ruby
+        ];
+      } else {
+        for (let i = 0; i < 3; i++) {
+          if (!STATE.trayPieces[i]) {
+            STATE.trayPieces[i] = generateTrayPiece();
+          }
         }
       }
+
       for (let i = 0; i < 3; i++) {
         if (STATE.trayPieces[i]) {
           STATE.selectedPieceIdx = i;
@@ -765,6 +694,7 @@
       slots.forEach((slot, idx) => {
         const piece = STATE.trayPieces[idx];
         slot.innerHTML = "";
+
         if (!piece) {
           slot.className = "piece-slot relative h-14 sm:h-16 rounded-xl bg-[#09150f] border border-emerald-950/40 opacity-20 pointer-events-none";
           return;
@@ -772,8 +702,8 @@
 
         const isSelected = STATE.selectedPieceIdx === idx;
         slot.className = isSelected
-          ? "piece-slot relative h-14 sm:h-16 rounded-xl bg-[#142f21] border-2 border-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.35)] flex flex-col items-center justify-center gap-0.5 scale-102 transition cursor-pointer"
-          : "piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-0.5 shadow transition active:scale-95 cursor-pointer";
+          ? "piece-slot slot-selected relative h-14 sm:h-16 rounded-xl bg-[#142f21] border-2 border-amber-300 shadow-[0_0_18px_rgba(251,191,36,0.4)] flex flex-col items-center justify-center gap-0.5 cursor-pointer"
+          : "piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-0.5 shadow transition cursor-pointer";
 
         if (isSelected) {
           const badge = document.createElement("span");
@@ -795,19 +725,10 @@
           }
           slot.appendChild(pill);
         });
-
-        slot.onclick = () => {
-          sound.init();
-          sound.playWaterPlop();
-          STATE.selectedPieceIdx = idx;
-          STATE.activeBooster = null; // deselect booster
-          renderTrayUI();
-          updateMatchBeacons();
-        };
       });
     }
 
-    // UPDATE COLUMN MATCH BEACONS
+    // UPDATE COLUMN MATCH BEACONS (Visual guidance showing where drops trigger leaps)
     function updateMatchBeacons() {
       const piece = STATE.trayPieces[STATE.selectedPieceIdx];
       const beacons = document.querySelectorAll(".beacon-slot");
@@ -818,7 +739,6 @@
       });
 
       if (!piece || piece.stones.length === 0) return;
-
       const testStone = piece.stones[0];
 
       for (let c = 0; c < COLS; c++) {
@@ -826,7 +746,6 @@
         let createsMatch = false;
 
         if (testStone.isRainbow) {
-          // Rainbow matches EVERYTHING that is not empty!
           if (col.length > 0 || (c > 0 && STATE.columns[c - 1].length > 0) || (c < COLS - 1 && STATE.columns[c + 1].length > 0)) {
             createsMatch = true;
           }
@@ -839,35 +758,41 @@
 
         if (createsMatch && col.length + piece.stones.length <= ROWS) {
           const beacon = beacons[c];
-          beacon.className = "beacon-slot border-r border-emerald-950/20 bg-emerald-400/15 match-beacon flex flex-col justify-start items-center pt-7";
+          beacon.className = "beacon-slot border-r border-emerald-950/20 bg-emerald-400/15 match-beacon flex flex-col justify-start items-center pt-6";
           beacon.innerHTML = `<span class="text-[9px] mono font-black text-amber-300 bg-black/80 px-1.5 py-0.5 rounded-full border border-amber-400/70 shadow-lg">✨ MATCH!</span>`;
         }
       }
     }
 
-    // CANVAS DRAWING & DIMENSIONS
+    // CANVAS & GEOMETRY
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
     function resizeCanvas() {
-      canvas.width = canvas.parentElement.clientWidth;
-      canvas.height = canvas.parentElement.clientHeight;
+      if (!canvas || !canvas.parentElement) return;
+      const w = canvas.parentElement.clientWidth;
+      const h = canvas.parentElement.clientHeight;
+      if (w > 0 && h > 0 && (canvas.width !== w || canvas.height !== h)) {
+        canvas.width = w;
+        canvas.height = h;
+      }
     }
     window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("orientationchange", resizeCanvas);
     resizeCanvas();
 
     function getSlotY(rowIdx) {
-      const bottomPadding = 30;
-      const slotHeight = (canvas.height - 50) / ROWS;
+      const bottomPadding = 26;
+      const slotHeight = (canvas.height - 45) / ROWS;
       return canvas.height - bottomPadding - (rowIdx * slotHeight);
     }
 
     // DROP PIECE INTO COLUMN
     function dropPieceIntoColumn(colIdx) {
+      if (colIdx < 0 || colIdx >= COLS) return;
       sound.init();
-      dismissTutorial();
 
-      // If hammer active, smash top stone!
+      // Booster: Hammer
       if (STATE.activeBooster === 'hammer') {
         const col = STATE.columns[colIdx];
         if (col.length > 0) {
@@ -881,10 +806,12 @@
           const colWidth = canvas.width / COLS;
           spawnBlossomParticles(colIdx * colWidth + colWidth / 2, getSlotY(col.length), smashed);
           showComboBanner("HAMMER SMASH! 🔨", "text-amber-300");
-          setTimeout(() => checkMagneticLeapsAndMatches(), 300);
+          resolveBoardCascade();
         }
         return;
       }
+
+      if (STATE.isResolving) return; // Wait for active cascade animations to settle
 
       const piece = STATE.trayPieces[STATE.selectedPieceIdx];
       if (!piece) return;
@@ -895,15 +822,21 @@
         return;
       }
 
+      // Consume piece from tray
       STATE.trayPieces[STATE.selectedPieceIdx] = null;
+      STATE.lastDropCol = colIdx;
+      STATE.isResolving = true;
+      dismissTutorial();
       sound.playWaterPlop();
 
       const colWidth = canvas.width / COLS;
       const targetX = colIdx * colWidth + colWidth / 2;
 
+      // Queue gravity falling animation for each stone in the piece
       piece.stones.forEach((stone, i) => {
         const destSlot = col.length + i;
         const targetY = getSlotY(destSlot);
+        const isLastStone = (i === piece.stones.length - 1);
 
         STATE.animatingStones.push({
           type: 'drop',
@@ -911,17 +844,23 @@
           col: colIdx,
           destSlot: destSlot,
           x: targetX,
-          y: -30 - (i * 25),
+          y: -20 - (i * 30),
           targetY: targetY,
-          vy: 2.0,
+          vy: 2.5,
           onLand: () => {
             col.push(stone);
             addWaterRipple(targetX, targetY);
             sound.playChime(stone.note, 1);
+
+            // When the last dropped stone lands, trigger the magnetic attractor sequence!
+            if (isLastStone) {
+              setTimeout(() => resolveBoardCascade(), 80);
+            }
           }
         });
       });
 
+      // Advance tray selection or refill
       if (STATE.trayPieces.every(p => p === null)) {
         setTimeout(refillTray, 400);
       } else {
@@ -934,56 +873,143 @@
         renderTrayUI();
         updateMatchBeacons();
       }
-
-      setTimeout(() => checkMagneticLeapsAndMatches(), 450);
     }
 
-    // BREEDING TIER 2 & 3: MAGNETIC TILE LEAPING & BLOSSOM CLEARS
-    function checkMagneticLeapsAndMatches() {
-      let leapFound = false;
+    // =========================================================================
+    // BREEDING TIER 3: ATTRACTOR MAGNETIC MERGING (Hexa Sort Tile Flight)
+    // =========================================================================
+    function findBestMagneticLeap() {
+      // Priority 1: Attractor Column (The column where the player just dropped)
+      if (STATE.lastDropCol !== null) {
+        const targetIdx = STATE.lastDropCol;
+        const targetCol = STATE.columns[targetIdx];
+        if (targetCol.length > 0 && targetCol.length < ROWS) {
+          const targetTop = targetCol[targetCol.length - 1];
 
+          // Check left neighbor
+          if (targetIdx > 0) {
+            const leftCol = STATE.columns[targetIdx - 1];
+            if (leftCol.length > 0) {
+              const leftTop = leftCol[leftCol.length - 1];
+              if (leftTop.id === targetTop.id || leftTop.isRainbow || targetTop.isRainbow) {
+                const stone = leftCol.pop();
+                return { from: targetIdx - 1, to: targetIdx, stone };
+              }
+            }
+          }
+
+          // Check right neighbor
+          if (targetIdx < COLS - 1) {
+            const rightCol = STATE.columns[targetIdx + 1];
+            if (rightCol.length > 0) {
+              const rightTop = rightCol[rightCol.length - 1];
+              if (rightTop.id === targetTop.id || rightTop.isRainbow || targetTop.isRainbow) {
+                const stone = rightCol.pop();
+                return { from: targetIdx + 1, to: targetIdx, stone };
+              }
+            }
+          }
+        }
+      }
+
+      // Priority 2: Any adjacent columns matching top colors -> merge into the taller stack
+      for (let c = 0; c < COLS - 1; c++) {
+        const colA = STATE.columns[c];
+        const colB = STATE.columns[c + 1];
+        if (colA.length > 0 && colB.length > 0) {
+          const topA = colA[colA.length - 1];
+          const topB = colB[colB.length - 1];
+          if (topA.id === topB.id || topA.isRainbow || topB.isRainbow) {
+            if (colA.length >= colB.length && colA.length < ROWS) {
+              const stone = colB.pop();
+              return { from: c + 1, to: c, stone };
+            } else if (colB.length > colA.length && colB.length < ROWS) {
+              const stone = colA.pop();
+              return { from: c, to: c + 1, stone };
+            }
+          }
+        }
+      }
+
+      return null;
+    }
+
+    function resolveBoardCascade() {
+      // 1. Check for magnetic leap
+      const leap = findBestMagneticLeap();
+      if (leap) {
+        executeMagneticLeap(leap.from, leap.to, leap.stone);
+        return;
+      }
+
+      // 2. Check for 4-pop blossoms
+      let blastTriggered = false;
       for (let c = 0; c < COLS; c++) {
         const col = STATE.columns[c];
-        if (col.length === 0) continue;
-
-        const topStone = col[col.length - 1];
-
-        // Check right neighbor
-        if (c < COLS - 1) {
-          const rightCol = STATE.columns[c + 1];
-          if (rightCol.length > 0) {
-            const rightTop = rightCol[rightCol.length - 1];
-            if (rightTop.id === topStone.id || topStone.isRainbow || rightTop.isRainbow) {
-              if (col.length < ROWS) {
-                const movingStone = rightCol.pop();
-                leapFound = true;
-                executeMagneticLeap(c + 1, c, movingStone);
-                break;
-              }
-            }
+        if (col.length >= 4) {
+          const lastColor = col[col.length - 1].id;
+          let count = 0;
+          for (let i = col.length - 1; i >= 0; i--) {
+            if (col[i].id === lastColor || col[i].isRainbow) count++;
+            else break;
           }
-        }
 
-        // Check left neighbor
-        if (c > 0) {
-          const leftCol = STATE.columns[c - 1];
-          if (leftCol.length > 0) {
-            const leftTop = leftCol[leftCol.length - 1];
-            if (leftTop.id === topStone.id || topStone.isRainbow || leftTop.isRainbow) {
-              if (col.length < ROWS) {
-                const movingStone = leftCol.pop();
-                leapFound = true;
-                executeMagneticLeap(c - 1, c, movingStone);
-                break;
-              }
+          if (count >= 4) {
+            blastTriggered = true;
+            STATE.combo++;
+            const removed = col.splice(col.length - count, count);
+            const pts = count * 100 * STATE.combo * (STATE.feverActive ? 2 : 1);
+            STATE.score += pts;
+
+            const poppedStone = removed[0];
+            const poppedId = poppedStone.id;
+
+            // Collect into Level Targets
+            if (STATE.targets.gem1.id === poppedId || poppedStone.isRainbow) {
+              STATE.targets.gem1.current = Math.min(STATE.targets.gem1.required, STATE.targets.gem1.current + removed.length);
             }
+            if (STATE.targets.gem2.id === poppedId || poppedStone.isRainbow) {
+              STATE.targets.gem2.current = Math.min(STATE.targets.gem2.required, STATE.targets.gem2.current + removed.length);
+            }
+
+            const colWidth = canvas.width / COLS;
+            const x = c * colWidth + colWidth / 2;
+            const y = getSlotY(col.length);
+
+            sound.playBloomChord();
+            spawnBlossomParticles(x, y, poppedStone);
+            spawnFlyingTargetGems(x, y, poppedStone, Math.min(6, removed.length));
+            addScorePopup(x, y, `+${pts} LOTUS POP! 🪷`);
+            showComboBanner(`HARMONY POP! COMBO x${STATE.combo}`, "text-emerald-300");
+
+            updateTargetsUI();
+            checkFeverMode();
+            triggerJuice();
+            document.getElementById("scoreVal").innerText = STATE.score.toLocaleString();
+
+            setTimeout(() => {
+              checkLevelProgress();
+              resolveBoardCascade(); // Re-check for cascading neighbor leaps
+            }, 300);
+            return;
           }
         }
       }
 
-      if (!leapFound) {
-        checkStackBlastsAndCascades();
-      }
+      // 3. Cascade settled: release resolution lock
+      STATE.isResolving = false;
+      STATE.lastDropCol = null;
+      updateMatchBeacons();
+
+      // Reset combo if no active blast
+      setTimeout(() => {
+        if (!STATE.isResolving) {
+          STATE.combo = 0;
+          STATE.feverActive = false;
+          document.getElementById("feverBadge").classList.add("hidden");
+          document.getElementById("appBody").classList.remove("fever-glow");
+        }
+      }, 1600);
     }
 
     function executeMagneticLeap(fromCol, toCol, stone) {
@@ -1010,78 +1036,13 @@
         onLand: () => {
           STATE.columns[toCol].push(stone);
           addWaterRipple(destX, destY);
-          setTimeout(() => checkMagneticLeapsAndMatches(), 180);
+          // Chain next leap or pop immediately!
+          setTimeout(() => resolveBoardCascade(), 140);
         }
       });
     }
 
-    // CHECK FOR 4+ STACK BLOSSOM POP (Matching Same Color)
-    function checkStackBlastsAndCascades() {
-      let blastTriggered = false;
-
-      // Check for 4+ matching in any column
-      for (let c = 0; c < COLS; c++) {
-        const col = STATE.columns[c];
-        if (col.length >= 4) {
-          const lastColor = col[col.length - 1].id;
-          let count = 0;
-          for (let i = col.length - 1; i >= 0; i--) {
-            if (col[i].id === lastColor || col[i].isRainbow) count++;
-            else break;
-          }
-
-          if (count >= 4) {
-            blastTriggered = true;
-            STATE.combo++;
-            const removed = col.splice(col.length - count, count);
-            const pts = count * 75 * STATE.combo * (STATE.feverActive ? 2 : 1);
-            STATE.score += pts;
-
-            const poppedStone = removed[0];
-            const poppedId = poppedStone.id;
-
-            // Collect into Level Targets!
-            if (STATE.targets.gem1.id === poppedId || poppedStone.isRainbow) {
-              STATE.targets.gem1.current = Math.min(STATE.targets.gem1.required, STATE.targets.gem1.current + removed.length);
-            }
-            if (STATE.targets.gem2.id === poppedId || poppedStone.isRainbow) {
-              STATE.targets.gem2.current = Math.min(STATE.targets.gem2.required, STATE.targets.gem2.current + removed.length);
-            }
-
-            const colWidth = canvas.width / COLS;
-            const x = c * colWidth + colWidth / 2;
-            const y = getSlotY(col.length);
-
-            sound.playBloomChord();
-            spawnBlossomParticles(x, y, poppedStone);
-            spawnFlyingTargetGems(x, y, poppedStone, Math.min(6, removed.length));
-            addScorePopup(x, y, `+${pts} LOTUS POP! 🪷`);
-            showComboBanner(`HARMONY POP! COMBO x${STATE.combo}`, "text-emerald-300");
-
-            updateTargetsUI();
-            checkFeverMode();
-            checkLevelProgress();
-            break;
-          }
-        }
-      }
-
-      if (blastTriggered) {
-        triggerJuice();
-        document.getElementById("scoreVal").innerText = STATE.score.toLocaleString();
-        setTimeout(() => checkMagneticLeapsAndMatches(), 320);
-      } else {
-        setTimeout(() => {
-          STATE.combo = 0;
-          STATE.feverActive = false;
-          document.getElementById("feverBadge").classList.add("hidden");
-          document.getElementById("appBody").classList.remove("fever-glow");
-        }, 1800);
-      }
-      updateMatchBeacons();
-    }
-
-    // CHECK FEVER MODE & COMBO BOOSTER REWARDS
+    // CHECK FEVER MODE & COMBO REWARDS
     function checkFeverMode() {
       if (STATE.combo >= 2 && !STATE.feverActive) {
         STATE.feverActive = true;
@@ -1089,8 +1050,6 @@
         document.getElementById("appBody").classList.add("fever-glow");
         showComboBanner("🔥 ZEN FEVER ACTIVATED! 2X POINTS! 🔥", "text-amber-300");
       }
-
-      // EARN BOOSTER BY SKILL: 3x Combo grants a free Zen Hammer!
       if (STATE.combo === 3) {
         STATE.hammers++;
         document.getElementById("hammerCount").innerText = STATE.hammers;
@@ -1098,63 +1057,62 @@
       }
     }
 
-    // CHECK LEVEL TARGET ADVANCEMENT (Candy Crush / Royal Match Target Win)
+    // LEVEL COMPLETION
     function checkLevelProgress() {
-      if (STATE.targets.gem1.current >= STATE.targets.gem1.required && STATE.targets.gem2.current >= STATE.targets.gem2.required) {
-        // LEVEL COMPLETE!
-        setTimeout(() => {
-          sound.playBloomChord();
-          document.getElementById("levelWinStats").innerText = `Score: ${STATE.score.toLocaleString()} • Targets Collected!`;
-          document.getElementById("levelWinModal").classList.remove("hidden");
-        }, 650);
+      const t1Done = STATE.targets.gem1.current >= STATE.targets.gem1.required;
+      const t2Done = STATE.targets.gem2.current >= STATE.targets.gem2.required;
+
+      if (t1Done && t2Done) {
+        sound.playBloomChord();
+        const winModal = document.getElementById("levelWinModal");
+        if (winModal) {
+          document.getElementById("levelWinStats").innerText = `Score: ${STATE.score.toLocaleString()} • Lotus Chimes Cleared!`;
+          winModal.classList.remove("hidden");
+        }
       }
     }
 
     document.getElementById("nextLevelBtn").addEventListener("click", () => {
+      sound.init();
       document.getElementById("levelWinModal").classList.add("hidden");
       STATE.level++;
-      
-      // LEVEL UP REWARD: Free Hammer & Magnet Booster!
-      STATE.hammers++;
-      STATE.magnets++;
-      document.getElementById("hammerCount").innerText = STATE.hammers;
-      document.getElementById("magnetCount").innerText = STATE.magnets;
-
-      document.getElementById("levelLabel").innerText = `LVL ${STATE.level}`;
       setTargetsForLevel(STATE.level);
       seedStarterStones();
       refillTray();
-      showComboBanner(`🌟 LEVEL ${STATE.level} UNLOCKED! REWARDS: +1 HAMMER, +1 MAGNET! 🌟`, "text-amber-300");
+      showComboBanner(`WELCOME TO LEVEL ${STATE.level}!`, "text-amber-300");
     });
 
-    // BOOSTERS: HAMMER & MAGNET VORTEX
-    document.getElementById("hammerBtn").addEventListener("click", () => {
-      if (STATE.hammers <= 0) return;
-      STATE.activeBooster = STATE.activeBooster === 'hammer' ? null : 'hammer';
-      const btn = document.getElementById("hammerBtn");
-      if (STATE.activeBooster === 'hammer') {
-        btn.classList.add("border-amber-400", "scale-105");
-        showComboBanner("TAP ANY COLUMN TO SMASH TOP STONE 🔨", "text-amber-300");
-      } else {
-        btn.classList.remove("border-amber-400", "scale-105");
+    // TUTORIAL HELPERS
+    function dismissTutorial() {
+      if (!STATE.tutorialActive) return;
+      STATE.tutorialActive = false;
+      const tut = document.getElementById("tutorialOverlay");
+      if (tut) {
+        tut.style.opacity = "0";
+        setTimeout(() => tut.classList.add("hidden"), 300);
       }
-    });
+    }
 
-    document.getElementById("magnetBtn").addEventListener("click", () => {
-      if (STATE.magnets <= 0) return;
-      STATE.magnets--;
-      document.getElementById("magnetCount").innerText = STATE.magnets;
-      sound.playBloomChord();
-      showComboBanner("🧲 MAGNET VORTEX! PULLING ALL COLORS!", "text-blue-300");
-      checkMagneticLeapsAndMatches();
-    });
+    function triggerJuice() {
+      const b = document.getElementById("boardContainer");
+      if (b) {
+        b.classList.remove("screen-shake");
+        void b.offsetWidth;
+        b.classList.add("screen-shake");
+      }
+      if (window.navigator && window.navigator.vibrate) {
+        try { window.navigator.vibrate([24, 16, 36]); } catch(e) {}
+      }
+    }
 
-    function showComboBanner(text, colorClass) {
+    function showComboBanner(text, colorClass = "text-amber-300") {
       const banner = document.getElementById("comboText");
+      if (!banner) return;
       banner.innerText = text;
-      banner.className = `text-xs font-extrabold uppercase tracking-widest ${colorClass} bg-black/85 border border-emerald-500/50 px-3.5 py-1 rounded-full shadow-2xl combo-active`;
+      banner.className = `text-xs font-extrabold uppercase tracking-widest ${colorClass} bg-black/90 border border-amber-400 px-3 py-1 rounded-full shadow-2xl combo-active`;
       banner.classList.remove("hidden");
-      setTimeout(() => banner.classList.add("hidden"), 2200);
+      clearTimeout(banner._timer);
+      banner._timer = setTimeout(() => banner.classList.add("hidden"), 1800);
     }
 
     function addScorePopup(x, y, text) {
@@ -1162,31 +1120,66 @@
     }
 
     function addWaterRipple(x, y) {
-      STATE.ripples.push({ x, y, radius: 8, maxRadius: 42, alpha: 0.85 });
+      STATE.ripples.push({ x, y, radius: 4, alpha: 0.8 });
     }
 
     function spawnBlossomParticles(x, y, stone) {
-      for (let i = 0; i < 22; i++) {
+      for (let i = 0; i < 28; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 4.8 + 1.5;
+        const speed = Math.random() * 4.5 + 1.2;
         STATE.particles.push({
           x: x,
           y: y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed - 1.2,
           color: stone.isRainbow ? '#facc15' : stone.glow,
-          radius: Math.random() * 3.8 + 1.8,
+          radius: Math.random() * 3.5 + 1.5,
           alpha: 1.0
         });
       }
     }
 
-    // 60FPS GAME ANIMATION LOOP
+    function spawnFlyingTargetGems(startX, startY, stone, count) {
+      const isT1 = stone.id === STATE.targets.gem1.id;
+      const isT2 = stone.id === STATE.targets.gem2.id;
+      if (!isT1 && !isT2 && !stone.isRainbow) return;
+
+      const targetEl = isT1 ? document.getElementById("targetPill1") : document.getElementById("targetPill2");
+      const targetRect = targetEl ? targetEl.getBoundingClientRect() : { left: canvas.width / 2, top: 20 };
+      const canvasRect = canvas.getBoundingClientRect();
+      const destX = targetRect.left - canvasRect.left + 24;
+      const destY = targetRect.top - canvasRect.top + 12;
+
+      for (let i = 0; i < count; i++) {
+        STATE.flyingGems.push({
+          x: startX,
+          y: startY,
+          startX: startX,
+          startY: startY,
+          destX: destX,
+          destY: destY,
+          color: stone.isRainbow ? '#facc15' : (stone.glow || '#38bdf8'),
+          progress: -i * 0.08,
+          onArrive: () => {
+            sound.playChime((stone.note || 440) * 1.35, 2);
+            if (targetEl) {
+              targetEl.classList.add("scale-115");
+              setTimeout(() => targetEl.classList.remove("scale-115"), 160);
+            }
+          }
+        });
+      }
+    }
+
+    // =========================================================================
+    // 60FPS GAME ANIMATION & CANVAS RENDERING
+    // =========================================================================
     function gameLoop() {
+      resizeCanvas();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const colWidth = canvas.width / COLS;
 
-      // 1. DRAW WATER COLUMN PEDESTALS (Glowing Lotus Pads)
+      // 1. Column Tubes & Pedestals
       for (let c = 0; c < COLS; c++) {
         const colX = c * colWidth;
         const colGrad = ctx.createLinearGradient(colX, 0, colX + colWidth, 0);
@@ -1196,22 +1189,19 @@
         ctx.fillStyle = colGrad;
         ctx.fillRect(colX, 0, colWidth, canvas.height);
 
-        // Lotus Pad Pedestal at column base
+        // Lotus Pad Pedestal
         const padX = colX + colWidth / 2;
-        const padY = canvas.height - 18;
+        const padY = canvas.height - 16;
         ctx.beginPath();
-        ctx.ellipse(padX, padY, colWidth / 2 - 4, 8, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "#0a2219";
+        ctx.ellipse(padX, padY, colWidth / 2 - 4, 7, 0, 0, Math.PI * 2);
+        ctx.fillStyle = "#091f17";
         ctx.fill();
         ctx.strokeStyle = "#10b981";
-        ctx.lineWidth = 1.6;
-        ctx.shadowColor = "rgba(16, 185, 129, 0.45)";
-        ctx.shadowBlur = 8;
+        ctx.lineWidth = 1.4;
         ctx.stroke();
-        ctx.shadowBlur = 0;
       }
 
-      // 1.5. DRAW LUMINOUS MAGNETIC TETHERS BETWEEN MATCHING NEIGHBOR COLUMNS
+      // 1.5. Luminous Magnetic Tethers (Connecting matching neighbors)
       for (let c = 0; c < COLS - 1; c++) {
         const colA = STATE.columns[c];
         const colB = STATE.columns[c + 1];
@@ -1231,7 +1221,7 @@
             const midY = Math.min(y1, y2) - 22;
             ctx.quadraticCurveTo(midX, midY, x2, y2);
             ctx.strokeStyle = topA.isRainbow ? '#facc15' : (topA.glow || '#38bdf8');
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 2.4;
             ctx.setLineDash([4, 4]);
             ctx.lineDashOffset = -Date.now() * 0.015;
             ctx.shadowColor = topA.glow || '#38bdf8';
@@ -1242,40 +1232,29 @@
         }
       }
 
-      // 2. DRAW WATER RIPPLES
+      // 2. Water Ripples
       STATE.ripples.forEach(r => {
         r.radius += 1.3;
         r.alpha -= 0.025;
         ctx.beginPath();
         ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(52, 211, 153, ${r.alpha})`;
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = `rgba(52, 211, 153, ${Math.max(0, r.alpha)})`;
+        ctx.lineWidth = 1.8;
         ctx.stroke();
       });
       STATE.ripples = STATE.ripples.filter(r => r.alpha > 0);
 
-      // 3. DRAW AT-REST RESTING STONES IN COLUMNS
+      // 3. Resting Column Stones
       for (let c = 0; c < COLS; c++) {
         const col = STATE.columns[c];
         const stoneX = c * colWidth + colWidth / 2;
 
         col.forEach((stone, r) => {
           const stoneY = getSlotY(r);
-          // Check if top stone is anticipating a leap with neighbor
-          let isAnticipating = false;
-          if (r === col.length - 1 && STATE.hoveredCol !== null) {
-            const activePiece = STATE.trayPieces[STATE.selectedPieceIdx];
-            if (activePiece && activePiece.stones.length > 0) {
-              const test = activePiece.stones[0];
-              if ((test.id === stone.id || test.isRainbow || stone.isRainbow) && (STATE.hoveredCol === c - 1 || STATE.hoveredCol === c + 1)) {
-                isAnticipating = true;
-              }
-            }
-          }
-          drawRiverStone(stoneX, stoneY, colWidth - 10, 22, stone, false, isAnticipating);
+          drawRiverStone(stoneX, stoneY, colWidth - 8, 20, stone, false);
         });
 
-        // Draw top stack count badge
+        // Stack count badge (e.g. 3/4)
         if (col.length >= 2) {
           const topColor = col[col.length - 1].id;
           let count = 0;
@@ -1286,13 +1265,13 @@
           if (count >= 2) {
             const topY = getSlotY(col.length - 1);
             ctx.fillStyle = count === 3 ? "#fbbf24" : "#a7f3d0";
-            ctx.font = "bold 10px sans-serif";
-            ctx.fillText(`${count}/4`, stoneX - 9, topY - 14);
+            ctx.font = "bold 9px sans-serif";
+            ctx.fillText(`${count}/4`, stoneX - 8, topY - 13);
           }
         }
       }
 
-      // 3.5. DRAW GHOST PREVIEW ON HOVERED COLUMN (Drag & Drop or Hover)
+      // 3.5. Ghost Stone Preview on Hovered Column
       if (STATE.hoveredCol !== null && STATE.hoveredCol >= 0 && STATE.hoveredCol < COLS) {
         const hCol = STATE.hoveredCol;
         const targetCol = STATE.columns[hCol];
@@ -1300,27 +1279,26 @@
 
         if (activePiece && targetCol.length + activePiece.stones.length <= ROWS) {
           const hX = hCol * colWidth;
-          // Column vertical light beam
-          ctx.fillStyle = "rgba(52, 211, 153, 0.16)";
+          ctx.fillStyle = "rgba(52, 211, 153, 0.14)";
           ctx.fillRect(hX + 1, 0, colWidth - 2, canvas.height);
 
           const ghostStoneX = hX + colWidth / 2;
           activePiece.stones.forEach((stone, i) => {
             const destSlot = targetCol.length + i;
             const ghostY = getSlotY(destSlot);
-            drawRiverStone(ghostStoneX, ghostY, colWidth - 10, 22, stone, true, false);
+            drawRiverStone(ghostStoneX, ghostY, colWidth - 8, 20, stone, true);
           });
         }
       }
 
-      // 4. ANIMATE MOVING STONES (Gravity Drops & Magnetic Leaps)
+      // 4. Moving Stones (Gravity Drops & Magnetic Leaps)
       for (let i = STATE.animatingStones.length - 1; i >= 0; i--) {
         const anim = STATE.animatingStones[i];
 
         if (anim.type === 'drop') {
-          anim.vy += 0.85;
+          anim.vy += 0.9;
           anim.y += anim.vy;
-          drawRiverStone(anim.x, anim.y, colWidth - 10, 22, anim.stone);
+          drawRiverStone(anim.x, anim.y, colWidth - 8, 20, anim.stone);
 
           if (anim.y >= anim.targetY) {
             anim.y = anim.targetY;
@@ -1328,19 +1306,19 @@
             STATE.animatingStones.splice(i, 1);
           }
         } else if (anim.type === 'leap') {
-          anim.progress += 0.08;
+          anim.progress += 0.075;
           const t = Math.min(1.0, anim.progress);
-          const arcHeight = 45;
+          const arcHeight = 40;
           anim.x = anim.startX + (anim.destX - anim.startX) * t;
           anim.y = anim.startY + (anim.destY - anim.startY) * t - Math.sin(t * Math.PI) * arcHeight;
 
-          // Glowing leap stardust trail
+          // Leap spark particle
           ctx.beginPath();
-          ctx.arc(anim.x, anim.y, 4, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+          ctx.arc(anim.x, anim.y, 3.5, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
           ctx.fill();
 
-          drawRiverStone(anim.x, anim.y, colWidth - 8, 22, anim.stone);
+          drawRiverStone(anim.x, anim.y, colWidth - 8, 20, anim.stone);
 
           if (t >= 1.0) {
             anim.onLand();
@@ -1349,7 +1327,7 @@
         }
       }
 
-      // 5. DRAW BLOSSOM PARTICLES
+      // 5. Blossom Particles
       for (let i = STATE.particles.length - 1; i >= 0; i--) {
         const p = STATE.particles[i];
         p.x += p.vx;
@@ -1367,14 +1345,14 @@
         if (p.alpha <= 0) STATE.particles.splice(i, 1);
       }
 
-      // 6. DRAW FLOATING SCORE POPUPS
+      // 6. Floating Score Popups
       for (let i = STATE.scorePopups.length - 1; i >= 0; i--) {
         const sp = STATE.scorePopups[i];
         sp.y -= 0.8;
         sp.alpha -= 0.02;
 
         ctx.save();
-        ctx.font = "bold 12px sans-serif";
+        ctx.font = "bold 11px sans-serif";
         ctx.fillStyle = `rgba(251, 191, 36, ${sp.alpha})`;
         ctx.fillText(sp.text, sp.x - 45, sp.y);
         ctx.restore();
@@ -1382,23 +1360,22 @@
         if (sp.alpha <= 0) STATE.scorePopups.splice(i, 1);
       }
 
-      // 7. UPDATE & DRAW FLYING TARGET GEMS
+      // 7. Flying Target Gems (Parabolic flight to header)
       for (let i = STATE.flyingGems.length - 1; i >= 0; i--) {
         const fg = STATE.flyingGems[i];
         fg.progress += 0.045;
-        if (fg.progress < 0) continue; // Waiting for stagger delay
+        if (fg.progress < 0) continue;
 
         const t = Math.min(1.0, fg.progress);
-        const arcHeight = 65;
+        const arcHeight = 60;
         fg.x = fg.startX + (fg.destX - fg.startX) * t;
         fg.y = fg.startY + (fg.destY - fg.startY) * t - Math.sin(t * Math.PI) * arcHeight;
 
-        // Sparkle stardust orb
         ctx.beginPath();
-        ctx.arc(fg.x, fg.y, 5, 0, Math.PI * 2);
+        ctx.arc(fg.x, fg.y, 4.5, 0, Math.PI * 2);
         ctx.fillStyle = fg.color;
         ctx.shadowColor = fg.color;
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = 10;
         ctx.fill();
         ctx.shadowBlur = 0;
 
@@ -1411,34 +1388,22 @@
       requestAnimationFrame(gameLoop);
     }
 
-    // DRAW 3D BEVELED RIVER STONES / GEMS (With Hyper-Realistic 3D Gloss & Light Refraction)
-    function drawRiverStone(x, y, w, h, stone, isGhost = false, isAnticipating = false) {
+    // DRAW 3D BEVELED RIVER GEMS (Translucent Gloss with Light Refractions)
+    function drawRiverStone(x, y, w, h, stone, isGhost = false) {
       ctx.save();
       ctx.translate(x, y);
 
       if (isGhost) {
-        ctx.globalAlpha = 0.55;
+        ctx.globalAlpha = 0.5;
       }
 
       // 1. Soft Ambient Drop Shadow
       ctx.beginPath();
-      ctx.ellipse(0, 5, w / 2, h / 2, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
+      ctx.ellipse(0, 4, w / 2, h / 2, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
       ctx.fill();
 
-      // 2. Anticipation Golden Glow Aura
-      if (isAnticipating) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.ellipse(0, 0, w / 2 + 5, h / 2 + 5, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(251, 191, 36, 0.45)";
-        ctx.shadowColor = "#fbbf24";
-        ctx.shadowBlur = 14;
-        ctx.fill();
-        ctx.restore();
-      }
-
-      // 3. Body Color Gradient with 3D Depth
+      // 2. 3D Body Gradient
       if (stone.isRainbow) {
         const time = Date.now() * 0.002;
         const grad = ctx.createLinearGradient(-w / 2 * Math.cos(time), -h / 2 * Math.sin(time), w / 2 * Math.cos(time), h / 2 * Math.sin(time));
@@ -1452,26 +1417,8 @@
         ctx.fillStyle = grad;
         ctx.fill();
         ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 2.4;
+        ctx.lineWidth = 2.0;
         ctx.stroke();
-      } else if (stone.isObstacle) {
-        // Golden Lotus Seal Obstacle (Screw Jam DNA)
-        const grad = ctx.createRadialGradient(-w * 0.1, -h * 0.2, 2, 0, 0, w / 2);
-        grad.addColorStop(0, '#fef3c7');
-        grad.addColorStop(0.3, '#f59e0b');
-        grad.addColorStop(0.7, '#b45309');
-        grad.addColorStop(1, '#451a03');
-        ctx.beginPath();
-        ctx.ellipse(0, 0, w / 2, h / 2, 0, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = '#fef08a';
-        ctx.lineWidth = 2.2;
-        ctx.stroke();
-
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 11px sans-serif";
-        ctx.fillText("🔒", -6, 4);
       } else {
         const grad = ctx.createRadialGradient(-w * 0.15, -h * 0.25, 2, 0, 0, w / 2);
         grad.addColorStop(0, stone.light || '#ffffff');
@@ -1485,105 +1432,192 @@
         ctx.fill();
 
         ctx.strokeStyle = stone.light;
-        ctx.lineWidth = 1.8;
+        ctx.lineWidth = 1.6;
         ctx.stroke();
       }
 
-      // 4. Top Curved Specular Arc (Glossy Supercell-style Highlight)
+      // 3. Specular Highlight Arc
       ctx.beginPath();
-      ctx.ellipse(-w * 0.16, -h * 0.22, w * 0.26, h * 0.18, -0.1, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255, 255, 255, 0.72)";
+      ctx.ellipse(-w * 0.16, -h * 0.22, w * 0.25, h * 0.16, -0.1, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.68)";
       ctx.fill();
 
-      // 5. Bottom Caustic Glow Reflection
+      // 4. Bottom Caustic Reflection
       ctx.beginPath();
-      ctx.ellipse(0, h * 0.22, w * 0.28, h * 0.12, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255, 255, 255, 0.18)";
+      ctx.ellipse(0, h * 0.2, w * 0.26, h * 0.1, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
       ctx.fill();
 
       ctx.restore();
     }
 
-    // DRAG AND DROP TOUCH & MOUSE GESTURE SYSTEM
+    // =========================================================================
+    // BULLETPROOF HYBRID INPUT SYSTEM (Tap-to-Select & Drag-to-Drop)
+    // =========================================================================
     const dragAvatar = document.getElementById("dragAvatar");
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let hasMovedThreshold = false;
 
-    function setupDragAndDrop() {
+    function setupInputSystem() {
       const slots = document.querySelectorAll(".piece-slot");
+
       slots.forEach((slot, idx) => {
-        // Pointer down handles both touch and mouse drag smoothly
+        // Pointer down on tray piece slot
         slot.addEventListener("pointerdown", (e) => {
-          if (!STATE.trayPieces[idx]) return;
-          e.preventDefault();
+          if (!STATE.trayPieces[idx] || STATE.isResolving) return;
           sound.init();
-          dismissTutorial();
+
+          // Select this piece immediately
           STATE.selectedPieceIdx = idx;
-          STATE.isDragging = true;
-          STATE.dragPieceIdx = idx;
           STATE.activeBooster = null;
           renderTrayUI();
           updateMatchBeacons();
 
-          // Populate drag avatar
-          dragAvatar.innerHTML = "";
-          STATE.trayPieces[idx].stones.forEach(stone => {
-            const pill = document.createElement("div");
-            pill.className = "w-10 h-3.5 sm:w-11 sm:h-4 rounded-full border shadow-2xl";
-            if (stone.isRainbow) {
-              pill.style.background = "linear-gradient(90deg, #f43f5e, #fbbf24, #10b981, #38bdf8, #a855f7)";
-              pill.style.borderColor = "#ffffff";
-            } else {
-              pill.style.background = `linear-gradient(180deg, ${stone.glow} 0%, ${stone.bg} 100%)`;
-              pill.style.borderColor = stone.light;
-            }
-            dragAvatar.appendChild(pill);
-          });
+          dragStartX = e.clientX;
+          dragStartY = e.clientY;
+          hasMovedThreshold = false;
+          STATE.isDragging = false;
+          STATE.dragPieceIdx = idx;
 
-          dragAvatar.style.left = `${e.clientX}px`;
-          dragAvatar.style.top = `${e.clientY - 35}px`;
-          dragAvatar.classList.remove("hidden");
+          // Capture pointer so touchmove tracks outside the slot
+          try { slot.setPointerCapture(e.pointerId); } catch(err) {}
+        });
+
+        slot.addEventListener("pointermove", (e) => {
+          if (STATE.dragPieceIdx !== idx) return;
+
+          const dist = Math.hypot(e.clientX - dragStartX, e.clientY - dragStartY);
+          if (dist > 12 && !STATE.isDragging) {
+            STATE.isDragging = true;
+            hasMovedThreshold = true;
+            dismissTutorial();
+
+            // Populate drag avatar
+            dragAvatar.innerHTML = "";
+            STATE.trayPieces[idx].stones.forEach(stone => {
+              const pill = document.createElement("div");
+              pill.className = "w-10 h-3.5 sm:w-11 sm:h-4 rounded-full border shadow-2xl";
+              if (stone.isRainbow) {
+                pill.style.background = "linear-gradient(90deg, #f43f5e, #fbbf24, #10b981, #38bdf8, #a855f7)";
+                pill.style.borderColor = "#ffffff";
+              } else {
+                pill.style.background = `linear-gradient(180deg, ${stone.glow} 0%, ${stone.bg} 100%)`;
+                pill.style.borderColor = stone.light;
+              }
+              dragAvatar.appendChild(pill);
+            });
+            dragAvatar.classList.remove("hidden");
+          }
+
+          if (STATE.isDragging) {
+            dragAvatar.style.left = `${e.clientX}px`;
+            dragAvatar.style.top = `${e.clientY - 35}px`;
+
+            // Detect hovered column
+            const rect = canvas.getBoundingClientRect();
+            if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom + 50) {
+              const colW = rect.width / COLS;
+              const c = Math.floor((e.clientX - rect.left) / colW);
+              STATE.hoveredCol = Math.max(0, Math.min(COLS - 1, c));
+            } else {
+              STATE.hoveredCol = null;
+            }
+          }
+        });
+
+        const handlePointerEnd = (e) => {
+          if (STATE.dragPieceIdx !== idx) return;
+
+          if (STATE.isDragging) {
+            STATE.isDragging = false;
+            dragAvatar.classList.add("hidden");
+
+            if (STATE.hoveredCol !== null) {
+              dropPieceIntoColumn(STATE.hoveredCol);
+            }
+            STATE.hoveredCol = null;
+          } else if (!hasMovedThreshold) {
+            // Clean simple tap: selects piece
+            sound.playWaterPlop();
+          }
+
+          STATE.dragPieceIdx = null;
+          try { slot.releasePointerCapture(e.pointerId); } catch(err) {}
+        };
+
+        slot.addEventListener("pointerup", handlePointerEnd);
+        slot.addEventListener("pointercancel", handlePointerEnd);
+      });
+
+      // TAPPING ANYWHERE ON A COLUMN (via column zone divs)
+      document.querySelectorAll(".col-tap-zone").forEach(zone => {
+        zone.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const colIdx = parseInt(zone.getAttribute("data-col"));
+          dropPieceIntoColumn(colIdx);
         });
       });
 
-      window.addEventListener("pointermove", (e) => {
-        if (!STATE.isDragging) return;
-        dragAvatar.style.left = `${e.clientX}px`;
-        dragAvatar.style.top = `${e.clientY - 35}px`;
-
-        const rect = canvas.getBoundingClientRect();
-        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom + 40) {
-          const colW = rect.width / COLS;
-          const c = Math.floor((e.clientX - rect.left) / colW);
-          STATE.hoveredCol = Math.max(0, Math.min(COLS - 1, c));
-        } else {
-          STATE.hoveredCol = null;
+      // FALLBACK: TAPPING DIRECTLY ON BOARD CONTAINER
+      const boardContainer = document.getElementById("boardContainer");
+      boardContainer.addEventListener("click", (e) => {
+        if (STATE.isResolving) return;
+        const rect = boardContainer.getBoundingClientRect();
+        const colW = rect.width / COLS;
+        const colIdx = Math.floor((e.clientX - rect.left) / colW);
+        if (colIdx >= 0 && colIdx < COLS) {
+          dropPieceIntoColumn(colIdx);
         }
-      });
-
-      window.addEventListener("pointerup", (e) => {
-        if (!STATE.isDragging) return;
-        STATE.isDragging = false;
-        dragAvatar.classList.add("hidden");
-
-        if (STATE.hoveredCol !== null) {
-          dropPieceIntoColumn(STATE.hoveredCol);
-        }
-        STATE.hoveredCol = null;
-      });
-
-      window.addEventListener("pointercancel", () => {
-        STATE.isDragging = false;
-        dragAvatar.classList.add("hidden");
-        STATE.hoveredCol = null;
       });
     }
 
-    // COLUMN TAP CLICK LISTENERS
-    document.querySelectorAll(".col-tap-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        dismissTutorial();
-        const colIdx = parseInt(btn.getAttribute("data-col"));
-        dropPieceIntoColumn(colIdx);
-      });
+    // BOOSTER BUTTONS
+    document.getElementById("hammerBtn").addEventListener("click", () => {
+      sound.init();
+      if (STATE.hammers <= 0) {
+        showComboBanner("NO HAMMERS LEFT! 3x COMBOS EARN MORE", "text-amber-400");
+        return;
+      }
+      STATE.activeBooster = STATE.activeBooster === 'hammer' ? null : 'hammer';
+      const btn = document.getElementById("hammerBtn");
+      if (STATE.activeBooster === 'hammer') {
+        btn.classList.add("border-amber-400", "scale-105");
+        showComboBanner("HAMMER READY: TAP ANY COLUMN TO SMASH TOP STONE! 🔨", "text-amber-300");
+      } else {
+        btn.classList.remove("border-amber-400", "scale-105");
+      }
+    });
+
+    document.getElementById("magnetBtn").addEventListener("click", () => {
+      sound.init();
+      if (STATE.magnets <= 0) {
+        showComboBanner("NO MAGNETS LEFT!", "text-blue-400");
+        return;
+      }
+      STATE.magnets--;
+      document.getElementById("magnetCount").innerText = STATE.magnets;
+      showComboBanner("🧲 MAGNET VORTEX ACTIVATED!", "text-blue-300");
+      sound.playBloomChord();
+
+      // Board-wide pull: merge all adjacent matching colors
+      let merges = 0;
+      for (let c = 0; c < COLS - 1; c++) {
+        const colA = STATE.columns[c];
+        const colB = STATE.columns[c + 1];
+        if (colA.length > 0 && colB.length > 0) {
+          const topA = colA[colA.length - 1];
+          const topB = colB[colB.length - 1];
+          if (topA.id === topB.id) {
+            merges++;
+            executeMagneticLeap(c + 1, c, colB.pop());
+            break;
+          }
+        }
+      }
+      if (merges === 0) {
+        showComboBanner("NO MATCHING ADJACENT GEMS FOUND", "text-slate-300");
+      }
     });
 
     // AUDIO MUTE TOGGLE
@@ -1593,10 +1627,10 @@
       document.getElementById("soundToggle").innerText = active ? "🔊 ASMR" : "🔇 MUTED";
     });
 
-    // MODAL LISTENERS (HOW TO PLAY & STUDIO SPECS)
-    const modal = document.getElementById("howToModal");
-    document.getElementById("howToPlayBtn").addEventListener("click", () => modal.classList.remove("hidden"));
-    document.getElementById("closeHowToBtn").addEventListener("click", () => modal.classList.add("hidden"));
+    // MODAL HANDLERS
+    const howToModal = document.getElementById("howToModal");
+    document.getElementById("howToPlayBtn").addEventListener("click", () => howToModal.classList.remove("hidden"));
+    document.getElementById("closeHowToBtn").addEventListener("click", () => howToModal.classList.add("hidden"));
 
     const specsModal = document.getElementById("specsModal");
     document.getElementById("specsBtn").addEventListener("click", () => {
@@ -1610,7 +1644,7 @@
     setTargetsForLevel(1);
     seedStarterStones();
     refillTray();
-    setupDragAndDrop();
+    setupInputSystem();
     requestAnimationFrame(gameLoop);
   </script>
 </body>
