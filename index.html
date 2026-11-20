@@ -284,6 +284,44 @@
   </div>
 
   <!-- ============================================ -->
+  <!-- "OUT OF MOVES / POND FULL" GAME OVER MODAL    -->
+  <!-- ============================================ -->
+  <div id="gameOverModal" class="absolute inset-0 bg-black/88 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
+    <div class="max-w-sm w-full bg-[#12080a] border-2 border-rose-500/90 rounded-3xl p-5 shadow-2xl space-y-3.5 text-center">
+      <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-rose-500 to-amber-600 flex items-center justify-center text-3xl shadow-xl animate-pulse">
+        ⚠️
+      </div>
+
+      <h2 class="text-xl font-black text-rose-300 uppercase tracking-wide">
+        POND IS FULL!
+      </h2>
+      <p class="text-xs text-slate-300 leading-relaxed">
+        No columns have enough space to fit your remaining stone stacks.
+      </p>
+
+      <div class="space-y-2 pt-1 text-left">
+        <!-- RESCUE HAMMER -->
+        <button id="rescueHammerBtn" class="w-full p-2.5 rounded-xl bg-amber-950/90 hover:bg-amber-900 border border-amber-500 text-amber-200 text-xs font-black flex items-center justify-between active:scale-95 transition shadow">
+          <span class="flex items-center gap-1.5">🔨 <span>FREE RESCUE HAMMER</span></span>
+          <span class="text-[9px] bg-amber-500 text-black px-2 py-0.5 rounded-full font-bold">SMASH & CONTINUE</span>
+        </button>
+
+        <!-- MAGNET RESCUE -->
+        <button id="rescueMagnetBtn" class="w-full p-2.5 rounded-xl bg-blue-950/90 hover:bg-blue-900 border border-blue-500 text-blue-200 text-xs font-black flex items-center justify-between active:scale-95 transition shadow">
+          <span class="flex items-center gap-1.5">🧲 <span>MAGNET VORTEX PULL</span></span>
+          <span class="text-[9px] bg-blue-500 text-black px-2 py-0.5 rounded-full font-bold">MERGE ALL</span>
+        </button>
+
+        <!-- RESTART LEVEL -->
+        <button id="restartLevelBtn" class="w-full p-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold flex items-center justify-between active:scale-95 transition shadow">
+          <span class="flex items-center gap-1.5">🔄 <span>RESTART LEVEL</span></span>
+          <span class="text-[9px] text-slate-400">FRESH BOARD</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
   <!-- "HOW TO PLAY" MODAL                          -->
   <!-- ============================================ -->
   <div id="howToModal" class="absolute inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
@@ -503,6 +541,22 @@
         gain.connect(this.master);
         osc.start(now);
         osc.stop(now + 0.3);
+      }
+
+      playFullThud() {
+        if (!this.ctx || this.muted) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(110, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.18);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+        osc.connect(gain);
+        gain.connect(this.master);
+        osc.start(now);
+        osc.stop(now + 0.21);
       }
     }
 
@@ -757,11 +811,33 @@
         }
 
         if (createsMatch && col.length + piece.stones.length <= ROWS) {
+          // Check if it's rescuing a full neighbor!
+          let rescuesNeighbor = false;
+          if (c > 0 && STATE.columns[c - 1].length >= ROWS) rescuesNeighbor = true;
+          if (c < COLS - 1 && STATE.columns[c + 1].length >= ROWS) rescuesNeighbor = true;
+
           const beacon = beacons[c];
           beacon.className = "beacon-slot border-r border-emerald-950/20 bg-emerald-400/15 match-beacon flex flex-col justify-start items-center pt-6";
-          beacon.innerHTML = `<span class="text-[9px] mono font-black text-amber-300 bg-black/80 px-1.5 py-0.5 rounded-full border border-amber-400/70 shadow-lg">✨ MATCH!</span>`;
+          beacon.innerHTML = rescuesNeighbor
+            ? `<span class="text-[8px] mono font-black text-emerald-300 bg-black/90 px-1.5 py-0.5 rounded-full border border-emerald-400 shadow-lg animate-bounce">🧲 RESCUE!</span>`
+            : `<span class="text-[9px] mono font-black text-amber-300 bg-black/80 px-1.5 py-0.5 rounded-full border border-amber-400/70 shadow-lg">✨ MATCH!</span>`;
         }
       }
+
+      // Update column zone labels with live full/capacity warnings
+      document.querySelectorAll(".col-tap-zone").forEach((zone, c) => {
+        const col = STATE.columns[c];
+        const span = zone.querySelector("span");
+        if (span) {
+          if (col.length >= ROWS) {
+            span.innerText = `COL ${c + 1} 🔒`;
+            span.className = "text-[9px] font-black text-rose-400 mt-0.5 animate-pulse";
+          } else {
+            span.innerText = `COL ${c + 1}`;
+            span.className = "text-[9px] font-bold text-emerald-400/60 mt-0.5";
+          }
+        }
+      });
     }
 
     // CANVAS & GEOMETRY
@@ -818,7 +894,15 @@
 
       const col = STATE.columns[colIdx];
       if (col.length + piece.stones.length > ROWS) {
-        showComboBanner("COLUMN FULL! CHOOSE ANOTHER", "text-amber-400");
+        sound.playFullThud();
+        triggerJuice();
+        showComboBanner(`⚠️ COL ${colIdx + 1} FULL (${col.length}/${ROWS})! Tap 🔨 Hammer or match neighbor!`, "text-rose-400");
+        const hammerBtn = document.getElementById("hammerBtn");
+        if (hammerBtn && STATE.hammers > 0) {
+          hammerBtn.classList.add("scale-110", "border-amber-300");
+          setTimeout(() => hammerBtn.classList.remove("scale-110", "border-amber-300"), 1200);
+        }
+        checkGameOverOrStuck();
         return;
       }
 
@@ -1000,6 +1084,7 @@
       STATE.isResolving = false;
       STATE.lastDropCol = null;
       updateMatchBeacons();
+      checkGameOverOrStuck();
 
       // Reset combo if no active blast
       setTimeout(() => {
@@ -1069,6 +1154,34 @@
           document.getElementById("levelWinStats").innerText = `Score: ${STATE.score.toLocaleString()} • Lotus Chimes Cleared!`;
           winModal.classList.remove("hidden");
         }
+      }
+    }
+
+    // GAME OVER / POND JAMMED DETECTION
+    function checkGameOverOrStuck() {
+      if (STATE.isResolving) return;
+
+      const hasPiecesInTray = STATE.trayPieces.some(p => p !== null);
+      if (!hasPiecesInTray) return;
+
+      // Check if ANY piece currently in tray can fit in ANY column
+      let canPlaceAny = false;
+      for (let i = 0; i < 3; i++) {
+        const piece = STATE.trayPieces[i];
+        if (!piece) continue;
+        for (let c = 0; c < COLS; c++) {
+          if (STATE.columns[c].length + piece.stones.length <= ROWS) {
+            canPlaceAny = true;
+            break;
+          }
+        }
+        if (canPlaceAny) break;
+      }
+
+      if (!canPlaceAny) {
+        sound.playFullThud();
+        const modal = document.getElementById("gameOverModal");
+        if (modal) modal.classList.remove("hidden");
       }
     }
 
@@ -1181,6 +1294,7 @@
 
       // 1. Column Tubes & Pedestals
       for (let c = 0; c < COLS; c++) {
+        const col = STATE.columns[c];
         const colX = c * colWidth;
         const colGrad = ctx.createLinearGradient(colX, 0, colX + colWidth, 0);
         colGrad.addColorStop(0, "rgba(6, 78, 59, 0.08)");
@@ -1199,6 +1313,18 @@
         ctx.strokeStyle = "#10b981";
         ctx.lineWidth = 1.4;
         ctx.stroke();
+
+        // Draw Full Column Warning when at max capacity (7/7)
+        if (col.length >= ROWS) {
+          ctx.save();
+          ctx.fillStyle = "rgba(244, 63, 94, 0.14)";
+          ctx.fillRect(colX + 1, 0, colWidth - 2, canvas.height);
+
+          ctx.fillStyle = "#f43f5e";
+          ctx.font = "bold 9px sans-serif";
+          ctx.fillText("🔒 FULL", colX + colWidth / 2 - 16, 20);
+          ctx.restore();
+        }
       }
 
       // 1.5. Luminous Magnetic Tethers (Connecting matching neighbors)
@@ -1639,6 +1765,33 @@
     });
     document.getElementById("closeSpecsBtn").addEventListener("click", () => specsModal.classList.add("hidden"));
     document.getElementById("closeSpecsBtn2").addEventListener("click", () => specsModal.classList.add("hidden"));
+
+    // GAME OVER / POND JAMMED RESCUE LISTENERS
+    document.getElementById("rescueHammerBtn").addEventListener("click", () => {
+      sound.init();
+      document.getElementById("gameOverModal").classList.add("hidden");
+      STATE.hammers++;
+      document.getElementById("hammerCount").innerText = STATE.hammers;
+      STATE.activeBooster = 'hammer';
+      const btn = document.getElementById("hammerBtn");
+      if (btn) btn.classList.add("border-amber-400", "scale-105");
+      showComboBanner("🔨 FREE RESCUE HAMMER READY: TAP ANY COLUMN TO SMASH TOP GEM!", "text-amber-300");
+    });
+
+    document.getElementById("rescueMagnetBtn").addEventListener("click", () => {
+      sound.init();
+      document.getElementById("gameOverModal").classList.add("hidden");
+      document.getElementById("magnetBtn").click();
+    });
+
+    document.getElementById("restartLevelBtn").addEventListener("click", () => {
+      sound.init();
+      document.getElementById("gameOverModal").classList.add("hidden");
+      setTargetsForLevel(STATE.level);
+      seedStarterStones();
+      refillTray();
+      showComboBanner("LEVEL RESTARTED! FRESH POND 🪷", "text-emerald-300");
+    });
 
     // START FIRST GAME
     setTargetsForLevel(1);
