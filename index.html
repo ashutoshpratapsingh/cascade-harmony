@@ -147,14 +147,15 @@
       </div>
     </div>
 
-    <!-- LEVEL GOAL PROGRESS BAR -->
-    <div class="flex flex-col items-center">
-      <div class="flex items-center gap-1 text-[8px] font-extrabold text-amber-300 leading-none">
-        <span>TARGET:</span>
-        <span id="levelGoalText">0 / 8 POPS</span>
+    <!-- LEVEL TARGET GOALS (Royal Match / Candy Crush style) -->
+    <div id="targetsContainer" class="flex items-center gap-1.5">
+      <div id="targetPill1" class="flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border border-sky-400/60 shadow transition-transform">
+        <span class="w-3 h-3 rounded-full bg-sky-400 shadow-[0_0_8px_#38bdf8] inline-block animate-pulse"></span>
+        <span id="targetCount1" class="text-[9px] font-black text-sky-200">0/6</span>
       </div>
-      <div class="w-20 h-1.5 bg-black/70 rounded-full overflow-hidden border border-emerald-800/60 mt-0.5">
-        <div id="goalProgressBar" class="h-full bg-gradient-to-r from-emerald-400 to-amber-400 transition-all duration-300" style="width: 0%"></div>
+      <div id="targetPill2" class="flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border border-rose-400/60 shadow transition-transform">
+        <span class="w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e] inline-block"></span>
+        <span id="targetCount2" class="text-[9px] font-black text-rose-200">0/6</span>
       </div>
     </div>
 
@@ -179,7 +180,7 @@
       <div class="flex items-center gap-1.5 leading-tight">
         <span class="text-xs">🎯</span>
         <span class="text-[10px] text-slate-200">
-          Match <strong>4 same colors</strong> ➔ <strong class="text-amber-300">POP!</strong> Stones leap sideways!
+          Match <strong>4 same gems</strong> in a column ➔ <strong class="text-amber-300">POP!</strong> Collect target gems above!
         </span>
       </div>
       <button id="howToPlayBtn" class="p-0.5 px-2 rounded-lg bg-amber-950/60 hover:bg-amber-900 border border-amber-600/50 text-amber-300 text-[9px] font-bold active:scale-95 transition">
@@ -548,8 +549,10 @@
     const ROWS = 7;
     const STATE = {
       level: 1,
-      targetPops: 8,
-      currentPops: 0,
+      targets: {
+        gem1: { id: 'sapphire', name: 'Sapphire', current: 0, required: 6, color: '#38bdf8' },
+        gem2: { id: 'rose', name: 'Rose Quartz', current: 0, required: 6, color: '#f43f5e' }
+      },
       score: 0,
       combo: 0,
       feverActive: false,
@@ -565,10 +568,102 @@
       dragPieceIdx: null,
       tutorialActive: true,
       animatingStones: [],
+      flyingGems: [],
       ripples: [],
       particles: [],
       scorePopups: []
     };
+
+    function setTargetsForLevel(lvl) {
+      if (lvl === 1) {
+        STATE.targets = {
+          gem1: { id: 'sapphire', name: 'Sapphire', current: 0, required: 6, color: '#38bdf8' },
+          gem2: { id: 'rose', name: 'Rose Quartz', current: 0, required: 6, color: '#f43f5e' }
+        };
+      } else if (lvl === 2) {
+        STATE.targets = {
+          gem1: { id: 'jade', name: 'Jade', current: 0, required: 8, color: '#10b981' },
+          gem2: { id: 'amethyst', name: 'Amethyst', current: 0, required: 8, color: '#a855f7' }
+        };
+      } else {
+        STATE.targets = {
+          gem1: { id: 'sapphire', name: 'Sapphire', current: 0, required: 10, color: '#38bdf8' },
+          gem2: { id: 'golden_seal', name: 'Golden Seal', current: 0, required: 1, color: '#fbbf24' }
+        };
+      }
+
+      const p1 = document.getElementById("targetPill1");
+      const p2 = document.getElementById("targetPill2");
+      if (p1) {
+        p1.className = "flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border shadow transition-transform";
+        p1.style.borderColor = STATE.targets.gem1.color;
+        p1.querySelector("span").style.background = STATE.targets.gem1.color;
+        p1.querySelector("span").style.boxShadow = `0 0 8px ${STATE.targets.gem1.color}`;
+      }
+      if (p2) {
+        p2.className = "flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border shadow transition-transform";
+        p2.style.borderColor = STATE.targets.gem2.color;
+        p2.querySelector("span").style.background = STATE.targets.gem2.color;
+        p2.querySelector("span").style.boxShadow = `0 0 8px ${STATE.targets.gem2.color}`;
+      }
+      updateTargetsUI();
+    }
+
+    function updateTargetsUI() {
+      const p1 = document.getElementById("targetPill1");
+      const p2 = document.getElementById("targetPill2");
+      const c1 = document.getElementById("targetCount1");
+      const c2 = document.getElementById("targetCount2");
+
+      if (c1) {
+        if (STATE.targets.gem1.current >= STATE.targets.gem1.required) {
+          c1.innerText = "✓ DONE";
+          if (p1) p1.classList.add("border-amber-400", "bg-emerald-900/80");
+        } else {
+          c1.innerText = `${STATE.targets.gem1.current}/${STATE.targets.gem1.required}`;
+        }
+      }
+      if (c2) {
+        if (STATE.targets.gem2.current >= STATE.targets.gem2.required) {
+          c2.innerText = "✓ DONE";
+          if (p2) p2.classList.add("border-amber-400", "bg-emerald-900/80");
+        } else {
+          c2.innerText = `${STATE.targets.gem2.current}/${STATE.targets.gem2.required}`;
+        }
+      }
+    }
+
+    function spawnFlyingTargetGems(startX, startY, stone, count) {
+      const isT1 = stone.id === STATE.targets.gem1.id;
+      const isT2 = stone.id === STATE.targets.gem2.id;
+      if (!isT1 && !isT2 && !stone.isRainbow) return;
+
+      const targetEl = isT1 ? document.getElementById("targetPill1") : document.getElementById("targetPill2");
+      const targetRect = targetEl ? targetEl.getBoundingClientRect() : { left: canvas.width / 2, top: 20 };
+      const canvasRect = canvas.getBoundingClientRect();
+      const destX = targetRect.left - canvasRect.left + 24;
+      const destY = targetRect.top - canvasRect.top + 12;
+
+      for (let i = 0; i < count; i++) {
+        STATE.flyingGems.push({
+          x: startX,
+          y: startY,
+          startX: startX,
+          startY: startY,
+          destX: destX,
+          destY: destY,
+          color: stone.isRainbow ? '#facc15' : (stone.glow || '#38bdf8'),
+          progress: -i * 0.08,
+          onArrive: () => {
+            sound.playChime((stone.note || 440) * 1.35, 2);
+            if (targetEl) {
+              targetEl.classList.add("scale-115");
+              setTimeout(() => targetEl.classList.remove("scale-115"), 180);
+            }
+          }
+        });
+      }
+    }
 
     function dismissTutorial() {
       if (!STATE.tutorialActive) return;
@@ -920,11 +1015,11 @@
       });
     }
 
-    // CHECK FOR 4+ STACK BLOSSOM POP OR FULL ROW BLOSSOM
+    // CHECK FOR 4+ STACK BLOSSOM POP (Matching Same Color)
     function checkStackBlastsAndCascades() {
       let blastTriggered = false;
 
-      // 1. Check for 4+ matching in a column
+      // Check for 4+ matching in any column
       for (let c = 0; c < COLS; c++) {
         const col = STATE.columns[c];
         if (col.length >= 4) {
@@ -939,46 +1034,31 @@
             blastTriggered = true;
             STATE.combo++;
             const removed = col.splice(col.length - count, count);
-            const pts = count * 60 * STATE.combo * (STATE.feverActive ? 2 : 1);
+            const pts = count * 75 * STATE.combo * (STATE.feverActive ? 2 : 1);
             STATE.score += pts;
-            STATE.currentPops++;
+
+            const poppedStone = removed[0];
+            const poppedId = poppedStone.id;
+
+            // Collect into Level Targets!
+            if (STATE.targets.gem1.id === poppedId || poppedStone.isRainbow) {
+              STATE.targets.gem1.current = Math.min(STATE.targets.gem1.required, STATE.targets.gem1.current + removed.length);
+            }
+            if (STATE.targets.gem2.id === poppedId || poppedStone.isRainbow) {
+              STATE.targets.gem2.current = Math.min(STATE.targets.gem2.required, STATE.targets.gem2.current + removed.length);
+            }
 
             const colWidth = canvas.width / COLS;
             const x = c * colWidth + colWidth / 2;
             const y = getSlotY(col.length);
 
             sound.playBloomChord();
-            spawnBlossomParticles(x, y, removed[0]);
+            spawnBlossomParticles(x, y, poppedStone);
+            spawnFlyingTargetGems(x, y, poppedStone, Math.min(6, removed.length));
             addScorePopup(x, y, `+${pts} LOTUS POP! 🪷`);
             showComboBanner(`HARMONY POP! COMBO x${STATE.combo}`, "text-emerald-300");
 
-            checkFeverMode();
-            checkLevelProgress();
-            break;
-          }
-        }
-      }
-
-      // 2. Check for Full Horizontal Row Clear
-      if (!blastTriggered) {
-        for (let r = 0; r < ROWS; r++) {
-          const rowFilled = STATE.columns.every(col => col.length > r);
-          if (rowFilled) {
-            blastTriggered = true;
-            STATE.combo++;
-            STATE.columns.forEach((col, cIdx) => {
-              const removedStone = col.splice(r, 1)[0];
-              const colWidth = canvas.width / COLS;
-              spawnBlossomParticles(cIdx * colWidth + colWidth / 2, getSlotY(r), removedStone);
-            });
-            const pts = 350 * STATE.combo * (STATE.feverActive ? 2 : 1);
-            STATE.score += pts;
-            STATE.currentPops++;
-
-            sound.playBloomChord();
-            addScorePopup(canvas.width / 2, getSlotY(r), `+${pts} FULL ROW CLEAR! ✨`);
-            showComboBanner(`ROW CLEAR! COMBO x${STATE.combo}`, "text-amber-300");
-
+            updateTargetsUI();
             checkFeverMode();
             checkLevelProgress();
             break;
@@ -989,7 +1069,7 @@
       if (blastTriggered) {
         triggerJuice();
         document.getElementById("scoreVal").innerText = STATE.score.toLocaleString();
-        setTimeout(() => checkMagneticLeapsAndMatches(), 300);
+        setTimeout(() => checkMagneticLeapsAndMatches(), 320);
       } else {
         setTimeout(() => {
           STATE.combo = 0;
@@ -1018,27 +1098,21 @@
       }
     }
 
-    // CHECK LEVEL TARGET ADVANCEMENT
+    // CHECK LEVEL TARGET ADVANCEMENT (Candy Crush / Royal Match Target Win)
     function checkLevelProgress() {
-      const pct = Math.min(100, (STATE.currentPops / STATE.targetPops) * 100);
-      document.getElementById("goalProgressBar").style.width = `${pct}%`;
-      document.getElementById("levelGoalText").innerText = `${STATE.currentPops} / ${STATE.targetPops} POPS`;
-
-      if (STATE.currentPops >= STATE.targetPops) {
+      if (STATE.targets.gem1.current >= STATE.targets.gem1.required && STATE.targets.gem2.current >= STATE.targets.gem2.required) {
         // LEVEL COMPLETE!
         setTimeout(() => {
           sound.playBloomChord();
-          document.getElementById("levelWinStats").innerText = `Score: ${STATE.score.toLocaleString()} • Lotus Pops: ${STATE.currentPops} / ${STATE.targetPops}`;
+          document.getElementById("levelWinStats").innerText = `Score: ${STATE.score.toLocaleString()} • Targets Collected!`;
           document.getElementById("levelWinModal").classList.remove("hidden");
-        }, 600);
+        }, 650);
       }
     }
 
     document.getElementById("nextLevelBtn").addEventListener("click", () => {
       document.getElementById("levelWinModal").classList.add("hidden");
       STATE.level++;
-      STATE.currentPops = 0;
-      STATE.targetPops = 8 + STATE.level * 3;
       
       // LEVEL UP REWARD: Free Hammer & Magnet Booster!
       STATE.hammers++;
@@ -1046,9 +1120,8 @@
       document.getElementById("hammerCount").innerText = STATE.hammers;
       document.getElementById("magnetCount").innerText = STATE.magnets;
 
-      document.getElementById("levelLabel").innerText = `LEVEL ${STATE.level}`;
-      document.getElementById("levelGoalText").innerText = `0 / ${STATE.targetPops} POPS`;
-      document.getElementById("goalProgressBar").style.width = "0%";
+      document.getElementById("levelLabel").innerText = `LVL ${STATE.level}`;
+      setTargetsForLevel(STATE.level);
       seedStarterStones();
       refillTray();
       showComboBanner(`🌟 LEVEL ${STATE.level} UNLOCKED! REWARDS: +1 HAMMER, +1 MAGNET! 🌟`, "text-amber-300");
@@ -1113,17 +1186,60 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const colWidth = canvas.width / COLS;
 
-      // 1. DRAW WATER COLUMN PEDESTALS
+      // 1. DRAW WATER COLUMN PEDESTALS (Glowing Lotus Pads)
       for (let c = 0; c < COLS; c++) {
         const colX = c * colWidth;
-        ctx.fillStyle = c % 2 === 0 ? "rgba(16, 185, 129, 0.02)" : "rgba(6, 78, 59, 0.04)";
+        const colGrad = ctx.createLinearGradient(colX, 0, colX + colWidth, 0);
+        colGrad.addColorStop(0, "rgba(6, 78, 59, 0.08)");
+        colGrad.addColorStop(0.5, "rgba(16, 185, 129, 0.03)");
+        colGrad.addColorStop(1, "rgba(6, 78, 59, 0.08)");
+        ctx.fillStyle = colGrad;
         ctx.fillRect(colX, 0, colWidth, canvas.height);
 
-        ctx.fillStyle = "#0a1912";
-        ctx.fillRect(colX + 4, canvas.height - 22, colWidth - 8, 14);
-        ctx.strokeStyle = "#047857";
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(colX + 4, canvas.height - 22, colWidth - 8, 14);
+        // Lotus Pad Pedestal at column base
+        const padX = colX + colWidth / 2;
+        const padY = canvas.height - 18;
+        ctx.beginPath();
+        ctx.ellipse(padX, padY, colWidth / 2 - 4, 8, 0, 0, Math.PI * 2);
+        ctx.fillStyle = "#0a2219";
+        ctx.fill();
+        ctx.strokeStyle = "#10b981";
+        ctx.lineWidth = 1.6;
+        ctx.shadowColor = "rgba(16, 185, 129, 0.45)";
+        ctx.shadowBlur = 8;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+
+      // 1.5. DRAW LUMINOUS MAGNETIC TETHERS BETWEEN MATCHING NEIGHBOR COLUMNS
+      for (let c = 0; c < COLS - 1; c++) {
+        const colA = STATE.columns[c];
+        const colB = STATE.columns[c + 1];
+        if (colA.length > 0 && colB.length > 0) {
+          const topA = colA[colA.length - 1];
+          const topB = colB[colB.length - 1];
+          if (topA.id === topB.id || topA.isRainbow || topB.isRainbow) {
+            const x1 = c * colWidth + colWidth / 2;
+            const y1 = getSlotY(colA.length - 1);
+            const x2 = (c + 1) * colWidth + colWidth / 2;
+            const y2 = getSlotY(colB.length - 1);
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            const midX = (x1 + x2) / 2;
+            const midY = Math.min(y1, y2) - 22;
+            ctx.quadraticCurveTo(midX, midY, x2, y2);
+            ctx.strokeStyle = topA.isRainbow ? '#facc15' : (topA.glow || '#38bdf8');
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([4, 4]);
+            ctx.lineDashOffset = -Date.now() * 0.015;
+            ctx.shadowColor = topA.glow || '#38bdf8';
+            ctx.shadowBlur = 8;
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
       }
 
       // 2. DRAW WATER RIPPLES
@@ -1264,6 +1380,32 @@
         ctx.restore();
 
         if (sp.alpha <= 0) STATE.scorePopups.splice(i, 1);
+      }
+
+      // 7. UPDATE & DRAW FLYING TARGET GEMS
+      for (let i = STATE.flyingGems.length - 1; i >= 0; i--) {
+        const fg = STATE.flyingGems[i];
+        fg.progress += 0.045;
+        if (fg.progress < 0) continue; // Waiting for stagger delay
+
+        const t = Math.min(1.0, fg.progress);
+        const arcHeight = 65;
+        fg.x = fg.startX + (fg.destX - fg.startX) * t;
+        fg.y = fg.startY + (fg.destY - fg.startY) * t - Math.sin(t * Math.PI) * arcHeight;
+
+        // Sparkle stardust orb
+        ctx.beginPath();
+        ctx.arc(fg.x, fg.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = fg.color;
+        ctx.shadowColor = fg.color;
+        ctx.shadowBlur = 12;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        if (t >= 1.0) {
+          fg.onArrive();
+          STATE.flyingGems.splice(i, 1);
+        }
       }
 
       requestAnimationFrame(gameLoop);
@@ -1465,6 +1607,7 @@
     document.getElementById("closeSpecsBtn2").addEventListener("click", () => specsModal.classList.add("hidden"));
 
     // START FIRST GAME
+    setTargetsForLevel(1);
     seedStarterStones();
     refillTray();
     setupDragAndDrop();
