@@ -153,8 +153,8 @@
       <button id="soundToggle" class="p-1 px-1.5 rounded-lg bg-emerald-900/50 hover:bg-emerald-800/60 border border-emerald-700/50 text-emerald-300 text-[10px] font-bold transition active:scale-95 shadow">
         🔊 ASMR
       </button>
-      <button id="specsBtn" title="Studio Pitch & Game Design Specs for Reviewers" class="p-1 px-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black text-[9px] font-black uppercase tracking-wider transition active:scale-95 shadow-md flex items-center gap-0.5">
-        👑 STUDIO SPECS
+      <button id="specsBtn" title="Why Play & Target Rewards" class="p-1 px-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black text-[9px] font-black uppercase tracking-wider transition active:scale-95 shadow-md flex items-center gap-0.5">
+        👑 SPECS & REWARDS
       </button>
     </div>
   </header>
@@ -440,162 +440,123 @@
   </div>
 
   <!-- ======================================================= -->
-  <!-- "STUDIO PITCH & GAME DESIGN SPECIFICATION" (For Evaluator) -->
+  <!-- "GAME SPECS & REWARDS" (Why Play & Target Rewards)      -->
   <!-- ======================================================= -->
-  <div id="specsModal" class="absolute inset-0 bg-black/95 z-50 flex items-center justify-center p-3.5 backdrop-blur-md hidden">
-    <div class="max-w-md w-full max-h-[92vh] overflow-y-auto bg-[#06120b] border-2 border-amber-400 rounded-3xl p-5 shadow-2xl space-y-3.5 text-left text-xs">
+  <div id="specsModal" class="absolute inset-0 bg-black/92 z-50 flex items-center justify-center p-3.5 backdrop-blur-md hidden">
+    <div class="max-w-md w-full max-h-[90vh] overflow-y-auto bg-[#07160e] border-2 border-amber-400 rounded-3xl p-5 shadow-2xl space-y-3.5 text-left text-xs">
       <!-- HEADER -->
       <div class="flex items-center justify-between border-b border-amber-500/30 pb-2.5">
-        <div class="flex items-center gap-2">
-          <span class="text-2xl">👑</span>
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-xl shadow-lg border border-amber-200/40">
+            👑
+          </div>
           <div>
-            <h2 class="text-xs sm:text-sm font-black text-amber-300 uppercase tracking-wider leading-tight">Studio Pitch & Game Design Spec</h2>
-            <p class="text-[9px] text-emerald-400 font-bold">Confidential GDD & Commercial Analysis for Evaluators</p>
+            <h2 class="text-xs sm:text-sm font-black text-amber-300 uppercase tracking-wide leading-tight">
+              Why Play & How You Get Rewarded
+            </h2>
+            <p class="text-[10px] text-emerald-400 font-bold">Cascade Harmony: The Zen Puzzle Experience</p>
           </div>
         </div>
         <button id="closeSpecsBtn" class="text-slate-400 hover:text-white text-base font-bold px-2 py-0.5 rounded-lg hover:bg-white/10 transition">✕</button>
       </div>
 
-      <!-- BADGES -->
-      <div class="flex flex-wrap items-center gap-1.5 text-[9px] font-black">
-        <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/40">🧬 HYBRID BREEDING GDD</span>
-        <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">🎯 ADULT 30+ TARGET</span>
-        <span class="px-2 py-0.5 rounded-md bg-sky-500/20 text-sky-300 border border-sky-500/40">💰 COMMERCIAL BLUEPRINT</span>
-      </div>
-
-      <div class="space-y-3 text-[10.5px] text-slate-200 leading-relaxed">
+      <!-- 1. WHY YOU SHOULD PLAY THIS GAME -->
+      <div class="bg-black/60 p-3 rounded-2xl border border-emerald-500/40 space-y-2 shadow-md">
+        <div class="flex items-center gap-1.5 text-emerald-300 font-black text-xs uppercase tracking-wide">
+          <span class="text-base">✨</span> <span>Why You Should Play This Game</span>
+        </div>
         
-        <!-- 1. THE 3-GAME HYBRID BREEDING THESIS -->
-        <div class="bg-black/60 p-3 rounded-2xl border border-amber-500/40 space-y-1.5 shadow-md">
-          <div class="flex items-center gap-1.5 text-amber-300 font-extrabold text-xs">
-            <span>🧬</span> <span>1. The Hybrid Breeding Thesis (Why It's 100% Unique)</span>
-          </div>
-          <p class="text-slate-300 text-[10px]">
-            Mobile puzzle charts are flooded with generic 2D clones. <em>Cascade Harmony</em> is engineered by mathematically breeding the top 3 viral puzzle mechanics into an uncopied gameplay category:
-          </p>
-          <div class="grid grid-cols-3 gap-1.5 text-center text-[9px] pt-1">
-            <div class="bg-blue-950/50 p-1.5 rounded-xl border border-blue-600/40">
-              <strong class="text-blue-300 block">Block Blast</strong>
-              <span class="text-slate-400">3-Piece bottom tray spatial agency & zen cognitive flow</span>
-            </div>
-            <div class="bg-amber-950/50 p-1.5 rounded-xl border border-amber-600/40">
-              <strong class="text-amber-300 block">Screw Jam</strong>
-              <span class="text-slate-400">Vertical gravity tubes, 7-stone capacity tension & un-jamming</span>
-            </div>
-            <div class="bg-teal-950/50 p-1.5 rounded-xl border border-teal-600/40">
-              <strong class="text-teal-300 block">Hexa Sort</strong>
-              <span class="text-slate-400">Attractor magnetic flight across columns & 4-POP dominoes</span>
+        <p class="text-slate-200 text-[10.5px] leading-relaxed">
+          Most puzzle games are stressful, rushed by annoying countdown timers, or repetitive. <strong>Cascade Harmony is built to be pure, calming fun:</strong>
+        </p>
+
+        <div class="space-y-1.5 text-[10px] text-slate-300">
+          <div class="flex items-start gap-2 bg-emerald-950/40 p-2 rounded-xl border border-emerald-800/30">
+            <span class="text-base">🧲</span>
+            <div>
+              <strong class="text-amber-300">Magic Magnetic Flight:</strong>
+              <span> Stones don't just sit in a grid. Drop a stone and matching colors in neighboring columns <strong>fly across the board into one stack!</strong></span>
             </div>
           </div>
-          <p class="text-[9.5px] text-emerald-300 font-semibold pt-1">
-            ⭐ The Breakthrough: Unlike static grids, dropping 1 stone triggers trans-column magnetic suction, pulling matching colors across the board into satisfying multi-stage domino clears.
-          </p>
-        </div>
 
-        <!-- 2. MARKET OPPORTUNITY & ADULT 30+ NEUROLOGICAL FIT -->
-        <div class="bg-black/60 p-3 rounded-2xl border border-emerald-800/50 space-y-1.5 shadow-md">
-          <div class="flex items-center gap-1.5 text-emerald-300 font-extrabold text-xs">
-            <span>🎯</span> <span>2. Market Demographics & Neurological Flow</span>
+          <div class="flex items-start gap-2 bg-emerald-950/40 p-2 rounded-xl border border-emerald-800/30">
+            <span class="text-base">🌊</span>
+            <div>
+              <strong class="text-emerald-300">Relaxing Zen ASMR:</strong>
+              <span> Soothing water gravity physics, gentle stone plops, and harmonic crystal chimes relax your mind with zero stressful countdown clocks.</span>
+            </div>
           </div>
-          <ul class="space-y-1 text-slate-300 text-[10px] pl-1">
-            <li><strong>• Demographic Sweet Spot:</strong> Adults aged 30–55 generate over 68% of global mobile puzzle revenue. This demographic rejects high-pressure countdown timers and twitch reflex mechanics.</li>
-            <li><strong>• Parasympathetic Calming ASMR:</strong> Real-time synthesized pentatonic chords (C-E-G-B), realistic water splash physics, and glass resonance trigger deep relaxation while domino cascades feed dopamine loops.</li>
-            <li><strong>• Session Length:</strong> Zero timer stress allows players to enter deep "flow state", driving industry-leading average session times (14–18 minutes).</li>
-          </ul>
-        </div>
 
-        <!-- 3. COMMERCIAL MONETIZATION & LIVE-OPS ECONOMY -->
-        <div class="bg-black/60 p-3 rounded-2xl border border-sky-800/50 space-y-1.5 shadow-md">
-          <div class="flex items-center gap-1.5 text-sky-300 font-extrabold text-xs">
-            <span>💰</span> <span>3. Rewarded Video (RV) & Live-Ops Economy</span>
-          </div>
-          <ul class="space-y-1 text-slate-300 text-[10px] pl-1">
-            <li><strong>• High-Converting Rewarded Video (RV):</strong> When columns reach 7/7 capacity, players are offered opt-in RV for a Free Zen Hammer or Magnet Pull. Industry eCPMs for save-state RVs exceed $28–$42.</li>
-            <li><strong>• Consumable Booster IAPs:</strong> Zen Hammer ($0.99), Magnet Vortex ($1.99), and Master Alchemist Bundles ($4.99–$9.99).</li>
-            <li><strong>• Live-Ops & Gacha Cosmetics:</strong> Seasonal Koi Pond water shaders, custom gemstone textures (Emerald Jade, Royal Amethyst, Cosmic Obsidian), and Daily Zen Blossom Streaks driving D1 > 42% and D7 > 22% retention.</li>
-          </ul>
-        </div>
-
-        <!-- 4. VIRAL UA (USER ACQUISITION) & PLAYABLE ADS -->
-        <div class="bg-black/60 p-3 rounded-2xl border border-purple-800/50 space-y-1.5 shadow-md">
-          <div class="flex items-center gap-1.5 text-purple-300 font-extrabold text-xs">
-            <span>📱</span> <span>4. Viral UA Playable Ads & Creative Hook</span>
-          </div>
-          <p class="text-[10px] text-slate-300">
-            Hyper-casual and hybrid puzzle marketing lives or dies on Cost-Per-Install (CPI). Cascade Harmony's mechanics are tailor-made for viral performance creatives:
-          </p>
-          <ul class="space-y-0.5 text-slate-300 text-[9.5px] pl-1">
-            <li><strong>• The 5-Second Magnetic Hook:</strong> Video ad showing 1 stone dropped that pulls 6 stones across 4 columns in rapid succession generates instant thumb-stop CTR (>4.2%).</li>
-            <li><strong>• The "98% Fail" Playable Hook:</strong> Showing a 6/7 jammed column where viewers can tap to make the saving magnetic leap drives ultra-low CPI ($0.28–$0.42).</li>
-          </ul>
-        </div>
-
-        <!-- 5. ENGINE ARCHITECTURE & FAIR-PLAY DISPENSER -->
-        <div class="bg-black/60 p-3 rounded-2xl border border-teal-800/50 space-y-1.5 shadow-md">
-          <div class="flex items-center gap-1.5 text-teal-300 font-extrabold text-xs">
-            <span>⚙️</span> <span>5. Real-Time Engine Architecture</span>
-          </div>
-          <ul class="space-y-0.5 text-slate-300 text-[9.5px] pl-1">
-            <li><strong>• Attractor Leap Algorithm:</strong> Real-time scan (<code class="text-amber-300">findBestMagneticLeap</code>) evaluates neighbor column top-stones for color harmony and calculates 3D cubic bezier flight curves.</li>
-            <li><strong>• Anti-Lock Tray Dispenser:</strong> Tray pieces are generated using dynamic board inspection to ensure at least 1 legal, rewarding move is always available.</li>
-            <li><strong>• Deterministic Cascades:</strong> Zero dropped frames; cascade resolution is triggered synchronously on final stone impact for 100% reliable combo chains.</li>
-          </ul>
-        </div>
-
-        <!-- 6. COMPETITIVE COMPARISON MATRIX -->
-        <div class="bg-black/60 p-3 rounded-2xl border border-yellow-700/50 space-y-1.5 shadow-md">
-          <div class="flex items-center gap-1.5 text-amber-300 font-extrabold text-xs">
-            <span>📊</span> <span>6. Competitive Feature Matrix</span>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-[9px] text-left border-collapse">
-              <thead>
-                <tr class="border-b border-white/20 text-slate-400">
-                  <th class="py-1">Feature</th>
-                  <th>Block Blast</th>
-                  <th>Screw Jam</th>
-                  <th>Hexa Sort</th>
-                  <th class="text-amber-300 font-bold">Cascade Harmony</th>
-                </tr>
-              </thead>
-              <tbody class="text-slate-300 divide-y divide-white/10">
-                <tr>
-                  <td class="py-1 font-semibold">Board Dynamic</td>
-                  <td>2D Flat Grid</td>
-                  <td>Pins / Hole Pins</td>
-                  <td>2D Hex Stack</td>
-                  <td class="text-emerald-300 font-bold">3D Water Gravity</td>
-                </tr>
-                <tr>
-                  <td class="py-1 font-semibold">Magnetic Leaps</td>
-                  <td>❌ None</td>
-                  <td>❌ None</td>
-                  <td>Adjacent only</td>
-                  <td class="text-emerald-300 font-bold">Trans-Column Arc</td>
-                </tr>
-                <tr>
-                  <td class="py-1 font-semibold">Stress / Timers</td>
-                  <td>Low</td>
-                  <td>High / Ad Gates</td>
-                  <td>Low / Medium</td>
-                  <td class="text-emerald-300 font-bold">Zen ASMR (No Clock)</td>
-                </tr>
-                <tr>
-                  <td class="py-1 font-semibold">Ad Toleration</td>
-                  <td>High churn</td>
-                  <td>Heavy gating</td>
-                  <td>Medium</td>
-                  <td class="text-emerald-300 font-bold">Opt-in Save State RV</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="flex items-start gap-2 bg-emerald-950/40 p-2 rounded-xl border border-emerald-800/30">
+            <span class="text-base">💥</span>
+            <div>
+              <strong class="text-rose-300">Satisfying Domino Blasts:</strong>
+              <span> Assemble 4 matching gems = <strong>POP!</strong> Upper gems tumble down in continuous domino chain reactions!</span>
+            </div>
           </div>
         </div>
-
       </div>
 
-      <button id="closeSpecsBtn2" class="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-black rounded-2xl text-xs uppercase tracking-wider shadow-xl transition active:scale-95">
-        RETURN TO PLAYABLE DEMO ➔
+      <!-- 2. REACHING TARGETS & EARNING POWERFUL REWARDS -->
+      <div class="bg-black/60 p-3 rounded-2xl border border-amber-500/40 space-y-2 shadow-md">
+        <div class="flex items-center gap-1.5 text-amber-300 font-black text-xs uppercase tracking-wide">
+          <span class="text-base">🎁</span> <span>Reach Targets & Get Rewarded!</span>
+        </div>
+
+        <p class="text-slate-200 text-[10.5px] leading-relaxed">
+          At the top of each level, you are given target color goals (like <span class="text-sky-300 font-bold">💎 Sapphires</span> & <span class="text-rose-400 font-bold">🔴 Rubies</span>). Reaching your targets and pulling off combos <strong>directly rewards you with powerful tools:</strong>
+        </p>
+
+        <div class="space-y-2 text-[10px]">
+          <!-- REWARD: HAMMER -->
+          <div class="flex items-start gap-2 bg-amber-950/40 p-2.5 rounded-xl border border-amber-600/40">
+            <span class="text-xl">🔨</span>
+            <div>
+              <div class="flex items-center justify-between">
+                <strong class="text-amber-300 text-[11px]">FREE ZEN HAMMER REWARD</strong>
+                <span class="text-[8.5px] bg-amber-500 text-black px-1.5 py-0.2 rounded font-black">EARNED IN-GAME</span>
+              </div>
+              <p class="text-slate-300 text-[10px] mt-0.5 leading-tight">
+                Hit a <strong>3x Combo</strong> or clear level targets to earn Free Hammers! Use your hammer when a column is full (<span class="text-rose-400 font-bold">7/7 🔒</span>) to smash any blocking stone and un-jam your board.
+              </p>
+            </div>
+          </div>
+
+          <!-- REWARD: MAGNET -->
+          <div class="flex items-start gap-2 bg-blue-950/40 p-2.5 rounded-xl border border-blue-600/40">
+            <span class="text-xl">🧲</span>
+            <div>
+              <div class="flex items-center justify-between">
+                <strong class="text-blue-300 text-[11px]">FREE MAGNET VORTEX REWARD</strong>
+                <span class="text-[8.5px] bg-blue-500 text-black px-1.5 py-0.2 rounded font-black">EARNED IN-GAME</span>
+              </div>
+              <p class="text-slate-300 text-[10px] mt-0.5 leading-tight">
+                Earned as you clear level goals! Tap the Magnet booster to instantly pull and merge ALL matching gems across the entire board at once into massive cascades!
+              </p>
+            </div>
+          </div>
+
+          <!-- REWARD: FEVER & WILDCARDS -->
+          <div class="grid grid-cols-2 gap-2 text-[9.5px]">
+            <div class="bg-purple-950/40 p-2 rounded-xl border border-purple-600/40">
+              <strong class="text-purple-300 text-[10px] block flex items-center gap-1">🌈 Rainbow Wildcard</strong>
+              <p class="text-slate-300 text-[9px] mt-0.5 leading-tight">
+                Appears in your tray: matches with ANY color on the board to complete a 4-POP!
+              </p>
+            </div>
+            <div class="bg-amber-950/40 p-2 rounded-xl border border-amber-600/40">
+              <strong class="text-amber-300 text-[10px] block flex items-center gap-1">🔥 2X Zen Fever</strong>
+              <p class="text-slate-300 text-[9px] mt-0.5 leading-tight">
+                Hit 2 combos in a row to ignite fever mode and double all your points!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTION BUTTON -->
+      <button id="closeSpecsBtn2" class="w-full py-2.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition active:scale-95">
+        PLAY & EARN REWARDS NOW ➔
       </button>
     </div>
   </div>
