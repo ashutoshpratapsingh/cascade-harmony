@@ -153,8 +153,8 @@
       <button id="soundToggle" class="p-1 px-1.5 rounded-lg bg-emerald-900/50 hover:bg-emerald-800/60 border border-emerald-700/50 text-emerald-300 text-[10px] font-bold transition active:scale-95 shadow">
         🔊 ASMR
       </button>
-      <button id="specsBtn" title="View Studio Pitch & Game Design Specs" class="p-1 px-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black text-[9px] font-black uppercase tracking-wider transition active:scale-95 shadow-md flex items-center gap-0.5">
-        👑 SPECS
+      <button id="specsBtn" title="View Full Game Guide & Studio Specs" class="p-1 px-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black text-[9px] font-black uppercase tracking-wider transition active:scale-95 shadow-md flex items-center gap-0.5">
+        👑 SPECS & GUIDE
       </button>
     </div>
   </header>
@@ -418,48 +418,129 @@
     </div>
   </div>
 
-  <!-- ============================================ -->
-  <!-- "STUDIO SPECS" MODAL (Pitch Documentation)   -->
-  <!-- ============================================ -->
-  <div id="specsModal" class="absolute inset-0 bg-black/92 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
-    <div class="max-w-md w-full max-h-[90vh] overflow-y-auto bg-[#09150f] border-2 border-amber-400/80 rounded-3xl p-5 shadow-2xl space-y-3.5 text-left text-xs">
+  <!-- ======================================================= -->
+  <!-- "GAME GUIDE & SPECS PLAYBOOK" (Comprehensive Breakdown) -->
+  <!-- ======================================================= -->
+  <div id="specsModal" class="absolute inset-0 bg-black/92 z-50 flex items-center justify-center p-3.5 backdrop-blur-md hidden">
+    <div class="max-w-md w-full max-h-[92vh] overflow-y-auto bg-[#08150e] border-2 border-amber-400/90 rounded-3xl p-5 shadow-2xl space-y-3.5 text-left text-xs">
+      <!-- HEADER -->
       <div class="flex items-center justify-between border-b border-amber-500/30 pb-2">
         <div class="flex items-center gap-2">
-          <span class="text-xl">👑</span>
-          <h2 class="text-sm font-black text-amber-300 uppercase tracking-wider">Cascade Harmony — Studio Specs</h2>
+          <span class="text-xl">📖</span>
+          <div>
+            <h2 class="text-sm font-black text-amber-300 uppercase tracking-wider leading-tight">Player Guide & Game Specs</h2>
+            <p class="text-[9px] text-emerald-400 font-bold">Cascade Harmony: The 3-Game Hybrid</p>
+          </div>
         </div>
-        <button id="closeSpecsBtn" class="text-slate-400 hover:text-white text-base font-bold">✕</button>
+        <button id="closeSpecsBtn" class="text-slate-400 hover:text-white text-base font-bold px-2 py-0.5 rounded-lg hover:bg-white/10 transition">✕</button>
       </div>
 
       <div class="space-y-3 text-[11px] text-slate-200">
-        <!-- 1. The 3-Game Hybrid Breeding Thesis -->
-        <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
-          <strong class="text-emerald-400 block text-xs mb-0.5">1. The 3-Game Breeding Formula</strong>
-          <ul class="list-disc pl-4 space-y-0.5 text-slate-300 text-[10px]">
-            <li><strong>Block Blast Hand Mechanic:</strong> 3 pre-spawned multi-stone pieces forced to fit into finite slots.</li>
-            <li><strong>Screw Jam Gravity Pins:</strong> Vertical tubes with top-layer locks, domino tumble cascades, and goal boxes.</li>
-            <li><strong>Hexa Sort Magnetic Flight:</strong> High-satisfaction tile leaps between adjacent stacks merging into 4-pops.</li>
+        
+        <!-- 1. HOW TO PLAY (THE CORE GAMEPLAY LOOP) -->
+        <div class="bg-black/60 p-3 rounded-2xl border border-emerald-800/50 space-y-1.5 shadow-md">
+          <div class="flex items-center gap-1.5 text-emerald-300 font-extrabold text-xs">
+            <span>🎯</span> <span>1. How to Play (The 3 Bred Mechanics)</span>
+          </div>
+          <ul class="space-y-1 text-slate-300 text-[10px] pl-1">
+            <li class="flex items-start gap-1.5">
+              <span class="text-amber-400 font-bold">1️⃣ Pick Stack:</span>
+              <span>Select 1 of the 3 stone stacks in your bottom tray <em>(Block Blast DNA)</em>.</span>
+            </li>
+            <li class="flex items-start gap-1.5">
+              <span class="text-amber-400 font-bold">2️⃣ Drop in Column:</span>
+              <span>Tap any column to drop. Stones fall via realistic water gravity <em>(Screw Jam DNA)</em>.</span>
+            </li>
+            <li class="flex items-start gap-1.5">
+              <span class="text-amber-400 font-bold">3️⃣ Magnetic 4-POP:</span>
+              <span>When a stone lands, matching colors in neighboring columns <strong>magnetically fly across into one stack!</strong> <em>(Hexa Sort DNA)</em>. When a stack reaches <strong>4 matching gems = POP!</strong> Upper stones tumble down in domino cascades.</span>
+            </li>
           </ul>
         </div>
 
-        <!-- 2. Target Demographic -->
-        <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
-          <strong class="text-emerald-400 block text-xs mb-0.5">2. Target Audience & Commercial Viability</strong>
+        <!-- 2. HOW TO REACH TARGETS & WIN (ROYAL MATCH STYLE) -->
+        <div class="bg-black/60 p-3 rounded-2xl border border-sky-800/50 space-y-1.5 shadow-md">
+          <div class="flex items-center gap-1.5 text-sky-300 font-extrabold text-xs">
+            <span>🏆</span> <span>2. How to Reach Targets & Clear Levels</span>
+          </div>
           <p class="text-[10px] text-slate-300 leading-relaxed">
-            Ages 30+ adults seeking high-tactility, stress-relief gaming with tactical depth. Replaces stressful timers with relaxing pentatonic chime feedback.
+            At the top header, each level gives you specific color targets (e.g. <span class="text-sky-300 font-bold">[💎 0/4 Sapphires]</span> and <span class="text-rose-400 font-bold">[🔴 0/4 Rubies]</span>).
           </p>
+          <ul class="list-disc pl-4 space-y-0.5 text-slate-300 text-[10px]">
+            <li>Every 4-gem lotus pop launches glowing gem orbs that <strong>fly directly into the header target pill</strong>!</li>
+            <li>When both targets reach their goal (<strong>✓ DONE</strong>), the level is cleared with 3-Star celebrations!</li>
+          </ul>
         </div>
 
-        <!-- 3. Unique Selling Proposition -->
-        <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
-          <strong class="text-emerald-400 block text-xs mb-0.5">3. Why it stands out on the App Store</strong>
-          <p class="text-[10px] text-slate-300 leading-relaxed">
-            Solves the dead-end puzzle trap: instead of losing when a column fills up, placing a matching stone near it pulls stones out to trigger a multi-column blossom clear!
-          </p>
+        <!-- 3. HOW PLAYERS GET REWARDED (COMBOS & ZEN FEVER) -->
+        <div class="bg-black/60 p-3 rounded-2xl border border-amber-800/50 space-y-1.5 shadow-md">
+          <div class="flex items-center gap-1.5 text-amber-300 font-extrabold text-xs">
+            <span>🔥</span> <span>3. Combos, Zen Fever & Earning Rewards</span>
+          </div>
+          <ul class="space-y-1 text-slate-300 text-[10px] pl-1">
+            <li class="flex items-start gap-1.5">
+              <span class="text-amber-300 font-bold">✨ Domino Combos:</span>
+              <span>Consecutive cascades trigger Combo x2, x3, x4 multiplying your score points!</span>
+            </li>
+            <li class="flex items-start gap-1.5">
+              <span class="text-amber-400 font-bold">🔥 Zen Fever Mode:</span>
+              <span>Hit a 2x Combo to ignite Zen Fever: the entire pond glows and <strong>DOUBLES (2X) ALL POINTS</strong>!</span>
+            </li>
+            <li class="flex items-start gap-1.5">
+              <span class="text-emerald-400 font-bold">🎁 Earn Free Boosters:</span>
+              <span>Hit a <strong>3x Combo</strong> through skill and the game immediately awards you a <strong>FREE +1 Zen Hammer 🔨</strong>!</span>
+            </li>
+          </ul>
         </div>
+
+        <!-- 4. TACTICAL BOOSTERS & SPECIAL GEMS -->
+        <div class="bg-black/60 p-3 rounded-2xl border border-purple-800/50 space-y-1.5 shadow-md">
+          <div class="flex items-center gap-1.5 text-purple-300 font-extrabold text-xs">
+            <span>⚡</span> <span>4. Tactical Boosters & Wildcards</span>
+          </div>
+          <div class="space-y-1.5 text-[10px] text-slate-300">
+            <div class="flex items-center gap-2">
+              <span class="px-1.5 py-0.5 rounded bg-amber-900 border border-amber-500 font-bold text-amber-200">🔨 Zen Hammer</span>
+              <span>Tap to smash & destroy any single obstructing gem that blocks your column stack.</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-1.5 py-0.5 rounded bg-blue-900 border border-blue-500 font-bold text-blue-200">🧲 Magnet Vortex</span>
+              <span>Pulls all matching adjacent gems across the entire board at once into massive cascades!</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="px-1.5 py-0.5 rounded bg-gradient-to-r from-rose-500 to-purple-500 border border-white font-bold text-white">🌈 Rainbow Prism</span>
+              <span>Wildcard gem! Matches with ANY color on the board and pulls adjacent gems into a 4-pop.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. WHAT HAPPENS WHEN COLUMNS FILL UP? (PRO STRATEGY) -->
+        <div class="bg-black/60 p-3 rounded-2xl border border-rose-800/50 space-y-1.5 shadow-md">
+          <div class="flex items-center gap-1.5 text-rose-300 font-extrabold text-xs">
+            <span>🛡️</span> <span>5. What to Do When a Column is Full (7/7 🔒)</span>
+          </div>
+          <p class="text-[10px] text-slate-300 leading-relaxed">
+            Columns hold at most 7 stones. If stacked with mixed colors without popping, it locks with <strong>🔒 FULL</strong>.
+          </p>
+          <ul class="list-disc pl-4 space-y-0.5 text-slate-300 text-[10px]">
+            <li><strong>Neighbor Rescue:</strong> Drop a matching gem in the column next to it. It will magnetically pull the top gem out, un-jamming the column!</li>
+            <li><strong>Zen Hammer:</strong> Tap the hammer and tap the column to shatter the blocking stone.</li>
+            <li><strong>Pond Full Protection:</strong> If all columns fill up, the game automatically grants a <strong>Free Rescue Hammer</strong> or <strong>Restart Level</strong> option so you never get unfairly stuck!</li>
+          </ul>
+        </div>
+
+        <!-- 6. CONTROLS GUIDE -->
+        <div class="bg-black/60 p-3 rounded-2xl border border-teal-800/50 space-y-1 text-[10px] text-slate-300">
+          <div class="flex items-center gap-1.5 text-teal-300 font-extrabold text-xs">
+            <span>🎮</span> <span>6. Controls (Touch & Mobile Friendly)</span>
+          </div>
+          <p><strong>• Tap Mode:</strong> Tap stack in bottom tray ➔ Tap column to drop.</p>
+          <p><strong>• Drag Mode:</strong> Touch & drag stack upward ➔ Watch column green light beam ➔ Release to drop.</p>
+        </div>
+
       </div>
 
-      <button id="closeSpecsBtn2" class="w-full py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition active:scale-95">
+      <button id="closeSpecsBtn2" class="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-black rounded-2xl text-xs uppercase tracking-wider shadow-xl transition active:scale-95">
         BACK TO PLAYABLE GAME ➔
       </button>
     </div>
@@ -1834,11 +1915,11 @@
     });
 
     // MODAL HANDLERS
-    const howToModal = document.getElementById("howToModal");
-    document.getElementById("howToPlayBtn").addEventListener("click", () => howToModal.classList.remove("hidden"));
-    document.getElementById("closeHowToBtn").addEventListener("click", () => howToModal.classList.add("hidden"));
-
     const specsModal = document.getElementById("specsModal");
+    document.getElementById("howToPlayBtn").addEventListener("click", () => {
+      sound.init();
+      specsModal.classList.remove("hidden");
+    });
     document.getElementById("specsBtn").addEventListener("click", () => {
       sound.init();
       specsModal.classList.remove("hidden");
