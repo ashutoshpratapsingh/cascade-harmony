@@ -1,1948 +1,1299 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>CASCADE HARMONY — The Zen Gravity Puzzle</title>
-  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <title>Meow Ripple — Cozy Cat Water Pond</title>
+  
+  <!-- Google Fonts: Fredoka & Quicksand for super cute Kawaii typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;800&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Quicksand:wght@600;700;800&family=Rozha+One&display=swap');
-
     * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
+      touch-action: none;
+      -webkit-touch-callout: none;
       -webkit-user-select: none;
+      user-select: none;
+      font-family: 'Fredoka', 'Quicksand', sans-serif;
     }
 
-    html, body {
-      font-family: 'Quicksand', 'Plus Jakarta Sans', sans-serif;
-      background: #040d09;
-      color: #e2f1e7;
-      overflow: hidden;
-      touch-action: none; /* Prevents unwanted pull-to-refresh or page bouncing on mobile */
-      height: 100%;
-      height: -webkit-fill-available;
-      height: 100dvh;
-      max-height: 100dvh;
-      width: 100vw;
-      margin: 0;
-      padding: 0;
+    body {
+      background: radial-gradient(circle at 50% 30%, #1a382c 0%, #0c2017 60%, #06120d 100%);
+      color: #fff;
     }
 
-    /* Pond Water Background */
-    .zen-pond {
-      background: radial-gradient(circle at 50% 25%, #0e271c 0%, #081912 50%, #030806 100%);
+    /* Ambient Floating Cherry Blossoms */
+    @keyframes blossomDrift {
+      0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+      20% { opacity: 0.8; }
+      80% { opacity: 0.8; }
+      100% { transform: translate(60px, 120px) rotate(180deg); opacity: 0; }
+    }
+    .blossom-petal {
+      position: absolute;
+      width: 14px;
+      height: 10px;
+      background: #fbcfe8;
+      border-radius: 60% 0 60% 0;
+      pointer-events: none;
+      animation: blossomDrift 7s linear infinite;
     }
 
-    /* Zen Fever Glow */
-    .fever-glow {
-      background: radial-gradient(circle at 50% 30%, #1a3828 0%, #10281c 50%, #06120c 100%) !important;
-      box-shadow: inset 0 0 80px rgba(52, 211, 153, 0.25);
+    /* Bouncy Marshmallow Buttons */
+    .btn-marshmallow {
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+    }
+    .btn-marshmallow:active {
+      transform: scale(0.92);
     }
 
-    /* Koi Fish Ambient */
-    @keyframes koiSwim1 {
-      0% { transform: translate(-80px, 100px) rotate(40deg); opacity: 0; }
-      15% { opacity: 0.16; }
-      85% { opacity: 0.16; }
-      100% { transform: translate(450px, 420px) rotate(50deg); opacity: 0; }
-    }
-    .koi-1 {
-      animation: koiSwim1 22s ease-in-out infinite;
-    }
-
-    /* Floating Score Popup */
-    @keyframes floatUp {
-      0% { transform: translateY(0) scale(0.85); opacity: 1; }
-      100% { transform: translateY(-44px) scale(1.1); opacity: 0; }
-    }
-    .float-score {
-      animation: floatUp 1.2s ease-out forwards;
-    }
-
-    /* Screen Shake on Lotus Pop */
-    @keyframes screenShakeAnim {
-      0%, 100% { transform: translate(0, 0); }
-      20% { transform: translate(-3px, 2px); }
-      40% { transform: translate(3px, -2px); }
-      60% { transform: translate(-2px, 1px); }
-      80% { transform: translate(2px, -1px); }
-    }
-    .screen-shake {
-      animation: screenShakeAnim 0.28s ease-in-out;
-    }
-
-    /* Hand Tutorial Animations */
-    @keyframes handTapBounce {
+    /* Hand Guide Bounce Animation */
+    @keyframes tapBounceAnim {
       0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-8px) scale(1.15); }
+      50% { transform: translateY(-10px) scale(1.18); }
     }
-    .hand-tap {
-      animation: handTapBounce 0.9s ease-in-out infinite;
-    }
-
-    @keyframes beaconBeam {
-      0%, 100% { opacity: 0.35; filter: drop-shadow(0 0 6px #fbbf24); }
-      50% { opacity: 0.75; filter: drop-shadow(0 0 18px #fbbf24); }
-    }
-    .beacon-beam {
-      animation: beaconBeam 1.1s ease-in-out infinite;
+    .guide-hand-tap {
+      animation: tapBounceAnim 0.85s ease-in-out infinite;
     }
 
-    @keyframes arrowBounceDown {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(6px); }
+    @keyframes pulseRing {
+      0% { transform: scale(0.6); opacity: 0.9; }
+      100% { transform: scale(1.8); opacity: 0; }
     }
-    .arrow-bounce-down {
-      animation: arrowBounceDown 0.8s ease-in-out infinite;
-    }
-
-    /* Pulse scale for piece selection */
-    @keyframes pulseSelect {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.04); }
-    }
-    .slot-selected {
-      animation: pulseSelect 1.8s ease-in-out infinite;
+    .pulse-ring {
+      animation: pulseRing 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
     }
   </style>
 </head>
-<body id="appBody" class="zen-pond flex flex-col justify-between items-center px-2 py-1 md:p-3 h-full max-h-[100dvh] w-full overflow-hidden select-none transition-colors duration-700">
+<body class="flex flex-col justify-between items-center px-2 py-1 md:p-3 h-full max-h-[100dvh] w-full overflow-hidden select-none">
 
-  <!-- KOI FISH SHADOW IN POND -->
-  <div class="koi-1 absolute w-36 h-12 rounded-full bg-emerald-400 blur-2xl pointer-events-none"></div>
+  <!-- FLOATING CHERRY BLOSSOM PETALS -->
+  <div class="blossom-petal top-4 left-6" style="animation-delay: 0s;"></div>
+  <div class="blossom-petal top-24 right-10" style="animation-delay: 2.5s;"></div>
+  <div class="blossom-petal top-1/2 left-4" style="animation-delay: 4.8s;"></div>
 
-  <!-- TOP HEADER HUD (Level, Targets, Score, ASMR, Specs) -->
-  <header class="w-full max-w-md mx-auto flex items-center justify-between z-20 px-2.5 py-1 bg-emerald-950/70 backdrop-blur-md rounded-xl border border-emerald-800/40 shadow-md">
-    <!-- LEVEL & GOAL ICON -->
-    <div class="flex items-center gap-1.5">
-      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-700 flex items-center justify-center shadow text-base">
-        🪷
+  <!-- ============================================ -->
+  <!-- TOP HEADER HUD (Level, Goals, Score, Sound)  -->
+  <!-- ============================================ -->
+  <header class="w-full max-w-md mx-auto flex items-center justify-between z-20 px-3 py-1.5 bg-[#142e23]/80 backdrop-blur-md rounded-2xl border-2 border-emerald-600/40 shadow-lg">
+    <!-- LEVEL & CAT ICON -->
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow text-lg border border-pink-200/50">
+        🐾
       </div>
       <div>
-        <div class="flex items-center gap-1 text-[8px] uppercase tracking-widest text-emerald-400 font-extrabold leading-none">
-          <span id="levelLabel">LVL 1</span>
-          <span class="text-slate-600">•</span>
-          <span id="feverBadge" class="text-amber-300 hidden animate-pulse">🔥 FEVER</span>
+        <div class="text-[9px] uppercase tracking-wider text-emerald-300 font-extrabold leading-none">
+          <span id="levelLabel">LEVEL 1</span>
         </div>
-        <h1 class="text-xs font-black tracking-wide text-white leading-tight">
-          CASCADE <span class="text-emerald-400 font-light">HARMONY</span>
+        <h1 class="text-xs sm:text-sm font-black text-amber-200 leading-tight">
+          MEOW <span class="text-pink-300">RIPPLE</span>
         </h1>
       </div>
     </div>
 
-    <!-- LEVEL TARGET GOALS (Royal Match style collection targets) -->
-    <div id="targetsContainer" class="flex items-center gap-1.5">
-      <div id="targetPill1" class="flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border border-sky-400/70 shadow transition-transform">
-        <span class="w-3 h-3 rounded-full bg-sky-400 shadow-[0_0_8px_#38bdf8] inline-block"></span>
-        <span id="targetCount1" class="text-[9px] font-black text-sky-200">0/4</span>
+    <!-- LEVEL GOAL TARGETS (Cuddle Goals) -->
+    <div id="goalsContainer" class="flex items-center gap-1.5">
+      <div id="goalBadge1" class="flex items-center gap-1.5 bg-black/50 px-2.5 py-1 rounded-full border border-orange-400/80 shadow">
+        <span class="text-xs">🐱</span>
+        <span id="goalCount1" class="text-[10px] font-black text-orange-200">0/1</span>
       </div>
-      <div id="targetPill2" class="flex items-center gap-1 bg-black/60 px-2 py-0.5 rounded-full border border-rose-400/70 shadow transition-transform">
-        <span class="w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e] inline-block"></span>
-        <span id="targetCount2" class="text-[9px] font-black text-rose-200">0/4</span>
+      <div id="goalBadge2" class="flex items-center gap-1.5 bg-black/50 px-2.5 py-1 rounded-full border border-pink-400/80 shadow">
+        <span class="text-xs">🌸</span>
+        <span id="goalCount2" class="text-[10px] font-black text-pink-200">0/1</span>
       </div>
     </div>
 
-    <!-- SCORE, ASMR AUDIO & STUDIO SPECS TOGGLE -->
+    <!-- SOUND & SPECS BUTTONS -->
     <div class="flex items-center gap-1.5">
-      <div class="text-right">
-        <div class="text-[7px] uppercase tracking-wider text-emerald-400/80 font-bold leading-none">Score</div>
-        <div id="scoreVal" class="text-xs sm:text-sm font-black text-emerald-200 tabular-nums leading-none mt-0.5">0</div>
-      </div>
-      <button id="soundToggle" class="p-1 px-1.5 rounded-lg bg-emerald-900/50 hover:bg-emerald-800/60 border border-emerald-700/50 text-emerald-300 text-[10px] font-bold transition active:scale-95 shadow">
-        🔊 ASMR
+      <button id="soundToggleBtn" class="btn-marshmallow p-1 px-2 rounded-xl bg-emerald-900/60 hover:bg-emerald-800 border border-emerald-500/50 text-emerald-200 text-[10px] font-bold shadow">
+        🔊 PURR
       </button>
-      <button id="specsBtn" title="Why Play & Target Rewards" class="p-1 px-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black text-[9px] font-black uppercase tracking-wider transition active:scale-95 shadow-md flex items-center gap-0.5">
-        👑 SPECS & REWARDS
+      <button id="specsBtn" class="btn-marshmallow p-1 px-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-[10px] font-black uppercase tracking-wider shadow">
+        👑 SPECS
       </button>
     </div>
   </header>
 
-  <!-- QUICK 1-SENTENCE GOAL BANNER + HELP -->
+  <!-- QUICK GOAL BANNER -->
   <div class="w-full max-w-md mx-auto z-20 my-0.5">
-    <div class="bg-black/60 border border-emerald-700/40 rounded-xl px-2.5 py-1 flex items-center justify-between text-xs backdrop-blur-md shadow">
+    <div class="bg-black/55 border border-emerald-700/40 rounded-xl px-3 py-1 flex items-center justify-between text-xs backdrop-blur-md shadow">
       <div class="flex items-center gap-1.5 leading-tight">
-        <span class="text-xs">🎯</span>
-        <span id="goalBannerText" class="text-[10px] text-slate-200">
-          Match <strong>4 same gems</strong> in any column ➔ <strong class="text-amber-300">POP!</strong> Target gems fly to goal!
+        <span class="text-xs animate-bounce">💧</span>
+        <span class="text-[10.5px] text-emerald-100">
+          <strong>Tap water to make a ripple!</strong> Push matching kittens to cuddle & merge!
         </span>
       </div>
-      <button id="howToPlayBtn" class="p-0.5 px-2 rounded-lg bg-amber-950/60 hover:bg-amber-900 border border-amber-600/50 text-amber-300 text-[9px] font-bold active:scale-95 transition">
+      <button id="howToBtn" class="btn-marshmallow p-0.5 px-2 rounded-lg bg-pink-950/70 hover:bg-pink-900 border border-pink-500/50 text-pink-200 text-[9px] font-bold shadow">
         RULES ❓
       </button>
     </div>
   </div>
 
-  <!-- FLOATING COMBO BANNER -->
-  <div id="comboBanner" class="absolute top-16 left-0 right-0 flex items-center justify-center z-30 pointer-events-none">
-    <div id="comboText" class="text-xs font-extrabold uppercase tracking-widest text-amber-300 bg-black/90 border border-amber-400 px-3 py-1 rounded-full shadow-2xl hidden">
-      ✨ COMBO 2 • HARMONY CHIME
-    </div>
-  </div>
-
-  <!-- MAIN PLAY BOARD: 6 VERTICAL WATER COLUMNS (Canvas) -->
+  <!-- ============================================ -->
+  <!-- MAIN POND CANVAS (Giant Floating Lotus Leaf)  -->
+  <!-- ============================================ -->
   <main class="relative w-full max-w-md flex-1 min-h-0 my-0.5 flex items-center justify-center overflow-hidden">
-    <div id="boardContainer" class="relative h-full max-h-full aspect-[6/7] w-auto max-w-full bg-[#0b1711]/95 rounded-2xl overflow-hidden border-2 border-emerald-800/60 shadow-[0_0_30px_rgba(4,120,87,0.25)] p-0.5 flex flex-col justify-between cursor-pointer">
-      
-      <!-- COLUMN MATCH BEACONS (Highlights columns where dropping causes a match!) -->
-      <div id="matchBeacons" class="absolute inset-0 grid grid-cols-6 pointer-events-none z-8">
-        <div data-beacon="0" class="beacon-slot border-r border-emerald-950/20"></div>
-        <div data-beacon="1" class="beacon-slot border-r border-emerald-950/20"></div>
-        <div data-beacon="2" class="beacon-slot border-r border-emerald-950/20"></div>
-        <div data-beacon="3" class="beacon-slot border-r border-emerald-950/20"></div>
-        <div data-beacon="4" class="beacon-slot border-r border-emerald-950/20"></div>
-        <div data-beacon="5" class="beacon-slot"></div>
-      </div>
-
-      <!-- COLUMN TAP TARGETS (6 Full-Height Touch Zones) -->
-      <div id="columnsHeader" class="absolute inset-0 grid grid-cols-6 z-10 pointer-events-auto">
-        <div data-col="0" class="col-tap-zone border-r border-emerald-950/30 flex flex-col justify-start p-1 items-center hover:bg-emerald-400/5 active:bg-emerald-400/20 transition-colors">
-          <span class="text-[9px] font-bold text-emerald-400/60 mt-0.5">COL 1</span>
-        </div>
-        <div data-col="1" class="col-tap-zone border-r border-emerald-950/30 flex flex-col justify-start p-1 items-center hover:bg-emerald-400/5 active:bg-emerald-400/20 transition-colors">
-          <span class="text-[9px] font-bold text-emerald-400/60 mt-0.5">COL 2</span>
-        </div>
-        <div data-col="2" class="col-tap-zone border-r border-emerald-950/30 flex flex-col justify-start p-1 items-center hover:bg-emerald-400/5 active:bg-emerald-400/20 transition-colors">
-          <span class="text-[9px] font-bold text-emerald-400/60 mt-0.5">COL 3</span>
-        </div>
-        <div data-col="3" class="col-tap-zone border-r border-emerald-950/30 flex flex-col justify-start p-1 items-center hover:bg-emerald-400/5 active:bg-emerald-400/20 transition-colors">
-          <span class="text-[9px] font-bold text-emerald-400/60 mt-0.5">COL 4</span>
-        </div>
-        <div data-col="4" class="col-tap-zone border-r border-emerald-950/30 flex flex-col justify-start p-1 items-center hover:bg-emerald-400/5 active:bg-emerald-400/20 transition-colors">
-          <span class="text-[9px] font-bold text-emerald-400/60 mt-0.5">COL 5</span>
-        </div>
-        <div data-col="5" class="col-tap-zone flex flex-col justify-start p-1 items-center hover:bg-emerald-400/5 active:bg-emerald-400/20 transition-colors">
-          <span class="text-[9px] font-bold text-emerald-400/60 mt-0.5">COL 6</span>
-        </div>
-      </div>
-
-      <!-- MAIN ANIMATED CANVAS -->
-      <canvas id="gameCanvas" class="w-full h-full pointer-events-none z-5"></canvas>
+    <div id="pondContainer" class="relative h-full max-h-full aspect-square w-auto max-w-full rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.3)] flex items-center justify-center cursor-pointer border-2 border-emerald-600/40 bg-[#092218]/90">
+      <canvas id="pondCanvas" class="w-full h-full block"></canvas>
     </div>
   </main>
 
   <!-- ============================================ -->
-  <!-- INTERACTIVE FTUE GUIDED TUTORIAL WITH SKIP   -->
+  <!-- INTERACTIVE FTUE GUIDED HAND (With 1-Tap SKIP)-->
   <!-- ============================================ -->
-  <div id="tutorialOverlay" class="fixed inset-0 pointer-events-none z-40 flex flex-col justify-between p-2.5 transition-opacity duration-300">
-    <!-- TOP TUTORIAL BAR: Status Badge + 1-Tap SKIP BUTTON -->
-    <div class="w-full max-w-md mx-auto flex items-center justify-between pt-1">
-      <div class="flex items-center gap-1.5 bg-black/90 border border-amber-400/80 px-2.5 py-1 rounded-full shadow-2xl backdrop-blur-md">
-        <span class="text-xs">💡</span>
-        <span class="text-[9px] font-black text-amber-300 uppercase tracking-wider">BEGINNER GUIDE</span>
+  <div id="tutorialOverlay" class="fixed inset-0 pointer-events-none z-40 flex flex-col justify-between p-3 transition-opacity duration-300">
+    <div class="w-full max-w-md mx-auto flex items-center justify-between pt-2">
+      <div class="flex items-center gap-1.5 bg-black/85 border-2 border-pink-400 px-3 py-1 rounded-full shadow-2xl backdrop-blur-md">
+        <span class="text-xs">🐾</span>
+        <span class="text-[9.5px] font-black text-pink-300 uppercase tracking-wider">TAP ANYWHERE ON WATER</span>
       </div>
-      <!-- 1-TAP SKIP BUTTON -->
-      <button id="skipTutorialBtn" class="pointer-events-auto flex items-center gap-1 bg-black/90 hover:bg-black active:scale-95 border-2 border-amber-400/90 px-3 py-1 rounded-full text-amber-300 hover:text-white text-[10px] font-black uppercase tracking-wider shadow-2xl transition cursor-pointer">
+      <button id="skipTutorialBtn" class="pointer-events-auto btn-marshmallow flex items-center gap-1 bg-black/85 hover:bg-black active:scale-95 border-2 border-amber-400 px-3 py-1 rounded-full text-amber-300 text-[10px] font-black uppercase tracking-wider shadow-2xl transition cursor-pointer">
         <span>SKIP</span>
         <span>⏭️</span>
       </button>
     </div>
 
-    <!-- CENTER BOARD GUIDANCE (Step 2: Column 2 Spotlight & Bouncing Arrow) -->
-    <div id="tutStep2" class="relative w-full max-w-md mx-auto flex-1 flex items-center justify-center my-0.5 hidden">
-      <div class="relative h-full aspect-[6/7] w-auto max-w-full">
-        <!-- Golden Spotlight over Column 2 (Left 16.66%, Width 16.66%) -->
-        <div class="absolute inset-y-0 left-[16.66%] w-[16.66%] bg-gradient-to-b from-amber-400/35 via-emerald-400/15 to-transparent border-x-2 border-amber-300/80 beacon-beam flex flex-col items-center justify-start pt-8">
-          <div class="bg-black/95 text-amber-300 text-[9px] font-black px-2 py-1 rounded-full border border-amber-400 shadow-2xl whitespace-nowrap mb-2 animate-pulse flex items-center gap-1">
-            <span>2️⃣ TAP COL 2 TO DROP & POP!</span>
-          </div>
-          <div class="text-3xl filter drop-shadow-[0_0_12px_rgba(251,191,36,1)] arrow-bounce-down">
-            👇
-          </div>
-          <div class="mt-4 text-xs font-black text-amber-300 animate-pulse tracking-widest">
-            ⬇️ ⬇️ ⬇️
-          </div>
+    <!-- Bouncing Guided Hand Pointing At Center Pond -->
+    <div id="tutHand" class="relative w-full max-w-md mx-auto flex-1 flex flex-col items-center justify-center pointer-events-none">
+      <div class="relative flex flex-col items-center">
+        <div class="w-16 h-16 rounded-full border-4 border-pink-400/80 pulse-ring absolute"></div>
+        <div class="bg-black/90 text-pink-300 text-[11px] font-black px-3 py-1 rounded-full border-2 border-pink-400 shadow-2xl whitespace-nowrap mb-2 animate-pulse flex items-center gap-1">
+          <span>💧 TAP WATER TO RIPPLE!</span>
+        </div>
+        <div class="text-4xl filter drop-shadow-[0_0_15px_rgba(244,114,182,1)] guide-hand-tap">
+          👇
         </div>
       </div>
     </div>
 
-    <!-- BOTTOM TRAY GUIDANCE (Step 1: Pointing at Slot 0 Sapphire) -->
-    <div id="tutStep1" class="w-full max-w-md mx-auto pb-14 sm:pb-16">
-      <div class="relative w-full grid grid-cols-3 gap-2">
-        <div class="relative flex flex-col items-center">
-          <div class="bg-black/95 text-amber-300 text-[9px] font-black px-2.5 py-1 rounded-full border-2 border-amber-400 shadow-2xl whitespace-nowrap mb-1 animate-pulse flex items-center gap-1">
-            <span>1️⃣ TAP THIS SAPPHIRE STACK!</span>
-          </div>
-          <div class="text-3xl filter drop-shadow-[0_0_12px_rgba(251,191,36,1)] hand-tap">
-            👇
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="w-full max-w-md mx-auto pb-4"></div>
   </div>
 
-  <!-- FLOATING DRAG AVATAR (Follows touch/pointer when dragging) -->
-  <div id="dragAvatar" class="fixed pointer-events-none z-50 hidden -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 scale-110 drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)]"></div>
-
-  <!-- TACTICAL BOOSTERS BAR (Hammer & Magnet Vortex) -->
-  <div class="w-full max-w-md mx-auto z-20 flex items-center justify-between px-2 py-0.5">
-    <div class="text-[8px] sm:text-[9px] uppercase tracking-widest text-emerald-400 font-extrabold flex items-center gap-1">
-      <span>⚡ BOOSTERS:</span>
+  <!-- ============================================ -->
+  <!-- BOTTOM CAT TOYS BAR (Boosters & Controls)    -->
+  <!-- ============================================ -->
+  <footer class="w-full max-w-md mx-auto z-20 flex items-center justify-between px-2 py-1 bg-[#142e23]/80 backdrop-blur-md rounded-2xl border-2 border-emerald-600/40 shadow-lg mb-1">
+    <div class="flex items-center gap-1 text-[9px] uppercase tracking-wider text-emerald-300 font-extrabold">
+      <span>🐱 CAT TOYS:</span>
     </div>
-    <div class="flex items-center gap-1.5">
-      <!-- HAMMER BOOSTER -->
-      <button id="hammerBtn" title="Shatter any single stone that blocks your stack" class="px-2 py-0.5 rounded-lg bg-amber-950/80 hover:bg-amber-900 border border-amber-600/60 text-amber-300 text-[9px] sm:text-[10px] font-extrabold flex items-center gap-1 active:scale-95 transition shadow">
-        <span>🔨 HAMMER</span>
-        <span id="hammerCount" class="px-1.5 py-0.2 bg-amber-800 rounded-full text-[8px] text-white">2</span>
+
+    <div class="flex items-center gap-2">
+      <!-- YARN HERD BOOSTER -->
+      <button id="yarnBoosterBtn" title="Drop a bouncy yarn ball that rolls and herds all kittens together!" class="btn-marshmallow px-3 py-1 rounded-xl bg-pink-950/80 hover:bg-pink-900 border border-pink-500/70 text-pink-200 text-[10px] font-extrabold flex items-center gap-1.5 shadow">
+        <span>🧶 YARN HERD</span>
+        <span id="yarnCount" class="px-1.5 py-0.2 bg-pink-800 rounded-full text-[8px] text-white font-bold">2</span>
       </button>
 
-      <!-- MAGNET VORTEX BOOSTER -->
-      <button id="magnetBtn" title="Pull all matching colors across the board together" class="px-2 py-0.5 rounded-lg bg-blue-950/80 hover:bg-blue-900 border border-blue-500/60 text-blue-300 text-[9px] sm:text-[10px] font-extrabold flex items-center gap-1 active:scale-95 transition shadow">
-        <span>🧲 MAGNET</span>
-        <span id="magnetCount" class="px-1.5 py-0.2 bg-blue-800 rounded-full text-[8px] text-white">1</span>
+      <!-- TUNA SNACK BOOSTER -->
+      <button id="tunaBoosterBtn" title="Drop a tasty tuna snack that draws matching kittens into an instant mega-cuddle!" class="btn-marshmallow px-3 py-1 rounded-xl bg-amber-950/80 hover:bg-amber-900 border border-amber-500/70 text-amber-200 text-[10px] font-extrabold flex items-center gap-1.5 shadow">
+        <span>🐟 TUNA TREAT</span>
+        <span id="tunaCount" class="px-1.5 py-0.2 bg-amber-800 rounded-full text-[8px] text-white font-bold">2</span>
       </button>
-    </div>
-  </div>
 
-  <!-- BOTTOM PIECE SELECTION TRAY: 3 Stack Pieces (From Block Blast) -->
-  <footer class="w-full max-w-md mx-auto z-20 flex flex-col items-center gap-1 px-2 py-1.5 bg-emerald-950/70 backdrop-blur-md rounded-2xl border border-emerald-800/40">
-    <div class="text-[8px] sm:text-[9px] uppercase tracking-widest text-emerald-300 font-extrabold flex items-center gap-1">
-      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-      <span id="trayInstruction">1. TAP PIECE ➔ 2. TAP COLUMN TO DROP</span>
-    </div>
-
-    <!-- 3 SPAWNED PIECES -->
-    <div id="pieceTray" class="w-full grid grid-cols-3 gap-2">
-      <div data-piece="0" class="piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 flex flex-col items-center justify-center gap-0.5 shadow transition cursor-pointer" style="touch-action: none;"></div>
-      <div data-piece="1" class="piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 flex flex-col items-center justify-center gap-0.5 shadow transition cursor-pointer" style="touch-action: none;"></div>
-      <div data-piece="2" class="piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 flex flex-col items-center justify-center gap-0.5 shadow transition cursor-pointer" style="touch-action: none;"></div>
+      <!-- RESTART LEVEL -->
+      <button id="restartBtn" title="Respawn fresh kittens on the water leaf" class="btn-marshmallow p-1 px-2.5 rounded-xl bg-emerald-950 hover:bg-emerald-900 border border-emerald-600/60 text-emerald-300 text-[10px] font-bold shadow">
+        🔄
+      </button>
     </div>
   </footer>
 
   <!-- ============================================ -->
-  <!-- "LEVEL COMPLETE" CELEBRATION MODAL           -->
+  <!-- "HOW TO PLAY" MODAL (Casual 4-Step Rules)    -->
   <!-- ============================================ -->
-  <div id="levelWinModal" class="absolute inset-0 bg-black/85 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
-    <div class="max-w-sm w-full bg-[#0d1d14] border-2 border-amber-400 rounded-3xl p-6 shadow-2xl space-y-4 text-center">
-      <div class="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-3xl shadow-xl animate-bounce">
-        🌟
-      </div>
-
-      <h2 class="text-2xl font-black text-amber-300 uppercase tracking-wide">
-        LEVEL COMPLETE!
-      </h2>
-      <div class="text-sm font-bold text-emerald-300">
-        All Lotus Blossom Targets Cleared!
-      </div>
-      <p id="levelWinStats" class="text-xs text-slate-300 bg-black/50 p-3 rounded-xl border border-emerald-900/60">
-        Score: 2,400 • Best Harmony Combo: 4X
-      </p>
-
-      <button id="nextLevelBtn" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black rounded-xl text-sm uppercase tracking-wider shadow-xl transition active:scale-95">
-        ADVANCE TO NEXT POND ➔
-      </button>
-    </div>
-  </div>
-
-  <!-- ============================================ -->
-  <!-- "OUT OF MOVES / POND FULL" GAME OVER MODAL    -->
-  <!-- ============================================ -->
-  <div id="gameOverModal" class="absolute inset-0 bg-black/88 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
-    <div class="max-w-sm w-full bg-[#12080a] border-2 border-rose-500/90 rounded-3xl p-5 shadow-2xl space-y-3.5 text-center">
-      <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-rose-500 to-amber-600 flex items-center justify-center text-3xl shadow-xl animate-pulse">
-        ⚠️
-      </div>
-
-      <h2 class="text-xl font-black text-rose-300 uppercase tracking-wide">
-        POND IS FULL!
-      </h2>
-      <p class="text-xs text-slate-300 leading-relaxed">
-        No columns have enough space to fit your remaining stone stacks.
-      </p>
-
-      <div class="space-y-2 pt-1 text-left">
-        <!-- RESCUE HAMMER -->
-        <button id="rescueHammerBtn" class="w-full p-2.5 rounded-xl bg-amber-950/90 hover:bg-amber-900 border border-amber-500 text-amber-200 text-xs font-black flex items-center justify-between active:scale-95 transition shadow">
-          <span class="flex items-center gap-1.5">🔨 <span>FREE RESCUE HAMMER</span></span>
-          <span class="text-[9px] bg-amber-500 text-black px-2 py-0.5 rounded-full font-bold">SMASH & CONTINUE</span>
-        </button>
-
-        <!-- MAGNET RESCUE -->
-        <button id="rescueMagnetBtn" class="w-full p-2.5 rounded-xl bg-blue-950/90 hover:bg-blue-900 border border-blue-500 text-blue-200 text-xs font-black flex items-center justify-between active:scale-95 transition shadow">
-          <span class="flex items-center gap-1.5">🧲 <span>MAGNET VORTEX PULL</span></span>
-          <span class="text-[9px] bg-blue-500 text-black px-2 py-0.5 rounded-full font-bold">MERGE ALL</span>
-        </button>
-
-        <!-- RESTART LEVEL -->
-        <button id="restartLevelBtn" class="w-full p-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold flex items-center justify-between active:scale-95 transition shadow">
-          <span class="flex items-center gap-1.5">🔄 <span>RESTART LEVEL</span></span>
-          <span class="text-[9px] text-slate-400">FRESH BOARD</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================ -->
-  <!-- "HOW TO PLAY" MODAL (Casual Player Tutorial) -->
-  <!-- ============================================ -->
-  <div id="howToModal" class="absolute inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
-    <div class="max-w-sm w-full bg-[#0d1a13] border-2 border-emerald-500 rounded-3xl p-5 shadow-2xl space-y-3.5 text-center">
-      <div class="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-700 flex items-center justify-center text-2xl shadow-lg border border-emerald-300/40">
-        🪷
+  <div id="howToModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
+    <div class="max-w-sm w-full bg-[#0d261b] border-2 border-pink-400 rounded-3xl p-5 shadow-2xl space-y-3.5 text-center">
+      <div class="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-2xl shadow-lg border border-pink-200/50">
+        🐾
       </div>
 
       <div>
-        <h2 class="text-base font-black text-emerald-200 uppercase tracking-wide">
-          How to Play Cascade Harmony
-        </h2>
-        <p class="text-[10px] text-emerald-400 font-bold">Quick 4-Step Player Guide</p>
+        <h2 class="text-base font-black text-pink-200 uppercase tracking-wide">How to Play Meow Ripple</h2>
+        <p class="text-[10px] text-emerald-300 font-bold">The 100% Unique Water-Ripple Kitten Puzzle</p>
       </div>
 
       <div class="space-y-2 text-left text-xs">
-        <!-- STEP 1 -->
-        <div class="flex items-start gap-2.5 bg-black/60 p-2.5 rounded-xl border border-emerald-900/60">
+        <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-emerald-800/40">
           <span class="text-xl">1️⃣</span>
           <div>
-            <strong class="text-emerald-300 block text-[11px]">Pick a Stone Stack</strong>
-            <span class="text-slate-300 text-[10px] leading-tight block">Tap 1 of the 3 stone stacks in your bottom tray. Watch for glowing <strong class="text-amber-300">Rainbow Wildcards</strong>!</span>
+            <strong class="text-pink-300 block text-[11px]">Tap Water to Make a Ripple</strong>
+            <span class="text-slate-300 text-[10px] leading-tight block">Tap anywhere on the lotus pond leaf. A gentle circular ripple wave expands smoothly through the water!</span>
           </div>
         </div>
 
-        <!-- STEP 2 -->
-        <div class="flex items-start gap-2.5 bg-black/60 p-2.5 rounded-xl border border-emerald-900/60">
+        <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-emerald-800/40">
           <span class="text-xl">2️⃣</span>
           <div>
-            <strong class="text-emerald-300 block text-[11px]">Drop into any Column</strong>
-            <span class="text-slate-300 text-[10px] leading-tight block">Tap a column or drag upwards to drop. Stones plunge deep with relaxing water ASMR plops!</span>
+            <strong class="text-pink-300 block text-[11px]">Ripples Push Floating Kittens</strong>
+            <span class="text-slate-300 text-[10px] leading-tight block">The water ripple physically pushes the floating chubby kittens in the direction of the wave!</span>
           </div>
         </div>
 
-        <!-- STEP 3 -->
-        <div class="flex items-start gap-2.5 bg-black/60 p-2.5 rounded-xl border border-emerald-900/60">
+        <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-emerald-800/40">
           <span class="text-xl">3️⃣</span>
           <div>
-            <strong class="text-amber-300 block text-[11px]">Magnetic Flight & 4-POP!</strong>
-            <span class="text-slate-300 text-[10px] leading-tight block">Matching neighbor colors <strong class="text-amber-300">magnetically fly across</strong> to merge! When 4 matching gems assemble = <strong class="text-rose-400 font-bold">POP!</strong> Upper gems cascade down!</span>
+            <strong class="text-amber-300 block text-[11px]">Matching Kittens Cuddle & Merge!</strong>
+            <span class="text-slate-300 text-[10px] leading-tight block">When 2 kittens of the same color collide, they cuddle into a <strong>Bigger Crown Mega-Kitty</strong> with a happy meow & purr!</span>
           </div>
         </div>
 
-        <!-- STEP 4 -->
-        <div class="flex items-start gap-2.5 bg-black/60 p-2.5 rounded-xl border border-sky-900/60">
+        <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-sky-800/40">
           <span class="text-xl">🏆</span>
           <div>
             <strong class="text-sky-300 block text-[11px]">Collect Target Goals to Win</strong>
-            <span class="text-slate-300 text-[10px] leading-tight block">Check top targets (e.g. <span class="text-sky-300 font-bold">💎 0/4</span> & <span class="text-rose-400 font-bold">🔴 0/4</span>). Popped gems fly into header pills to clear the level!</span>
+            <span class="text-slate-300 text-[10px] leading-tight block">Check top targets (e.g. 🐱 Ginger Cuddle & 🌸 Sakura Cuddle). Clear all goals to beat the level!</span>
           </div>
-        </div>
-
-        <!-- PRO TIPS -->
-        <div class="bg-emerald-950/40 p-2 rounded-xl border border-emerald-800/40 text-[9.5px] text-slate-300 space-y-0.5">
-          <div>💡 <strong class="text-emerald-300">Pro-Tip:</strong> Full column (7/7 🔒)? Drop a matching stone next to it to pull the top gem out, or use <strong class="text-amber-300">Zen Hammer 🔨</strong>!</div>
-          <div>🔥 <strong class="text-amber-300">Fever Mode:</strong> 2 combos in a row activates Zen Fever for <strong>2X Double Score</strong>!</div>
         </div>
       </div>
 
-      <button id="closeHowToBtn" class="w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-black font-black rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow-lg">
+      <button id="closeHowToBtn" class="w-full py-2.5 bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-300 hover:to-rose-400 text-black font-black rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow-lg">
         GOT IT — PLAY NOW ➔
       </button>
     </div>
   </div>
 
-  <!-- ======================================================= -->
-  <!-- "GAME SPECS & REWARDS" (Why Play & Target Rewards)      -->
-  <!-- ======================================================= -->
-  <div id="specsModal" class="absolute inset-0 bg-black/92 z-50 flex items-center justify-center p-3.5 backdrop-blur-md hidden">
-    <div class="max-w-md w-full max-h-[90vh] overflow-y-auto bg-[#07160e] border-2 border-amber-400 rounded-3xl p-5 shadow-2xl space-y-3.5 text-left text-xs">
+  <!-- ============================================ -->
+  <!-- "GAME SPECS & DESIGN INNOVATION" MODAL       -->
+  <!-- ============================================ -->
+  <div id="specsModal" class="fixed inset-0 bg-black/92 z-50 flex items-center justify-center p-3.5 backdrop-blur-md hidden">
+    <div class="max-w-md w-full max-h-[90vh] overflow-y-auto bg-[#071d14] border-2 border-amber-400 rounded-3xl p-5 shadow-2xl space-y-3.5 text-left text-xs">
       <!-- HEADER -->
-      <div class="flex items-center justify-between border-b border-amber-500/30 pb-2.5">
+      <div class="flex items-center justify-between border-b border-amber-500/30 pb-2">
         <div class="flex items-center gap-2.5">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-xl shadow-lg border border-amber-200/40">
-            👑
-          </div>
+          <span class="text-2xl">👑</span>
           <div>
-            <h2 class="text-xs sm:text-sm font-black text-amber-300 uppercase tracking-wide leading-tight">
-              Why Play & How You Get Rewarded
-            </h2>
-            <p class="text-[10px] text-emerald-400 font-bold">Cascade Harmony: The Zen Puzzle Experience</p>
+            <h2 class="text-xs sm:text-sm font-black text-amber-300 uppercase tracking-wide leading-tight">Meow Ripple: Game Design Specs</h2>
+            <p class="text-[9.5px] text-pink-300 font-bold">100% Unique • Zero Clones • Casual Appeal</p>
           </div>
         </div>
         <button id="closeSpecsBtn" class="text-slate-400 hover:text-white text-base font-bold px-2 py-0.5 rounded-lg hover:bg-white/10 transition">✕</button>
       </div>
 
-      <!-- 1. WHY YOU SHOULD PLAY THIS GAME -->
-      <div class="bg-black/60 p-3 rounded-2xl border border-emerald-500/40 space-y-2 shadow-md">
-        <div class="flex items-center gap-1.5 text-emerald-300 font-black text-xs uppercase tracking-wide">
-          <span class="text-base">✨</span> <span>Why You Should Play This Game</span>
-        </div>
-        
-        <p class="text-slate-200 text-[10.5px] leading-relaxed">
-          Most puzzle games are stressful, rushed by annoying countdown timers, or repetitive. <strong>Cascade Harmony is built to be pure, calming fun:</strong>
-        </p>
-
-        <div class="space-y-1.5 text-[10px] text-slate-300">
-          <div class="flex items-start gap-2 bg-emerald-950/40 p-2 rounded-xl border border-emerald-800/30">
-            <span class="text-base">🧲</span>
-            <div>
-              <strong class="text-amber-300">Magic Magnetic Flight:</strong>
-              <span> Stones don't just sit in a grid. Drop a stone and matching colors in neighboring columns <strong>fly across the board into one stack!</strong></span>
-            </div>
+      <!-- SPECS CONTENT -->
+      <div class="space-y-2.5 text-[10px] text-slate-200">
+        <!-- 1. WHY THIS IS 100% UNIQUE -->
+        <div class="bg-black/60 p-3 rounded-2xl border border-pink-500/40 space-y-1.5 shadow">
+          <div class="flex items-center gap-1.5 text-pink-300 font-black text-xs uppercase">
+            <span>🌊</span> <span>1. Truly Unique: Water-Ripple Impulse Physics</span>
           </div>
-
-          <div class="flex items-start gap-2 bg-emerald-950/40 p-2 rounded-xl border border-emerald-800/30">
-            <span class="text-base">🌊</span>
-            <div>
-              <strong class="text-emerald-300">Relaxing Zen ASMR:</strong>
-              <span> Soothing water gravity physics, gentle stone plops, and harmonic crystal chimes relax your mind with zero stressful countdown clocks.</span>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-2 bg-emerald-950/40 p-2 rounded-xl border border-emerald-800/30">
-            <span class="text-base">💥</span>
-            <div>
-              <strong class="text-rose-300">Satisfying Domino Blasts:</strong>
-              <span> Assemble 4 matching gems = <strong>POP!</strong> Upper gems tumble down in continuous domino chain reactions!</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2. REACHING TARGETS & EARNING POWERFUL REWARDS -->
-      <div class="bg-black/60 p-3 rounded-2xl border border-amber-500/40 space-y-2 shadow-md">
-        <div class="flex items-center gap-1.5 text-amber-300 font-black text-xs uppercase tracking-wide">
-          <span class="text-base">🎁</span> <span>Reach Targets & Get Rewarded!</span>
+          <p class="leading-relaxed">
+            Unlike every generic puzzle on Google Play, <em>Meow Ripple</em> contains <strong>NO vertical bottle tubes</strong>, <strong>NO match-3 grids</strong>, and <strong>NO sliding blocks</strong>.
+          </p>
+          <p class="text-emerald-300 font-semibold leading-relaxed">
+            ⭐ The Breakthrough: The player interacts with natural water surface tension! Tapping the pond creates concentric ripple waves that physically push and collide floating, living cat puffs.
+          </p>
         </div>
 
-        <p class="text-slate-200 text-[10.5px] leading-relaxed">
-          At the top of each level, you are given target color goals (like <span class="text-sky-300 font-bold">💎 Sapphires</span> & <span class="text-rose-400 font-bold">🔴 Rubies</span>). Reaching your targets and pulling off combos <strong>directly rewards you with powerful tools:</strong>
-        </p>
-
-        <div class="space-y-2 text-[10px]">
-          <!-- REWARD: HAMMER -->
-          <div class="flex items-start gap-2 bg-amber-950/40 p-2.5 rounded-xl border border-amber-600/40">
-            <span class="text-xl">🔨</span>
-            <div>
-              <div class="flex items-center justify-between">
-                <strong class="text-amber-300 text-[11px]">FREE ZEN HAMMER REWARD</strong>
-                <span class="text-[8.5px] bg-amber-500 text-black px-1.5 py-0.2 rounded font-black">EARNED IN-GAME</span>
-              </div>
-              <p class="text-slate-300 text-[10px] mt-0.5 leading-tight">
-                Hit a <strong>3x Combo</strong> or clear level targets to earn Free Hammers! Use your hammer when a column is full (<span class="text-rose-400 font-bold">7/7 🔒</span>) to smash any blocking stone and un-jam your board.
-              </p>
-            </div>
+        <!-- 2. WHY CASUAL PLAYERS FALL IN LOVE (THE 2-SECOND RULE) -->
+        <div class="bg-black/60 p-3 rounded-2xl border border-emerald-600/40 space-y-1.5 shadow">
+          <div class="flex items-center gap-1.5 text-emerald-300 font-black text-xs uppercase">
+            <span>🐾</span> <span>2. Instant Comprehension & Cute Kawaii Animals</span>
           </div>
+          <ul class="space-y-1 text-slate-300 pl-1">
+            <li><strong>• 2-Second Learning Curve:</strong> A 4-year-old or 70-year-old immediately understands that water ripples push things. No manual or reading required.</li>
+            <li><strong>• Living Characters:</strong> Chubby kittens blink, squish, breath, and purr. Colliding matching cats triggers a joyful cuddle-merge with ASMR purrs.</li>
+            <li><strong>• Zero Stress:</strong> No punishing countdown clocks, pure sensory delight.</li>
+          </ul>
+        </div>
 
-          <!-- REWARD: MAGNET -->
-          <div class="flex items-start gap-2 bg-blue-950/40 p-2.5 rounded-xl border border-blue-600/40">
-            <span class="text-xl">🧲</span>
-            <div>
-              <div class="flex items-center justify-between">
-                <strong class="text-blue-300 text-[11px]">FREE MAGNET VORTEX REWARD</strong>
-                <span class="text-[8.5px] bg-blue-500 text-black px-1.5 py-0.2 rounded font-black">EARNED IN-GAME</span>
-              </div>
-              <p class="text-slate-300 text-[10px] mt-0.5 leading-tight">
-                Earned as you clear level goals! Tap the Magnet booster to instantly pull and merge ALL matching gems across the entire board at once into massive cascades!
-              </p>
-            </div>
+        <!-- 3. RETENTION & MONETIZATION BLUEPRINT -->
+        <div class="bg-black/60 p-3 rounded-2xl border border-amber-600/40 space-y-1.5 shadow">
+          <div class="flex items-center gap-1.5 text-amber-300 font-black text-xs uppercase">
+            <span>🎁</span> <span>3. Rewarded Boosters & Live-Ops Hooks</span>
           </div>
-
-          <!-- REWARD: FEVER & WILDCARDS -->
-          <div class="grid grid-cols-2 gap-2 text-[9.5px]">
-            <div class="bg-purple-950/40 p-2 rounded-xl border border-purple-600/40">
-              <strong class="text-purple-300 text-[10px] block flex items-center gap-1">🌈 Rainbow Wildcard</strong>
-              <p class="text-slate-300 text-[9px] mt-0.5 leading-tight">
-                Appears in your tray: matches with ANY color on the board to complete a 4-POP!
-              </p>
-            </div>
-            <div class="bg-amber-950/40 p-2 rounded-xl border border-amber-600/40">
-              <strong class="text-amber-300 text-[10px] block flex items-center gap-1">🔥 2X Zen Fever</strong>
-              <p class="text-slate-300 text-[9px] mt-0.5 leading-tight">
-                Hit 2 combos in a row to ignite fever mode and double all your points!
-              </p>
-            </div>
-          </div>
+          <ul class="space-y-1 text-slate-300 pl-1">
+            <li><strong>• 🧶 Yarn Herd Booster:</strong> Throws a bouncy yarn ball that pulls all kittens toward it in one swoop.</li>
+            <li><strong>• 🐟 Tuna Snack Booster:</strong> Drops a delicious fish snack that attracts all cats across the pond into mega-merges.</li>
+            <li><strong>• Collectible Cat Outfits:</strong> Rewarded videos unlock cute hats, flower crowns, and sleeping caps for your kittens!</li>
+          </ul>
         </div>
       </div>
 
-      <!-- ACTION BUTTON -->
-      <button id="closeSpecsBtn2" class="w-full py-2.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition active:scale-95">
-        PLAY & EARN REWARDS NOW ➔
+      <button id="closeSpecsBtn2" class="w-full py-2.5 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition active:scale-95">
+        BACK TO PLAYABLE GAME ➔
       </button>
     </div>
   </div>
 
+  <!-- ============================================ -->
+  <!-- LEVEL CLEARED / VICTORY MODAL                -->
+  <!-- ============================================ -->
+  <div id="victoryModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
+    <div class="max-w-xs w-full bg-[#0d261b] border-2 border-amber-400 rounded-3xl p-5 shadow-2xl text-center space-y-3">
+      <div class="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-3xl shadow-xl animate-bounce border-2 border-amber-200">
+        👑
+      </div>
+
+      <div>
+        <h2 class="text-lg font-black text-amber-300 uppercase tracking-wide">Pond Cleared!</h2>
+        <p class="text-[10px] text-pink-300 font-bold">All Kittens Cuddled in Harmony 💕</p>
+      </div>
+
+      <!-- 3 STARS -->
+      <div class="flex justify-center items-center gap-2 text-2xl text-amber-300 animate-pulse">
+        <span>⭐</span><span>⭐</span><span>⭐</span>
+      </div>
+
+      <div class="bg-black/50 p-2.5 rounded-2xl border border-emerald-800/50">
+        <div class="text-[9px] uppercase tracking-wider text-emerald-400 font-bold">Level Score</div>
+        <div id="victoryScore" class="text-xl font-black text-amber-200">500</div>
+      </div>
+
+      <button id="nextLevelBtn" class="w-full py-3 bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-300 hover:to-rose-400 text-black font-black rounded-2xl text-xs uppercase tracking-wider shadow-xl transition active:scale-95">
+        NEXT COZY POND ➔
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT: THE COMPLETE MEOW RIPPLE GAME & WATER PHYSICS ENGINE           -->
+  <!-- ========================================================================= -->
   <script>
     /**
-     * CASCADE HARMONY — PRO EDITION
-     * - The 3-in-1 Hybrid: Block Blast (Hand) + Screw Jam (Gravity Pins) + Hexa Sort (Magnetic Tile Flight)
-     * - Bulletproof Mobile Touch & Drag Gestures (No scroll capture, no pointer suppression)
-     * - Attractor Magnetic Merging (Placed stack pulls matching neighbors into 4-pops)
-     * - Royal Match Level Collection Goals with Flying Gem FX
-     * - Procedural Pentatonic Web Audio ASMR Engine
+     * MEOW RIPPLE: COZY CAT WATER POND
+     * - 100% Unique Water Ripple Fluid Impulse Physics
+     * - Zero bottles, zero match-3 grids, zero clones
+     * - Chubby, breathing, blinking, blushing living kittens
+     * - Web Audio Synthesized Water Plops, Meows, and Purrs
      */
 
-    // PALETTE OF POLISHED RIVER GEMS + RAINBOW WILDCARD
-    const PALETTE = [
-      { id: 'sapphire', name: 'Sapphire', bg: '#0284c7', glow: '#38bdf8', light: '#bae6fd', note: 261.63 }, // C4
-      { id: 'rose', name: 'Ruby', bg: '#e11d48', glow: '#f43f5e', light: '#fecdd3', note: 293.66 },        // D4
-      { id: 'jade', name: 'Jade', bg: '#059669', glow: '#10b981', light: '#a7f3d0', note: 329.63 },        // E4
-      { id: 'amber', name: 'Amber', bg: '#d97706', glow: '#f59e0b', light: '#fef3c7', note: 392.00 },      // G4
-      { id: 'amethyst', name: 'Amethyst', bg: '#7c3aed', glow: '#8b5cf6', light: '#ddd6fe', note: 440.00 }   // A4
-    ];
-
-    const RAINBOW_STONE = {
-      id: 'rainbow',
-      name: 'Rainbow Prism',
-      bg: 'linear-gradient(135deg, #f43f5e, #fbbf24, #38bdf8, #a855f7)',
-      glow: '#ffffff',
-      light: '#ffffff',
-      isRainbow: true,
-      note: 523.25
-    };
-
-    // ASMR AUDIO ENGINE
-    class ZenAudioEngine {
+    // =========================================================================
+    // 1. CUTE KAWAII ASMR AUDIO ENGINE (Web Audio API)
+    // =========================================================================
+    class MeowAudioEngine {
       constructor() {
         this.ctx = null;
-        this.master = null;
         this.muted = false;
       }
 
       init() {
-        if (this.ctx) {
-          if (this.ctx.state === 'suspended') this.ctx.resume();
-          return;
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
         }
-        try {
-          const AudioCtx = window.AudioContext || window.webkitAudioContext;
-          if (AudioCtx) {
-            this.ctx = new AudioCtx();
-            this.master = this.ctx.createGain();
-            this.master.gain.setValueAtTime(0.75, this.ctx.currentTime);
-            this.master.connect(this.ctx.destination);
-          }
-        } catch(e) {}
+        if (this.ctx.state === "suspended") {
+          this.ctx.resume();
+        }
       }
 
       toggleMute() {
         this.muted = !this.muted;
-        if (this.master && this.ctx) {
-          this.master.gain.setValueAtTime(this.muted ? 0 : 0.75, this.ctx.currentTime);
-        }
         return !this.muted;
       }
 
+      // Realistic Water Plop (Sine sweep with lowpass filter)
       playWaterPlop() {
         if (!this.ctx || this.muted) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(1400, now);
+        filter.frequency.exponentialRampToValueAtTime(300, now + 0.18);
+
         osc.type = "sine";
-        osc.frequency.setValueAtTime(580, now);
-        osc.frequency.exponentialRampToValueAtTime(280, now + 0.12);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
-        osc.connect(gain);
-        gain.connect(this.master);
+        osc.frequency.setValueAtTime(680, now);
+        osc.frequency.exponentialRampToValueAtTime(140, now + 0.16);
+
+        gain.gain.setValueAtTime(0.45, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
         osc.start(now);
-        osc.stop(now + 0.14);
+        osc.stop(now + 0.19);
       }
 
-      playChime(freq = 440, multiplier = 1) {
+      // Sweet Cat Kitten Meow (Frequency modulated vibrato)
+      playCuteMeow() {
         if (!this.ctx || this.muted) return;
         const now = this.ctx.currentTime;
-        const noteFreq = freq * Math.pow(1.05946, (multiplier - 1) * 2);
-
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
+
         osc.type = "triangle";
-        osc.frequency.setValueAtTime(noteFreq, now);
+        // Meow pitch contour: low -> high -> gently settle
+        osc.frequency.setValueAtTime(450, now);
+        osc.frequency.exponentialRampToValueAtTime(820, now + 0.12);
+        osc.frequency.exponentialRampToValueAtTime(560, now + 0.32);
 
         gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(0.32, now + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.1);
+        gain.gain.linearRampToValueAtTime(0.35, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
 
         osc.connect(gain);
-        gain.connect(this.master);
+        gain.connect(this.ctx.destination);
+
         osc.start(now);
-        osc.stop(now + 1.15);
+        osc.stop(now + 0.36);
       }
 
-      playBloomChord() {
+      // Soothing Cat Purr Sound (Low frequency pulsed rumble)
+      playCatPurr() {
         if (!this.ctx || this.muted) return;
         const now = this.ctx.currentTime;
-        [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(75, now);
+
+        // Tremolo LFO for realistic rhythmic purr
+        const lfo = this.ctx.createOscillator();
+        const lfoGain = this.ctx.createGain();
+        lfo.frequency.setValueAtTime(24, now); // 24 Hz purr rumble
+        lfoGain.gain.setValueAtTime(0.2, now);
+        lfo.connect(lfoGain.gain);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        lfo.start(now);
+        osc.stop(now + 0.62);
+        lfo.stop(now + 0.62);
+      }
+
+      // Crystal Cuddle Harmony Chime (C5 - E5 - G5 - C6)
+      playCuddleChime() {
+        if (!this.ctx || this.muted) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        const now = this.ctx.currentTime;
+
+        notes.forEach((freq, idx) => {
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
+          const startTime = now + idx * 0.06;
+
           osc.type = "sine";
-          osc.frequency.setValueAtTime(freq, now + idx * 0.04);
-          gain.gain.setValueAtTime(0.2, now + idx * 0.04);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 1.6);
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0.25, startTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.5);
+
           osc.connect(gain);
-          gain.connect(this.master);
-          osc.start(now + idx * 0.04);
-          osc.stop(now + 1.7);
+          gain.connect(this.ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + 0.52);
         });
       }
 
-      playHammerSmash() {
+      // Level Complete Fanfare
+      playVictoryFanfare() {
         if (!this.ctx || this.muted) return;
+        const chord = [523.25, 659.25, 783.99, 1046.50, 1318.51];
         const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(140, now);
-        osc.frequency.exponentialRampToValueAtTime(40, now + 0.25);
-        gain.gain.setValueAtTime(0.5, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-        osc.connect(gain);
-        gain.connect(this.master);
-        osc.start(now);
-        osc.stop(now + 0.3);
-      }
-
-      playFullThud() {
-        if (!this.ctx || this.muted) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(110, now);
-        osc.frequency.exponentialRampToValueAtTime(45, now + 0.18);
-        gain.gain.setValueAtTime(0.4, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-        osc.connect(gain);
-        gain.connect(this.master);
-        osc.start(now);
-        osc.stop(now + 0.21);
+        chord.forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(freq, now + i * 0.08);
+          gain.gain.setValueAtTime(0.3, now + i * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.7);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + i * 0.08);
+          osc.stop(now + i * 0.08 + 0.72);
+        });
       }
     }
 
-    const sound = new ZenAudioEngine();
+    const sound = new MeowAudioEngine();
 
-    // GAME STATE & CONSTANTS
-    const COLS = 6;
-    const ROWS = 7;
+    // =========================================================================
+    // 2. GAME STATE & KITTEN PALETTES
+    // =========================================================================
+    const KITTEN_TYPES = {
+      ginger: {
+        id: 'ginger',
+        name: 'Ginger',
+        icon: '🐱',
+        baseColor: '#fb923c',     // Warm orange
+        bellyColor: '#ffedd5',    // Cream belly
+        earColor: '#ea580c',      // Darker orange ear tip
+        stripeColor: '#c2410c',
+        glow: '#f97316'
+      },
+      sakura: {
+        id: 'sakura',
+        name: 'Sakura',
+        icon: '🌸',
+        baseColor: '#f472b6',     // Sweet strawberry pink
+        bellyColor: '#fdf2f8',    // Milky white
+        earColor: '#db2777',
+        stripeColor: '#be185d',
+        glow: '#ec4899'
+      },
+      bluey: {
+        id: 'bluey',
+        name: 'Bluey',
+        icon: '🫐',
+        baseColor: '#38bdf8',     // Pastel sky blue
+        bellyColor: '#f0f9ff',    // Soft ice white
+        earColor: '#0284c7',
+        stripeColor: '#0369a1',
+        glow: '#0ea5e9'
+      },
+      honey: {
+        id: 'honey',
+        name: 'Honey',
+        icon: '🍯',
+        baseColor: '#facc15',     // Butterscotch gold
+        bellyColor: '#fefce8',    // Warm milk
+        earColor: '#ca8a04',
+        stripeColor: '#a16207',
+        glow: '#eab308'
+      },
+      rainbow: {
+        id: 'rainbow',
+        name: 'Prism',
+        icon: '🌈',
+        isRainbow: true,
+        baseColor: '#c084fc',
+        bellyColor: '#faf5ff',
+        earColor: '#9333ea',
+        stripeColor: '#7e22ce',
+        glow: '#a855f7'
+      }
+    };
 
     const STATE = {
       level: 1,
-      targets: {
-        gem1: { id: 'sapphire', name: 'Sapphire', current: 0, required: 4, color: '#38bdf8' },
-        gem2: { id: 'rose', name: 'Ruby', current: 0, required: 4, color: '#f43f5e' }
-      },
       score: 0,
-      combo: 0,
-      feverActive: false,
-      hammers: 2,
-      magnets: 1,
-      activeBooster: null,
-
-      columns: Array.from({ length: COLS }, () => []),
-      trayPieces: [null, null, null],
-      selectedPieceIdx: 0,
-      lastDropCol: null,
-      hoveredCol: null,
-      isDragging: false,
-      dragPieceIdx: null,
-      tutorialActive: true,
-      tutorialStep: 1,
-      isResolving: false, // Prevents input overlap while cascades are resolving
-
-      animatingStones: [],
-      flyingGems: [],
+      goals: {
+        goal1: { type: 'ginger', count: 0, target: 1 },
+        goal2: { type: 'sakura', count: 0, target: 1 }
+      },
+      kittens: [],
       ripples: [],
-      particles: [],
-      scorePopups: []
+      hearts: [],
+      flyingGoalHearts: [],
+      activeBooster: null, // 'yarn' | 'tuna'
+      yarnBalls: 2,
+      tunaSnacks: 2,
+      tutorialActive: true,
+      isLevelClear: false
     };
 
-    // LEVEL INITIALIZATION & TARGETS
-    function setTargetsForLevel(lvl) {
-      if (lvl === 1) {
-        STATE.targets = {
-          gem1: { id: 'sapphire', name: 'Sapphire', current: 0, required: 4, color: '#38bdf8' },
-          gem2: { id: 'rose', name: 'Ruby', current: 0, required: 4, color: '#f43f5e' }
-        };
-      } else if (lvl === 2) {
-        STATE.targets = {
-          gem1: { id: 'jade', name: 'Jade', current: 0, required: 6, color: '#10b981' },
-          gem2: { id: 'amethyst', name: 'Amethyst', current: 0, required: 6, color: '#8b5cf6' }
-        };
-      } else {
-        STATE.targets = {
-          gem1: { id: 'sapphire', name: 'Sapphire', current: 0, required: 8, color: '#38bdf8' },
-          gem2: { id: 'amber', name: 'Amber', current: 0, required: 8, color: '#f59e0b' }
-        };
+    // =========================================================================
+    // 3. LIVING KITTEN CLASS (Breathing, Blinking, Squishy Physics)
+    // =========================================================================
+    class Kitten {
+      constructor(x, y, typeKey, level = 1) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 0.4;
+        this.vy = (Math.random() - 0.5) * 0.4;
+        this.typeKey = typeKey;
+        this.data = KITTEN_TYPES[typeKey];
+        this.level = level; // 1 = kitten (r=26), 2 = Mega-Crown Cat (r=35)
+        this.baseRadius = level === 1 ? 26 : 35;
+        this.radius = this.baseRadius;
+
+        // Micro-animations: breathing, bobbing, blinking
+        this.bobSeed = Math.random() * Math.PI * 2;
+        this.blinkCounter = Math.floor(80 + Math.random() * 150);
+        this.isBlinking = false;
+        this.squishX = 1.0;
+        this.squishY = 1.0;
+        this.rotation = (Math.random() - 0.5) * 0.2;
+        this.isMerged = false;
       }
 
-      document.getElementById("levelLabel").innerText = `LVL ${lvl}`;
-      const p1 = document.getElementById("targetPill1");
-      const p2 = document.getElementById("targetPill2");
-      if (p1) {
-        p1.style.borderColor = STATE.targets.gem1.color;
-        p1.querySelector("span").style.background = STATE.targets.gem1.color;
-        p1.querySelector("span").style.boxShadow = `0 0 8px ${STATE.targets.gem1.color}`;
-      }
-      if (p2) {
-        p2.style.borderColor = STATE.targets.gem2.color;
-        p2.querySelector("span").style.background = STATE.targets.gem2.color;
-        p2.querySelector("span").style.boxShadow = `0 0 8px ${STATE.targets.gem2.color}`;
-      }
-      updateTargetsUI();
-    }
+      update(centerX, centerY, pondRadius) {
+        // 1. Friction / Water Drag
+        this.vx *= 0.94;
+        this.vy *= 0.94;
+        this.x += this.vx;
+        this.y += this.vy;
 
-    function updateTargetsUI() {
-      const p1 = document.getElementById("targetPill1");
-      const p2 = document.getElementById("targetPill2");
-      const c1 = document.getElementById("targetCount1");
-      const c2 = document.getElementById("targetCount2");
+        // 2. Squish elasticity recovery
+        this.squishX += (1.0 - this.squishX) * 0.12;
+        this.squishY += (1.0 - this.squishY) * 0.12;
 
-      if (c1) {
-        if (STATE.targets.gem1.current >= STATE.targets.gem1.required) {
-          c1.innerText = "✓ DONE";
-          if (p1) p1.classList.add("border-amber-400", "bg-emerald-900/80");
-        } else {
-          c1.innerText = `${STATE.targets.gem1.current}/${STATE.targets.gem1.required}`;
-        }
-      }
-      if (c2) {
-        if (STATE.targets.gem2.current >= STATE.targets.gem2.required) {
-          c2.innerText = "✓ DONE";
-          if (p2) p2.classList.add("border-amber-400", "bg-emerald-900/80");
-        } else {
-          c2.innerText = `${STATE.targets.gem2.current}/${STATE.targets.gem2.required}`;
-        }
-      }
-    }
-
-    // LEVEL 1 GOLDEN SETUP (Teaches the 3 Bred Mechanics in 10 Seconds)
-    function seedStarterStones() {
-      STATE.columns = Array.from({ length: COLS }, () => []);
-
-      if (STATE.level === 1) {
-        // Golden Onboarding Setup:
-        // Col 0: 2 Sapphires
-        // Col 1: Empty (Attractor Target)
-        // Col 2: 1 Sapphire
-        // Col 3: Empty
-        // Col 4: 2 Rubies
-        // Col 5: 1 Ruby
-        STATE.columns[0] = [PALETTE[0], PALETTE[0]];
-        STATE.columns[2] = [PALETTE[0]];
-        STATE.columns[4] = [PALETTE[1], PALETTE[1]];
-        STATE.columns[5] = [PALETTE[1]];
-      } else if (STATE.level === 2) {
-        // Rainbow Wildcard Showcase
-        STATE.columns[0] = [PALETTE[2], PALETTE[2]]; // Jade
-        STATE.columns[1] = [RAINBOW_STONE];          // Rainbow
-        STATE.columns[2] = [PALETTE[2]];             // Jade
-        STATE.columns[4] = [PALETTE[4], PALETTE[4]]; // Amethyst
-        STATE.columns[5] = [PALETTE[4]];             // Amethyst
-      } else {
-        // Higher Levels: Rich multi-color setup
-        STATE.columns[0] = [PALETTE[0], PALETTE[3]];
-        STATE.columns[1] = [PALETTE[1]];
-        STATE.columns[2] = [PALETTE[0], PALETTE[0]];
-        STATE.columns[3] = [PALETTE[2]];
-        STATE.columns[4] = [PALETTE[1], PALETTE[1]];
-        STATE.columns[5] = [PALETTE[3]];
-      }
-    }
-
-    // SPAWN PIECES FOR TRAY
-    function generateTrayPiece() {
-      if (STATE.level === 1 && STATE.tutorialActive) {
-        if (STATE.tutorialStep === 1) {
-          return { stones: [PALETTE[0]] }; // Guaranteed 1 Sapphire to trigger Col 2 magnetic pop!
-        } else if (STATE.tutorialStep === 2) {
-          return { stones: [PALETTE[1]] }; // Guaranteed 1 Ruby to trigger Col 5 magnetic pop!
-        }
-      }
-
-      // 10% chance for Rainbow Wildcard
-      if (Math.random() < 0.10) {
-        return { stones: [RAINBOW_STONE] };
-      }
-
-      const size = Math.random() < 0.35 ? 1 : Math.random() < 0.85 ? 2 : 3;
-      const stones = [];
-      const primaryColor = PALETTE[Math.floor(Math.random() * PALETTE.length)];
-      for (let i = 0; i < size; i++) {
-        if (Math.random() < 0.7) {
-          stones.push(primaryColor);
-        } else {
-          stones.push(PALETTE[Math.floor(Math.random() * PALETTE.length)]);
-        }
-      }
-      return { stones };
-    }
-
-    function refillTray() {
-      if (STATE.level === 1 && STATE.tutorialActive && STATE.tutorialStep === 1) {
-        STATE.trayPieces = [
-          { stones: [PALETTE[0]] }, // Sapphire
-          { stones: [PALETTE[1]] }, // Ruby
-          { stones: [PALETTE[0], PALETTE[1]] } // Sapphire + Ruby
-        ];
-      } else {
-        for (let i = 0; i < 3; i++) {
-          if (!STATE.trayPieces[i]) {
-            STATE.trayPieces[i] = generateTrayPiece();
-          }
-        }
-      }
-
-      for (let i = 0; i < 3; i++) {
-        if (STATE.trayPieces[i]) {
-          STATE.selectedPieceIdx = i;
-          break;
-        }
-      }
-      renderTrayUI();
-      updateMatchBeacons();
-    }
-
-    function renderTrayUI() {
-      const slots = document.querySelectorAll(".piece-slot");
-      slots.forEach((slot, idx) => {
-        const piece = STATE.trayPieces[idx];
-        slot.innerHTML = "";
-
-        if (!piece) {
-          slot.className = "piece-slot relative h-14 sm:h-16 rounded-xl bg-[#09150f] border border-emerald-950/40 opacity-20 pointer-events-none";
-          return;
-        }
-
-        const isSelected = STATE.selectedPieceIdx === idx;
-        slot.className = isSelected
-          ? "piece-slot slot-selected relative h-14 sm:h-16 rounded-xl bg-[#142f21] border-2 border-amber-300 shadow-[0_0_18px_rgba(251,191,36,0.4)] flex flex-col items-center justify-center gap-0.5 cursor-pointer"
-          : "piece-slot relative h-14 sm:h-16 rounded-xl bg-[#0e2017] border border-emerald-700/60 hover:border-emerald-400 flex flex-col items-center justify-center gap-0.5 shadow transition cursor-pointer";
-
-        if (isSelected) {
-          const badge = document.createElement("span");
-          badge.className = "absolute -top-2 px-1.5 py-0.2 bg-amber-400 text-black font-black text-[7px] sm:text-[8px] rounded-full uppercase tracking-tighter shadow";
-          badge.innerText = "READY ⬇️";
-          slot.appendChild(badge);
-        }
-
-        piece.stones.forEach(stone => {
-          const pill = document.createElement("div");
-          pill.className = "w-8 h-3 sm:w-10 sm:h-3.5 rounded-full border shadow-sm transition-all";
-          if (stone.isRainbow) {
-            pill.style.background = "linear-gradient(90deg, #f43f5e, #fbbf24, #10b981, #38bdf8, #a855f7)";
-            pill.style.borderColor = "#ffffff";
-            pill.innerHTML = `<span class="block text-[6px] text-center font-black text-black">WILD</span>`;
+        // 3. Blinking animation
+        this.blinkCounter--;
+        if (this.blinkCounter <= 0) {
+          if (!this.isBlinking) {
+            this.isBlinking = true;
+            this.blinkCounter = 12; // blink duration
           } else {
-            pill.style.background = `linear-gradient(180deg, ${stone.glow} 0%, ${stone.bg} 100%)`;
-            pill.style.borderColor = stone.light;
-          }
-          slot.appendChild(pill);
-        });
-      });
-    }
-
-    // UPDATE COLUMN MATCH BEACONS (Visual guidance showing where drops trigger leaps)
-    function updateMatchBeacons() {
-      const piece = STATE.trayPieces[STATE.selectedPieceIdx];
-      const beacons = document.querySelectorAll(".beacon-slot");
-
-      beacons.forEach(b => {
-        b.className = "beacon-slot border-r border-emerald-950/20";
-        b.innerHTML = "";
-      });
-
-      if (!piece || piece.stones.length === 0) return;
-      const testStone = piece.stones[0];
-
-      for (let c = 0; c < COLS; c++) {
-        const col = STATE.columns[c];
-        let createsMatch = false;
-
-        if (testStone.isRainbow) {
-          if (col.length > 0 || (c > 0 && STATE.columns[c - 1].length > 0) || (c < COLS - 1 && STATE.columns[c + 1].length > 0)) {
-            createsMatch = true;
-          }
-        } else {
-          const testColor = testStone.id;
-          if (col.length > 0 && (col[col.length - 1].id === testColor || col[col.length - 1].isRainbow)) createsMatch = true;
-          if (c > 0 && STATE.columns[c - 1].length > 0 && (STATE.columns[c - 1][STATE.columns[c - 1].length - 1].id === testColor || STATE.columns[c - 1][STATE.columns[c - 1].length - 1].isRainbow)) createsMatch = true;
-          if (c < COLS - 1 && STATE.columns[c + 1].length > 0 && (STATE.columns[c + 1][STATE.columns[c + 1].length - 1].id === testColor || STATE.columns[c + 1][STATE.columns[c + 1].length - 1].isRainbow)) createsMatch = true;
-        }
-
-        if (createsMatch && col.length + piece.stones.length <= ROWS) {
-          // Check if it's rescuing a full neighbor!
-          let rescuesNeighbor = false;
-          if (c > 0 && STATE.columns[c - 1].length >= ROWS) rescuesNeighbor = true;
-          if (c < COLS - 1 && STATE.columns[c + 1].length >= ROWS) rescuesNeighbor = true;
-
-          const beacon = beacons[c];
-          beacon.className = "beacon-slot border-r border-emerald-950/20 bg-emerald-400/15 match-beacon flex flex-col justify-start items-center pt-6";
-          beacon.innerHTML = rescuesNeighbor
-            ? `<span class="text-[8px] mono font-black text-emerald-300 bg-black/90 px-1.5 py-0.5 rounded-full border border-emerald-400 shadow-lg animate-bounce">🧲 RESCUE!</span>`
-            : `<span class="text-[9px] mono font-black text-amber-300 bg-black/80 px-1.5 py-0.5 rounded-full border border-amber-400/70 shadow-lg">✨ MATCH!</span>`;
-        }
-      }
-
-      // Update column zone labels with live full/capacity warnings
-      document.querySelectorAll(".col-tap-zone").forEach((zone, c) => {
-        const col = STATE.columns[c];
-        const span = zone.querySelector("span");
-        if (span) {
-          if (col.length >= ROWS) {
-            span.innerText = `COL ${c + 1} 🔒`;
-            span.className = "text-[9px] font-black text-rose-400 mt-0.5 animate-pulse";
-          } else {
-            span.innerText = `COL ${c + 1}`;
-            span.className = "text-[9px] font-bold text-emerald-400/60 mt-0.5";
+            this.isBlinking = false;
+            this.blinkCounter = Math.floor(100 + Math.random() * 200);
           }
         }
-      });
-    }
 
-    // CANVAS & GEOMETRY
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-
-    function resizeCanvas() {
-      if (!canvas || !canvas.parentElement) return;
-      const w = canvas.parentElement.clientWidth;
-      const h = canvas.parentElement.clientHeight;
-      if (w > 0 && h > 0 && (canvas.width !== w || canvas.height !== h)) {
-        canvas.width = w;
-        canvas.height = h;
-      }
-    }
-    window.addEventListener("resize", resizeCanvas);
-    window.addEventListener("orientationchange", resizeCanvas);
-    resizeCanvas();
-
-    function getSlotY(rowIdx) {
-      const bottomPadding = 26;
-      const slotHeight = (canvas.height - 45) / ROWS;
-      return canvas.height - bottomPadding - (rowIdx * slotHeight);
-    }
-
-    // DROP PIECE INTO COLUMN
-    function dropPieceIntoColumn(colIdx) {
-      if (colIdx < 0 || colIdx >= COLS) return;
-      sound.init();
-
-      // Booster: Hammer
-      if (STATE.activeBooster === 'hammer') {
-        const col = STATE.columns[colIdx];
-        if (col.length > 0) {
-          const smashed = col.pop();
-          sound.playHammerSmash();
-          STATE.hammers--;
-          document.getElementById("hammerCount").innerText = STATE.hammers;
-          STATE.activeBooster = null;
-          document.getElementById("hammerBtn").classList.remove("border-amber-400", "scale-105");
-
-          const colWidth = canvas.width / COLS;
-          spawnBlossomParticles(colIdx * colWidth + colWidth / 2, getSlotY(col.length), smashed);
-          showComboBanner("HAMMER SMASH! 🔨", "text-amber-300");
-          resolveBoardCascade();
-        }
-        return;
-      }
-
-      if (STATE.isResolving) return; // Wait for active cascade animations to settle
-
-      const piece = STATE.trayPieces[STATE.selectedPieceIdx];
-      if (!piece) return;
-
-      const col = STATE.columns[colIdx];
-      if (col.length + piece.stones.length > ROWS) {
-        sound.playFullThud();
-        triggerJuice();
-        showComboBanner(`⚠️ COL ${colIdx + 1} FULL (${col.length}/${ROWS})! Tap 🔨 Hammer or match neighbor!`, "text-rose-400");
-        const hammerBtn = document.getElementById("hammerBtn");
-        if (hammerBtn && STATE.hammers > 0) {
-          hammerBtn.classList.add("scale-110", "border-amber-300");
-          setTimeout(() => hammerBtn.classList.remove("scale-110", "border-amber-300"), 1200);
-        }
-        checkGameOverOrStuck();
-        return;
-      }
-
-      // Consume piece from tray
-      STATE.trayPieces[STATE.selectedPieceIdx] = null;
-      STATE.lastDropCol = colIdx;
-      STATE.isResolving = true;
-      dismissTutorial();
-      sound.playWaterPlop();
-
-      const colWidth = canvas.width / COLS;
-      const targetX = colIdx * colWidth + colWidth / 2;
-
-      // Queue gravity falling animation for each stone in the piece
-      piece.stones.forEach((stone, i) => {
-        const destSlot = col.length + i;
-        const targetY = getSlotY(destSlot);
-        const isLastStone = (i === piece.stones.length - 1);
-
-        STATE.animatingStones.push({
-          type: 'drop',
-          stone: stone,
-          col: colIdx,
-          destSlot: destSlot,
-          x: targetX,
-          y: -20 - (i * 30),
-          targetY: targetY,
-          vy: 2.5,
-          onLand: () => {
-            col.push(stone);
-            addWaterRipple(targetX, targetY);
-            sound.playChime(stone.note, 1);
-
-            // When the last dropped stone lands, trigger the magnetic attractor sequence!
-            if (isLastStone) {
-              setTimeout(() => resolveBoardCascade(), 80);
-            }
-          }
-        });
-      });
-
-      // Advance tray selection or refill
-      if (STATE.trayPieces.every(p => p === null)) {
-        setTimeout(refillTray, 400);
-      } else {
-        for (let i = 0; i < 3; i++) {
-          if (STATE.trayPieces[i]) {
-            STATE.selectedPieceIdx = i;
-            break;
-          }
-        }
-        renderTrayUI();
-        updateMatchBeacons();
-      }
-    }
-
-    // =========================================================================
-    // BREEDING TIER 3: ATTRACTOR MAGNETIC MERGING (Hexa Sort Tile Flight)
-    // =========================================================================
-    function findBestMagneticLeap() {
-      // Priority 1: Attractor Column (The column where the player just dropped)
-      if (STATE.lastDropCol !== null) {
-        const targetIdx = STATE.lastDropCol;
-        const targetCol = STATE.columns[targetIdx];
-        if (targetCol.length > 0 && targetCol.length < ROWS) {
-          const targetTop = targetCol[targetCol.length - 1];
-
-          // Check left neighbor
-          if (targetIdx > 0) {
-            const leftCol = STATE.columns[targetIdx - 1];
-            if (leftCol.length > 0) {
-              const leftTop = leftCol[leftCol.length - 1];
-              if (leftTop.id === targetTop.id || leftTop.isRainbow || targetTop.isRainbow) {
-                const stone = leftCol.pop();
-                return { from: targetIdx - 1, to: targetIdx, stone };
-              }
-            }
-          }
-
-          // Check right neighbor
-          if (targetIdx < COLS - 1) {
-            const rightCol = STATE.columns[targetIdx + 1];
-            if (rightCol.length > 0) {
-              const rightTop = rightCol[rightCol.length - 1];
-              if (rightTop.id === targetTop.id || rightTop.isRainbow || targetTop.isRainbow) {
-                const stone = rightCol.pop();
-                return { from: targetIdx + 1, to: targetIdx, stone };
-              }
-            }
-          }
+        // 4. Boundary collision with circular lotus leaf
+        const distFromCenter = Math.hypot(this.x - centerX, this.y - centerY);
+        const maxDist = pondRadius - this.radius - 8;
+        if (distFromCenter > maxDist) {
+          const angle = Math.atan2(this.y - centerY, this.x - centerX);
+          this.x = centerX + Math.cos(angle) * maxDist;
+          this.y = centerY + Math.sin(angle) * maxDist;
+          // Soft bounce back towards center
+          const normalX = Math.cos(angle);
+          const normalY = Math.sin(angle);
+          const dot = this.vx * normalX + this.vy * normalY;
+          this.vx = (this.vx - 2 * dot * normalX) * 0.6;
+          this.vy = (this.vy - 2 * dot * normalY) * 0.6;
+          this.squishX = 0.85;
+          this.squishY = 1.15;
         }
       }
 
-      // Priority 2: Any adjacent columns matching top colors -> merge into the taller stack
-      for (let c = 0; c < COLS - 1; c++) {
-        const colA = STATE.columns[c];
-        const colB = STATE.columns[c + 1];
-        if (colA.length > 0 && colB.length > 0) {
-          const topA = colA[colA.length - 1];
-          const topB = colB[colB.length - 1];
-          if (topA.id === topB.id || topA.isRainbow || topB.isRainbow) {
-            if (colA.length >= colB.length && colA.length < ROWS) {
-              const stone = colB.pop();
-              return { from: c + 1, to: c, stone };
-            } else if (colB.length > colA.length && colB.length < ROWS) {
-              const stone = colA.pop();
-              return { from: c, to: c + 1, stone };
-            }
-          }
-        }
-      }
-
-      return null;
-    }
-
-    function resolveBoardCascade() {
-      // 1. Check for magnetic leap
-      const leap = findBestMagneticLeap();
-      if (leap) {
-        executeMagneticLeap(leap.from, leap.to, leap.stone);
-        return;
-      }
-
-      // 2. Check for 4-pop blossoms
-      let blastTriggered = false;
-      for (let c = 0; c < COLS; c++) {
-        const col = STATE.columns[c];
-        if (col.length >= 4) {
-          const lastColor = col[col.length - 1].id;
-          let count = 0;
-          for (let i = col.length - 1; i >= 0; i--) {
-            if (col[i].id === lastColor || col[i].isRainbow) count++;
-            else break;
-          }
-
-          if (count >= 4) {
-            blastTriggered = true;
-            STATE.combo++;
-            const removed = col.splice(col.length - count, count);
-            const pts = count * 100 * STATE.combo * (STATE.feverActive ? 2 : 1);
-            STATE.score += pts;
-
-            const poppedStone = removed[0];
-            const poppedId = poppedStone.id;
-
-            // Collect into Level Targets
-            if (STATE.targets.gem1.id === poppedId || poppedStone.isRainbow) {
-              STATE.targets.gem1.current = Math.min(STATE.targets.gem1.required, STATE.targets.gem1.current + removed.length);
-            }
-            if (STATE.targets.gem2.id === poppedId || poppedStone.isRainbow) {
-              STATE.targets.gem2.current = Math.min(STATE.targets.gem2.required, STATE.targets.gem2.current + removed.length);
-            }
-
-            const colWidth = canvas.width / COLS;
-            const x = c * colWidth + colWidth / 2;
-            const y = getSlotY(col.length);
-
-            sound.playBloomChord();
-            spawnBlossomParticles(x, y, poppedStone);
-            spawnFlyingTargetGems(x, y, poppedStone, Math.min(6, removed.length));
-            addScorePopup(x, y, `+${pts} LOTUS POP! 🪷`);
-            showComboBanner(`HARMONY POP! COMBO x${STATE.combo}`, "text-emerald-300");
-
-            updateTargetsUI();
-            checkFeverMode();
-            triggerJuice();
-            document.getElementById("scoreVal").innerText = STATE.score.toLocaleString();
-
-            setTimeout(() => {
-              checkLevelProgress();
-              resolveBoardCascade(); // Re-check for cascading neighbor leaps
-            }, 300);
-            return;
-          }
-        }
-      }
-
-      // 3. Cascade settled: release resolution lock
-      STATE.isResolving = false;
-      STATE.lastDropCol = null;
-      updateMatchBeacons();
-      checkGameOverOrStuck();
-
-      // Reset combo if no active blast
-      setTimeout(() => {
-        if (!STATE.isResolving) {
-          STATE.combo = 0;
-          STATE.feverActive = false;
-          document.getElementById("feverBadge").classList.add("hidden");
-          document.getElementById("appBody").classList.remove("fever-glow");
-        }
-      }, 1600);
-    }
-
-    function executeMagneticLeap(fromCol, toCol, stone) {
-      const colWidth = canvas.width / COLS;
-      const startX = fromCol * colWidth + colWidth / 2;
-      const startY = getSlotY(STATE.columns[fromCol].length);
-
-      const destSlot = STATE.columns[toCol].length;
-      const destX = toCol * colWidth + colWidth / 2;
-      const destY = getSlotY(destSlot);
-
-      sound.playChime(stone.note, STATE.combo + 1);
-
-      STATE.animatingStones.push({
-        type: 'leap',
-        stone: stone,
-        startX: startX,
-        startY: startY,
-        destX: destX,
-        destY: destY,
-        x: startX,
-        y: startY,
-        progress: 0,
-        onLand: () => {
-          STATE.columns[toCol].push(stone);
-          addWaterRipple(destX, destY);
-          // Chain next leap or pop immediately!
-          setTimeout(() => resolveBoardCascade(), 140);
-        }
-      });
-    }
-
-    // CHECK FEVER MODE & COMBO REWARDS
-    function checkFeverMode() {
-      if (STATE.combo >= 2 && !STATE.feverActive) {
-        STATE.feverActive = true;
-        document.getElementById("feverBadge").classList.remove("hidden");
-        document.getElementById("appBody").classList.add("fever-glow");
-        showComboBanner("🔥 ZEN FEVER ACTIVATED! 2X POINTS! 🔥", "text-amber-300");
-      }
-      if (STATE.combo === 3) {
-        STATE.hammers++;
-        document.getElementById("hammerCount").innerText = STATE.hammers;
-        showComboBanner("🌟 3X COMBO BONUS: EARNED +1 ZEN HAMMER! 🔨", "text-amber-300");
-      }
-    }
-
-    // LEVEL COMPLETION
-    function checkLevelProgress() {
-      const t1Done = STATE.targets.gem1.current >= STATE.targets.gem1.required;
-      const t2Done = STATE.targets.gem2.current >= STATE.targets.gem2.required;
-
-      if (t1Done && t2Done) {
-        sound.playBloomChord();
-        const winModal = document.getElementById("levelWinModal");
-        if (winModal) {
-          document.getElementById("levelWinStats").innerText = `Score: ${STATE.score.toLocaleString()} • Lotus Chimes Cleared!`;
-          winModal.classList.remove("hidden");
-        }
-      }
-    }
-
-    // GAME OVER / POND JAMMED DETECTION
-    function checkGameOverOrStuck() {
-      if (STATE.isResolving) return;
-
-      const hasPiecesInTray = STATE.trayPieces.some(p => p !== null);
-      if (!hasPiecesInTray) return;
-
-      // Check if ANY piece currently in tray can fit in ANY column
-      let canPlaceAny = false;
-      for (let i = 0; i < 3; i++) {
-        const piece = STATE.trayPieces[i];
-        if (!piece) continue;
-        for (let c = 0; c < COLS; c++) {
-          if (STATE.columns[c].length + piece.stones.length <= ROWS) {
-            canPlaceAny = true;
-            break;
-          }
-        }
-        if (canPlaceAny) break;
-      }
-
-      if (!canPlaceAny) {
-        sound.playFullThud();
-        const modal = document.getElementById("gameOverModal");
-        if (modal) modal.classList.remove("hidden");
-      }
-    }
-
-    document.getElementById("nextLevelBtn").addEventListener("click", () => {
-      sound.init();
-      document.getElementById("levelWinModal").classList.add("hidden");
-      STATE.level++;
-      setTargetsForLevel(STATE.level);
-      seedStarterStones();
-      refillTray();
-      showComboBanner(`WELCOME TO LEVEL ${STATE.level}!`, "text-amber-300");
-    });
-
-    // TUTORIAL HELPERS (Interactive Guided FTUE)
-    function updateTutorialUI() {
-      const tut = document.getElementById("tutorialOverlay");
-      if (!tut) return;
-      if (!STATE.tutorialActive) {
-        tut.classList.add("hidden");
-        return;
-      }
-      tut.classList.remove("hidden");
-      tut.style.opacity = "1";
-
-      const step1El = document.getElementById("tutStep1");
-      const step2El = document.getElementById("tutStep2");
-
-      if (STATE.tutorialStep === 1) {
-        if (step1El) step1El.classList.remove("hidden");
-        if (step2El) step2El.classList.add("hidden");
-      } else if (STATE.tutorialStep === 2) {
-        if (step1El) step1El.classList.add("hidden");
-        if (step2El) step2El.classList.remove("hidden");
-      }
-    }
-
-    function dismissTutorial() {
-      if (!STATE.tutorialActive) return;
-      STATE.tutorialActive = false;
-      const tut = document.getElementById("tutorialOverlay");
-      if (tut) {
-        tut.style.opacity = "0";
-        setTimeout(() => tut.classList.add("hidden"), 300);
-      }
-    }
-
-    function triggerJuice() {
-      const b = document.getElementById("boardContainer");
-      if (b) {
-        b.classList.remove("screen-shake");
-        void b.offsetWidth;
-        b.classList.add("screen-shake");
-      }
-      if (window.navigator && window.navigator.vibrate) {
-        try { window.navigator.vibrate([24, 16, 36]); } catch(e) {}
-      }
-    }
-
-    function showComboBanner(text, colorClass = "text-amber-300") {
-      const banner = document.getElementById("comboText");
-      if (!banner) return;
-      banner.innerText = text;
-      banner.className = `text-xs font-extrabold uppercase tracking-widest ${colorClass} bg-black/90 border border-amber-400 px-3 py-1 rounded-full shadow-2xl combo-active`;
-      banner.classList.remove("hidden");
-      clearTimeout(banner._timer);
-      banner._timer = setTimeout(() => banner.classList.add("hidden"), 1800);
-    }
-
-    function addScorePopup(x, y, text) {
-      STATE.scorePopups.push({ x, y, text, alpha: 1.0 });
-    }
-
-    function addWaterRipple(x, y) {
-      STATE.ripples.push({ x, y, radius: 4, alpha: 0.8 });
-    }
-
-    function spawnBlossomParticles(x, y, stone) {
-      for (let i = 0; i < 28; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 4.5 + 1.2;
-        STATE.particles.push({
-          x: x,
-          y: y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 1.2,
-          color: stone.isRainbow ? '#facc15' : stone.glow,
-          radius: Math.random() * 3.5 + 1.5,
-          alpha: 1.0
-        });
-      }
-    }
-
-    function spawnFlyingTargetGems(startX, startY, stone, count) {
-      const isT1 = stone.id === STATE.targets.gem1.id;
-      const isT2 = stone.id === STATE.targets.gem2.id;
-      if (!isT1 && !isT2 && !stone.isRainbow) return;
-
-      const targetEl = isT1 ? document.getElementById("targetPill1") : document.getElementById("targetPill2");
-      const targetRect = targetEl ? targetEl.getBoundingClientRect() : { left: canvas.width / 2, top: 20 };
-      const canvasRect = canvas.getBoundingClientRect();
-      const destX = targetRect.left - canvasRect.left + 24;
-      const destY = targetRect.top - canvasRect.top + 12;
-
-      for (let i = 0; i < count; i++) {
-        STATE.flyingGems.push({
-          x: startX,
-          y: startY,
-          startX: startX,
-          startY: startY,
-          destX: destX,
-          destY: destY,
-          color: stone.isRainbow ? '#facc15' : (stone.glow || '#38bdf8'),
-          progress: -i * 0.08,
-          onArrive: () => {
-            sound.playChime((stone.note || 440) * 1.35, 2);
-            if (targetEl) {
-              targetEl.classList.add("scale-115");
-              setTimeout(() => targetEl.classList.remove("scale-115"), 160);
-            }
-          }
-        });
-      }
-    }
-
-    // =========================================================================
-    // 60FPS GAME ANIMATION & CANVAS RENDERING
-    // =========================================================================
-    function gameLoop() {
-      resizeCanvas();
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const colWidth = canvas.width / COLS;
-
-      // 1. Column Tubes & Pedestals
-      for (let c = 0; c < COLS; c++) {
-        const col = STATE.columns[c];
-        const colX = c * colWidth;
-        const colGrad = ctx.createLinearGradient(colX, 0, colX + colWidth, 0);
-        colGrad.addColorStop(0, "rgba(6, 78, 59, 0.08)");
-        colGrad.addColorStop(0.5, "rgba(16, 185, 129, 0.03)");
-        colGrad.addColorStop(1, "rgba(6, 78, 59, 0.08)");
-        ctx.fillStyle = colGrad;
-        ctx.fillRect(colX, 0, colWidth, canvas.height);
-
-        // Lotus Pad Pedestal
-        const padX = colX + colWidth / 2;
-        const padY = canvas.height - 16;
-        ctx.beginPath();
-        ctx.ellipse(padX, padY, colWidth / 2 - 4, 7, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "#091f17";
-        ctx.fill();
-        ctx.strokeStyle = "#10b981";
-        ctx.lineWidth = 1.4;
-        ctx.stroke();
-
-        // Draw Full Column Warning when at max capacity (7/7)
-        if (col.length >= ROWS) {
-          ctx.save();
-          ctx.fillStyle = "rgba(244, 63, 94, 0.14)";
-          ctx.fillRect(colX + 1, 0, colWidth - 2, canvas.height);
-
-          ctx.fillStyle = "#f43f5e";
-          ctx.font = "bold 9px sans-serif";
-          ctx.fillText("🔒 FULL", colX + colWidth / 2 - 16, 20);
-          ctx.restore();
-        }
-      }
-
-      // 1.5. Luminous Magnetic Tethers (Connecting matching neighbors)
-      for (let c = 0; c < COLS - 1; c++) {
-        const colA = STATE.columns[c];
-        const colB = STATE.columns[c + 1];
-        if (colA.length > 0 && colB.length > 0) {
-          const topA = colA[colA.length - 1];
-          const topB = colB[colB.length - 1];
-          if (topA.id === topB.id || topA.isRainbow || topB.isRainbow) {
-            const x1 = c * colWidth + colWidth / 2;
-            const y1 = getSlotY(colA.length - 1);
-            const x2 = (c + 1) * colWidth + colWidth / 2;
-            const y2 = getSlotY(colB.length - 1);
-
-            ctx.save();
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            const midX = (x1 + x2) / 2;
-            const midY = Math.min(y1, y2) - 22;
-            ctx.quadraticCurveTo(midX, midY, x2, y2);
-            ctx.strokeStyle = topA.isRainbow ? '#facc15' : (topA.glow || '#38bdf8');
-            ctx.lineWidth = 2.4;
-            ctx.setLineDash([4, 4]);
-            ctx.lineDashOffset = -Date.now() * 0.015;
-            ctx.shadowColor = topA.glow || '#38bdf8';
-            ctx.shadowBlur = 8;
-            ctx.stroke();
-            ctx.restore();
-          }
-        }
-      }
-
-      // 2. Water Ripples
-      STATE.ripples.forEach(r => {
-        r.radius += 1.3;
-        r.alpha -= 0.025;
-        ctx.beginPath();
-        ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(52, 211, 153, ${Math.max(0, r.alpha)})`;
-        ctx.lineWidth = 1.8;
-        ctx.stroke();
-      });
-      STATE.ripples = STATE.ripples.filter(r => r.alpha > 0);
-
-      // 3. Resting Column Stones
-      for (let c = 0; c < COLS; c++) {
-        const col = STATE.columns[c];
-        const stoneX = c * colWidth + colWidth / 2;
-
-        col.forEach((stone, r) => {
-          const stoneY = getSlotY(r);
-          drawRiverStone(stoneX, stoneY, colWidth - 8, 20, stone, false);
-        });
-
-        // Stack count badge (e.g. 3/4)
-        if (col.length >= 2) {
-          const topColor = col[col.length - 1].id;
-          let count = 0;
-          for (let i = col.length - 1; i >= 0; i--) {
-            if (col[i].id === topColor || col[i].isRainbow) count++;
-            else break;
-          }
-          if (count >= 2) {
-            const topY = getSlotY(col.length - 1);
-            ctx.fillStyle = count === 3 ? "#fbbf24" : "#a7f3d0";
-            ctx.font = "bold 9px sans-serif";
-            ctx.fillText(`${count}/4`, stoneX - 8, topY - 13);
-          }
-        }
-      }
-
-      // 3.5. Ghost Stone Preview on Hovered Column
-      if (STATE.hoveredCol !== null && STATE.hoveredCol >= 0 && STATE.hoveredCol < COLS) {
-        const hCol = STATE.hoveredCol;
-        const targetCol = STATE.columns[hCol];
-        const activePiece = STATE.trayPieces[STATE.selectedPieceIdx];
-
-        if (activePiece && targetCol.length + activePiece.stones.length <= ROWS) {
-          const hX = hCol * colWidth;
-          ctx.fillStyle = "rgba(52, 211, 153, 0.14)";
-          ctx.fillRect(hX + 1, 0, colWidth - 2, canvas.height);
-
-          const ghostStoneX = hX + colWidth / 2;
-          activePiece.stones.forEach((stone, i) => {
-            const destSlot = targetCol.length + i;
-            const ghostY = getSlotY(destSlot);
-            drawRiverStone(ghostStoneX, ghostY, colWidth - 8, 20, stone, true);
-          });
-        }
-      }
-
-      // 4. Moving Stones (Gravity Drops & Magnetic Leaps)
-      for (let i = STATE.animatingStones.length - 1; i >= 0; i--) {
-        const anim = STATE.animatingStones[i];
-
-        if (anim.type === 'drop') {
-          anim.vy += 0.9;
-          anim.y += anim.vy;
-          drawRiverStone(anim.x, anim.y, colWidth - 8, 20, anim.stone);
-
-          if (anim.y >= anim.targetY) {
-            anim.y = anim.targetY;
-            anim.onLand();
-            STATE.animatingStones.splice(i, 1);
-          }
-        } else if (anim.type === 'leap') {
-          anim.progress += 0.075;
-          const t = Math.min(1.0, anim.progress);
-          const arcHeight = 40;
-          anim.x = anim.startX + (anim.destX - anim.startX) * t;
-          anim.y = anim.startY + (anim.destY - anim.startY) * t - Math.sin(t * Math.PI) * arcHeight;
-
-          // Leap spark particle
-          ctx.beginPath();
-          ctx.arc(anim.x, anim.y, 3.5, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
-          ctx.fill();
-
-          drawRiverStone(anim.x, anim.y, colWidth - 8, 20, anim.stone);
-
-          if (t >= 1.0) {
-            anim.onLand();
-            STATE.animatingStones.splice(i, 1);
-          }
-        }
-      }
-
-      // 5. Blossom Particles
-      for (let i = STATE.particles.length - 1; i >= 0; i--) {
-        const p = STATE.particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.12;
-        p.alpha -= 0.022;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = Math.max(0, p.alpha);
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-
-        if (p.alpha <= 0) STATE.particles.splice(i, 1);
-      }
-
-      // 6. Floating Score Popups
-      for (let i = STATE.scorePopups.length - 1; i >= 0; i--) {
-        const sp = STATE.scorePopups[i];
-        sp.y -= 0.8;
-        sp.alpha -= 0.02;
-
+      draw(ctx, time) {
         ctx.save();
-        ctx.font = "bold 11px sans-serif";
-        ctx.fillStyle = `rgba(251, 191, 36, ${sp.alpha})`;
-        ctx.fillText(sp.text, sp.x - 45, sp.y);
-        ctx.restore();
+        // Gentle bobbing on water
+        const bobY = Math.sin(time * 0.003 + this.bobSeed) * 2.5;
+        ctx.translate(this.x, this.y + bobY);
+        ctx.rotate(this.rotation);
+        ctx.scale(this.squishX, this.squishY);
 
-        if (sp.alpha <= 0) STATE.scorePopups.splice(i, 1);
-      }
+        const r = this.radius;
 
-      // 7. Flying Target Gems (Parabolic flight to header)
-      for (let i = STATE.flyingGems.length - 1; i >= 0; i--) {
-        const fg = STATE.flyingGems[i];
-        fg.progress += 0.045;
-        if (fg.progress < 0) continue;
-
-        const t = Math.min(1.0, fg.progress);
-        const arcHeight = 60;
-        fg.x = fg.startX + (fg.destX - fg.startX) * t;
-        fg.y = fg.startY + (fg.destY - fg.startY) * t - Math.sin(t * Math.PI) * arcHeight;
-
+        // 1. Soft Water Shadow underneath
         ctx.beginPath();
-        ctx.arc(fg.x, fg.y, 4.5, 0, Math.PI * 2);
-        ctx.fillStyle = fg.color;
-        ctx.shadowColor = fg.color;
-        ctx.shadowBlur = 10;
+        ctx.ellipse(0, r * 0.85, r * 0.9, r * 0.35, 0, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0, 0, 0, 0.28)";
         ctx.fill();
-        ctx.shadowBlur = 0;
 
-        if (t >= 1.0) {
-          fg.onArrive();
-          STATE.flyingGems.splice(i, 1);
+        // 2. Fluffy Cat Tail
+        ctx.beginPath();
+        const tailWag = Math.sin(time * 0.006 + this.bobSeed) * 0.25;
+        ctx.ellipse(-r * 0.85, r * 0.2, r * 0.45, r * 0.22, tailWag - 0.4, 0, Math.PI * 2);
+        ctx.fillStyle = this.data.baseColor;
+        ctx.fill();
+
+        // 3. Cat Ears (Left & Right)
+        // Left Ear
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.7, -r * 0.4);
+        ctx.lineTo(-r * 0.65, -r * 1.15);
+        ctx.lineTo(-r * 0.2, -r * 0.75);
+        ctx.closePath();
+        ctx.fillStyle = this.data.baseColor;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.6, -r * 0.5);
+        ctx.lineTo(-r * 0.6, -r * 1.0);
+        ctx.lineTo(-r * 0.3, -r * 0.75);
+        ctx.closePath();
+        ctx.fillStyle = "#fbcfe8"; // Pink inner ear
+        ctx.fill();
+
+        // Right Ear
+        ctx.beginPath();
+        ctx.moveTo(r * 0.7, -r * 0.4);
+        ctx.lineTo(r * 0.65, -r * 1.15);
+        ctx.lineTo(r * 0.2, -r * 0.75);
+        ctx.closePath();
+        ctx.fillStyle = this.data.baseColor;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(r * 0.6, -r * 0.5);
+        ctx.lineTo(r * 0.6, -r * 1.0);
+        ctx.lineTo(r * 0.3, -r * 0.75);
+        ctx.closePath();
+        ctx.fillStyle = "#fbcfe8"; // Pink inner ear
+        ctx.fill();
+
+        // 4. Chubby Body (Fluffy Circle with Gradient)
+        const bodyGrad = ctx.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.1, 0, 0, r);
+        if (this.data.isRainbow) {
+          const cycle = (time * 0.002) % (Math.PI * 2);
+          bodyGrad.addColorStop(0, '#fbcfe8');
+          bodyGrad.addColorStop(0.3, '#fde047');
+          bodyGrad.addColorStop(0.6, '#6ee7b7');
+          bodyGrad.addColorStop(0.85, '#93c5fd');
+          bodyGrad.addColorStop(1, '#c084fc');
+        } else {
+          bodyGrad.addColorStop(0, '#ffffff');
+          bodyGrad.addColorStop(0.4, this.data.baseColor);
+          bodyGrad.addColorStop(1, this.data.stripeColor);
         }
-      }
 
-      requestAnimationFrame(gameLoop);
-    }
-
-    // DRAW 3D BEVELED RIVER GEMS (Translucent Gloss with Light Refractions)
-    function drawRiverStone(x, y, w, h, stone, isGhost = false) {
-      ctx.save();
-      ctx.translate(x, y);
-
-      if (isGhost) {
-        ctx.globalAlpha = 0.5;
-      }
-
-      // 1. Soft Ambient Drop Shadow
-      ctx.beginPath();
-      ctx.ellipse(0, 4, w / 2, h / 2, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
-      ctx.fill();
-
-      // 2. 3D Body Gradient
-      if (stone.isRainbow) {
-        const time = Date.now() * 0.002;
-        const grad = ctx.createLinearGradient(-w / 2 * Math.cos(time), -h / 2 * Math.sin(time), w / 2 * Math.cos(time), h / 2 * Math.sin(time));
-        grad.addColorStop(0, '#f43f5e');
-        grad.addColorStop(0.25, '#fbbf24');
-        grad.addColorStop(0.5, '#10b981');
-        grad.addColorStop(0.75, '#38bdf8');
-        grad.addColorStop(1, '#a855f7');
         ctx.beginPath();
-        ctx.ellipse(0, 0, w / 2, h / 2, 0, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fillStyle = bodyGrad;
         ctx.fill();
-        ctx.strokeStyle = "#ffffff";
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
         ctx.lineWidth = 2.0;
         ctx.stroke();
-      } else {
-        const grad = ctx.createRadialGradient(-w * 0.15, -h * 0.25, 2, 0, 0, w / 2);
-        grad.addColorStop(0, stone.light || '#ffffff');
-        grad.addColorStop(0.3, stone.glow);
-        grad.addColorStop(0.75, stone.bg);
-        grad.addColorStop(1, '#021810');
 
+        // 5. Cute Soft Belly
         ctx.beginPath();
-        ctx.ellipse(0, 0, w / 2, h / 2, 0, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
+        ctx.ellipse(0, r * 0.35, r * 0.55, r * 0.4, 0, 0, Math.PI * 2);
+        ctx.fillStyle = this.data.bellyColor;
         ctx.fill();
 
-        ctx.strokeStyle = stone.light;
-        ctx.lineWidth = 1.6;
+        // 6. Cute Anime Face (Eyes, Blushing Cheeks, Nose & Mouth)
+        // Blushing Pink Cheeks
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.48, r * 0.05, r * 0.2, r * 0.12, 0, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.48, r * 0.05, r * 0.2, r * 0.12, 0, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(244, 63, 94, 0.55)";
+        ctx.fill();
+
+        // Eyes (Blinking or Big Anime Sparkle Eyes)
+        ctx.fillStyle = "#1e293b";
+        if (this.isBlinking) {
+          // Happy curved sleep eyes (^ ^)
+          ctx.beginPath();
+          ctx.arc(-r * 0.28, -r * 0.05, r * 0.15, Math.PI, 0, false);
+          ctx.arc(r * 0.28, -r * 0.05, r * 0.15, Math.PI, 0, false);
+          ctx.lineWidth = 2.4;
+          ctx.strokeStyle = "#1e293b";
+          ctx.stroke();
+        } else {
+          // Big Shiny Eyes with highlights
+          ctx.beginPath();
+          ctx.arc(-r * 0.28, -r * 0.05, r * 0.16, 0, Math.PI * 2);
+          ctx.arc(r * 0.28, -r * 0.05, r * 0.16, 0, Math.PI * 2);
+          ctx.fill();
+
+          // White catchlights
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(-r * 0.32, -r * 0.1, r * 0.07, 0, Math.PI * 2);
+          ctx.arc(r * 0.24, -r * 0.1, r * 0.07, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Tiny Cute Pink Nose
+        ctx.beginPath();
+        ctx.moveTo(0, r * 0.06);
+        ctx.lineTo(-r * 0.06, 0);
+        ctx.lineTo(r * 0.06, 0);
+        ctx.closePath();
+        ctx.fillStyle = "#f43f5e";
+        ctx.fill();
+
+        // Cute Cat Mouth (3)
+        ctx.beginPath();
+        ctx.arc(-r * 0.07, r * 0.12, r * 0.07, 0, Math.PI, false);
+        ctx.arc(r * 0.07, r * 0.12, r * 0.07, 0, Math.PI, false);
+        ctx.strokeStyle = "#1e293b";
+        ctx.lineWidth = 1.8;
         ctx.stroke();
-      }
 
-      // 3. Specular Highlight Arc
-      ctx.beginPath();
-      ctx.ellipse(-w * 0.16, -h * 0.22, w * 0.25, h * 0.16, -0.1, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255, 255, 255, 0.68)";
-      ctx.fill();
+        // Whiskers
+        ctx.strokeStyle = "rgba(30, 41, 59, 0.4)";
+        ctx.lineWidth = 1.4;
+        // Left Whiskers
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.45, 0);
+        ctx.lineTo(-r * 0.85, -r * 0.08);
+        ctx.moveTo(-r * 0.45, r * 0.08);
+        ctx.lineTo(-r * 0.85, r * 0.12);
+        // Right Whiskers
+        ctx.moveTo(r * 0.45, 0);
+        ctx.lineTo(r * 0.85, -r * 0.08);
+        ctx.moveTo(r * 0.45, r * 0.08);
+        ctx.lineTo(r * 0.85, r * 0.12);
+        ctx.stroke();
 
-      // 4. Bottom Caustic Reflection
-      ctx.beginPath();
-      ctx.ellipse(0, h * 0.2, w * 0.26, h * 0.1, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
-      ctx.fill();
+        // 7. Shiny Golden Crown (If Merged Level 2 Mega-Cat!)
+        if (this.level >= 2) {
+          ctx.save();
+          ctx.translate(0, -r * 0.85);
+          ctx.beginPath();
+          ctx.moveTo(-14, 4);
+          ctx.lineTo(-14, -10);
+          ctx.lineTo(-7, -4);
+          ctx.lineTo(0, -14);
+          ctx.lineTo(7, -4);
+          ctx.lineTo(14, -10);
+          ctx.lineTo(14, 4);
+          ctx.closePath();
+          ctx.fillStyle = "#facc15";
+          ctx.fill();
+          ctx.strokeStyle = "#ca8a04";
+          ctx.lineWidth = 1.8;
+          ctx.stroke();
 
-      ctx.restore();
-    }
-
-    // =========================================================================
-    // BULLETPROOF HYBRID INPUT SYSTEM (Tap-to-Select & Drag-to-Drop)
-    // =========================================================================
-    const dragAvatar = document.getElementById("dragAvatar");
-    let dragStartX = 0;
-    let dragStartY = 0;
-    let hasMovedThreshold = false;
-
-    function setupInputSystem() {
-      const slots = document.querySelectorAll(".piece-slot");
-
-      slots.forEach((slot, idx) => {
-        // Pointer down on tray piece slot
-        slot.addEventListener("pointerdown", (e) => {
-          if (!STATE.trayPieces[idx] || STATE.isResolving) return;
-          sound.init();
-
-          // Select this piece immediately
-          STATE.selectedPieceIdx = idx;
-          STATE.activeBooster = null;
-          renderTrayUI();
-          updateMatchBeacons();
-
-          // Advance tutorial step 1 -> step 2
-          if (STATE.tutorialActive && STATE.tutorialStep === 1) {
-            STATE.tutorialStep = 2;
-            updateTutorialUI();
-          }
-
-          dragStartX = e.clientX;
-          dragStartY = e.clientY;
-          hasMovedThreshold = false;
-          STATE.isDragging = false;
-          STATE.dragPieceIdx = idx;
-
-          // Capture pointer so touchmove tracks outside the slot
-          try { slot.setPointerCapture(e.pointerId); } catch(err) {}
-        });
-
-        slot.addEventListener("pointermove", (e) => {
-          if (STATE.dragPieceIdx !== idx) return;
-
-          const dist = Math.hypot(e.clientX - dragStartX, e.clientY - dragStartY);
-          if (dist > 12 && !STATE.isDragging) {
-            STATE.isDragging = true;
-            hasMovedThreshold = true;
-            dismissTutorial();
-
-            // Populate drag avatar
-            dragAvatar.innerHTML = "";
-            STATE.trayPieces[idx].stones.forEach(stone => {
-              const pill = document.createElement("div");
-              pill.className = "w-10 h-3.5 sm:w-11 sm:h-4 rounded-full border shadow-2xl";
-              if (stone.isRainbow) {
-                pill.style.background = "linear-gradient(90deg, #f43f5e, #fbbf24, #10b981, #38bdf8, #a855f7)";
-                pill.style.borderColor = "#ffffff";
-              } else {
-                pill.style.background = `linear-gradient(180deg, ${stone.glow} 0%, ${stone.bg} 100%)`;
-                pill.style.borderColor = stone.light;
-              }
-              dragAvatar.appendChild(pill);
-            });
-            dragAvatar.classList.remove("hidden");
-          }
-
-          if (STATE.isDragging) {
-            dragAvatar.style.left = `${e.clientX}px`;
-            dragAvatar.style.top = `${e.clientY - 35}px`;
-
-            // Detect hovered column
-            const rect = canvas.getBoundingClientRect();
-            if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom + 50) {
-              const colW = rect.width / COLS;
-              const c = Math.floor((e.clientX - rect.left) / colW);
-              STATE.hoveredCol = Math.max(0, Math.min(COLS - 1, c));
-            } else {
-              STATE.hoveredCol = null;
-            }
-          }
-        });
-
-        const handlePointerEnd = (e) => {
-          if (STATE.dragPieceIdx !== idx) return;
-
-          if (STATE.isDragging) {
-            STATE.isDragging = false;
-            dragAvatar.classList.add("hidden");
-
-            if (STATE.hoveredCol !== null) {
-              dropPieceIntoColumn(STATE.hoveredCol);
-            }
-            STATE.hoveredCol = null;
-          } else if (!hasMovedThreshold) {
-            // Clean simple tap: selects piece
-            sound.playWaterPlop();
-          }
-
-          STATE.dragPieceIdx = null;
-          try { slot.releasePointerCapture(e.pointerId); } catch(err) {}
-        };
-
-        slot.addEventListener("pointerup", handlePointerEnd);
-        slot.addEventListener("pointercancel", handlePointerEnd);
-      });
-
-      // TAPPING ANYWHERE ON A COLUMN (via column zone divs)
-      document.querySelectorAll(".col-tap-zone").forEach(zone => {
-        zone.addEventListener("click", (e) => {
-          e.stopPropagation();
-          const colIdx = parseInt(zone.getAttribute("data-col"));
-          dropPieceIntoColumn(colIdx);
-        });
-      });
-
-      // FALLBACK: TAPPING DIRECTLY ON BOARD CONTAINER
-      const boardContainer = document.getElementById("boardContainer");
-      boardContainer.addEventListener("click", (e) => {
-        if (STATE.isResolving) return;
-        const rect = boardContainer.getBoundingClientRect();
-        const colW = rect.width / COLS;
-        const colIdx = Math.floor((e.clientX - rect.left) / colW);
-        if (colIdx >= 0 && colIdx < COLS) {
-          dropPieceIntoColumn(colIdx);
+          // Crown jewel gems
+          ctx.fillStyle = "#f43f5e";
+          ctx.beginPath();
+          ctx.arc(0, -4, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
         }
-      });
+
+        ctx.restore();
+      }
     }
 
-    // BOOSTER BUTTONS
-    document.getElementById("hammerBtn").addEventListener("click", () => {
-      sound.init();
-      if (STATE.hammers <= 0) {
-        showComboBanner("NO HAMMERS LEFT! 3x COMBOS EARN MORE", "text-amber-400");
-        return;
+    // =========================================================================
+    // 4. WATER RIPPLE CLASS
+    // =========================================================================
+    class WaterRipple {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.radius = 4;
+        this.maxRadius = 190;
+        this.speed = 5.2;
+        this.strength = 16.0;
+        this.alpha = 1.0;
+        this.hasPushed = new Set();
       }
-      STATE.activeBooster = STATE.activeBooster === 'hammer' ? null : 'hammer';
-      const btn = document.getElementById("hammerBtn");
-      if (STATE.activeBooster === 'hammer') {
-        btn.classList.add("border-amber-400", "scale-105");
-        showComboBanner("HAMMER READY: TAP ANY COLUMN TO SMASH TOP STONE! 🔨", "text-amber-300");
+
+      update(kittens) {
+        this.radius += this.speed;
+        this.alpha = Math.max(0, 1.0 - (this.radius / this.maxRadius));
+
+        // Physics Push: check wave contact with each kitten
+        kittens.forEach(k => {
+          if (this.hasPushed.has(k)) return;
+          const dist = Math.hypot(k.x - this.x, k.y - this.y);
+          // Wavefront detection zone
+          if (Math.abs(dist - this.radius) < 22) {
+            this.hasPushed.add(k);
+            const angle = Math.atan2(k.y - this.y, k.x - this.x);
+            const push = this.strength * Math.max(0.35, 1.0 - (this.radius / this.maxRadius));
+            k.vx += Math.cos(angle) * push;
+            k.vy += Math.sin(angle) * push;
+            // Squish reaction
+            k.squishX = 1.25;
+            k.squishY = 0.8;
+          }
+        });
+
+        return this.alpha > 0;
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(167, 243, 208, ${this.alpha * 0.85})`;
+        ctx.lineWidth = 3.2 * this.alpha;
+        ctx.stroke();
+
+        // Inner secondary ripple reflection
+        if (this.radius > 20) {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius - 14, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(251, 207, 232, ${this.alpha * 0.45})`;
+          ctx.lineWidth = 2.0 * this.alpha;
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+    }
+
+    // =========================================================================
+    // 5. HEART & PARTICLE EFFECTS
+    // =========================================================================
+    class HeartParticle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 3.5;
+        this.vy = -Math.random() * 3.5 - 1.5;
+        this.scale = 0.6 + Math.random() * 0.6;
+        this.alpha = 1.0;
+        this.color = Math.random() > 0.5 ? '#f472b6' : '#fb7185';
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.08; // gravity
+        this.alpha -= 0.024;
+        return this.alpha > 0;
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.scale(this.scale, this.scale);
+        ctx.globalAlpha = Math.max(0, this.alpha);
+        ctx.font = "16px sans-serif";
+        ctx.fillText("💕", -8, 0);
+        ctx.restore();
+      }
+    }
+
+    // Flying Goal Hearts (fly straight into header goal badges)
+    class FlyingGoalHeart {
+      constructor(startX, startY, targetElemId, onArrive) {
+        this.x = startX;
+        this.y = startY;
+        this.startX = startX;
+        this.startY = startY;
+        this.progress = 0;
+        this.onArrive = onArrive;
+
+        const target = document.getElementById(targetElemId);
+        if (target) {
+          const rect = target.getBoundingClientRect();
+          this.destX = rect.left + rect.width / 2;
+          this.destY = rect.top + rect.height / 2;
+        } else {
+          this.destX = startX;
+          this.destY = 30;
+        }
+      }
+
+      update() {
+        this.progress += 0.045;
+        const t = Math.min(1.0, this.progress);
+        const arcY = Math.sin(t * Math.PI) * 50;
+        this.x = this.startX + (this.destX - this.startX) * t;
+        this.y = this.startY + (this.destY - this.startY) * t - arcY;
+
+        if (t >= 1.0) {
+          if (this.onArrive) this.onArrive();
+          return false;
+        }
+        return true;
+      }
+
+      draw(ctx) {
+        ctx.save();
+        ctx.font = "18px sans-serif";
+        ctx.shadowColor = "#f43f5e";
+        ctx.shadowBlur = 12;
+        ctx.fillText("💖", this.x - 9, this.y);
+        ctx.restore();
+      }
+    }
+
+    // =========================================================================
+    // 6. MAIN GAME ENGINE & INITIALIZATION
+    // =========================================================================
+    const canvas = document.getElementById("pondCanvas");
+    const ctx = canvas.getContext("2d");
+    let centerX = 0;
+    let centerY = 0;
+    let pondRadius = 0;
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      centerX = rect.width / 2;
+      centerY = rect.height / 2;
+      pondRadius = Math.min(centerX, centerY) * 0.94;
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+
+    // LEVEL SETUP
+    function initLevel(lvl) {
+      STATE.level = lvl;
+      document.getElementById("levelLabel").innerText = `LEVEL ${lvl}`;
+      STATE.isLevelClear = false;
+
+      if (lvl === 1) {
+        STATE.goals.goal1 = { type: 'ginger', count: 0, target: 1 };
+        STATE.goals.goal2 = { type: 'sakura', count: 0, target: 1 };
+        // Spawn 2 Gingers and 2 Sakuras
+        spawnKittens([
+          { type: 'ginger', x: centerX - 65, y: centerY - 45 },
+          { type: 'ginger', x: centerX - 55, y: centerY + 55 },
+          { type: 'sakura', x: centerX + 65, y: centerY - 45 },
+          { type: 'sakura', x: centerX + 55, y: centerY + 55 }
+        ]);
+      } else if (lvl === 2) {
+        STATE.goals.goal1 = { type: 'ginger', count: 0, target: 2 };
+        STATE.goals.goal2 = { type: 'bluey', count: 0, target: 1 };
+        spawnKittens([
+          { type: 'ginger', x: centerX - 70, y: centerY - 50 },
+          { type: 'ginger', x: centerX - 40, y: centerY + 70 },
+          { type: 'ginger', x: centerX - 80, y: centerY + 20 },
+          { type: 'bluey', x: centerX + 60, y: centerY - 50 },
+          { type: 'bluey', x: centerX + 50, y: centerY + 60 }
+        ]);
       } else {
-        btn.classList.remove("border-amber-400", "scale-105");
+        // Level 3+ with Rainbow Wildcard
+        STATE.goals.goal1 = { type: 'sakura', count: 0, target: 1 };
+        STATE.goals.goal2 = { type: 'honey', count: 0, target: 1 };
+        spawnKittens([
+          { type: 'sakura', x: centerX - 70, y: centerY - 40 },
+          { type: 'honey', x: centerX + 70, y: centerY - 40 },
+          { type: 'rainbow', x: centerX, y: centerY + 60 },
+          { type: 'sakura', x: centerX - 40, y: centerY + 30 }
+        ]);
       }
-    });
 
-    document.getElementById("magnetBtn").addEventListener("click", () => {
-      sound.init();
-      if (STATE.magnets <= 0) {
-        showComboBanner("NO MAGNETS LEFT!", "text-blue-400");
-        return;
+      updateGoalUI();
+    }
+
+    function spawnKittens(list) {
+      STATE.kittens = [];
+      list.forEach(item => {
+        STATE.kittens.push(new Kitten(item.x, item.y, item.type));
+      });
+    }
+
+    function updateGoalUI() {
+      const g1 = STATE.goals.goal1;
+      const g2 = STATE.goals.goal2;
+      const b1 = document.getElementById("goalBadge1");
+      const b2 = document.getElementById("goalBadge2");
+
+      if (b1) {
+        b1.querySelector("span:first-child").innerText = KITTEN_TYPES[g1.type].icon;
+        document.getElementById("goalCount1").innerText = `${g1.count}/${g1.target}`;
+        if (g1.count >= g1.target) {
+          b1.classList.add("bg-emerald-950/80", "border-emerald-400");
+          document.getElementById("goalCount1").innerText = "✓ DONE";
+        } else {
+          b1.classList.remove("bg-emerald-950/80", "border-emerald-400");
+        }
       }
-      STATE.magnets--;
-      document.getElementById("magnetCount").innerText = STATE.magnets;
-      showComboBanner("🧲 MAGNET VORTEX ACTIVATED!", "text-blue-300");
-      sound.playBloomChord();
 
-      // Board-wide pull: merge all adjacent matching colors
-      let merges = 0;
-      for (let c = 0; c < COLS - 1; c++) {
-        const colA = STATE.columns[c];
-        const colB = STATE.columns[c + 1];
-        if (colA.length > 0 && colB.length > 0) {
-          const topA = colA[colA.length - 1];
-          const topB = colB[colB.length - 1];
-          if (topA.id === topB.id) {
-            merges++;
-            executeMagneticLeap(c + 1, c, colB.pop());
-            break;
+      if (b2) {
+        b2.querySelector("span:first-child").innerText = KITTEN_TYPES[g2.type].icon;
+        document.getElementById("goalCount2").innerText = `${g2.count}/${g2.target}`;
+        if (g2.count >= g2.target) {
+          b2.classList.add("bg-emerald-950/80", "border-emerald-400");
+          document.getElementById("goalCount2").innerText = "✓ DONE";
+        } else {
+          b2.classList.remove("bg-emerald-950/80", "border-emerald-400");
+        }
+      }
+    }
+
+    // CHECK KITTEN COLLISION & MERGE
+    function checkKittenCollisions() {
+      const len = STATE.kittens.length;
+      for (let i = 0; i < len; i++) {
+        for (let j = i + 1; j < len; j++) {
+          const k1 = STATE.kittens[i];
+          const k2 = STATE.kittens[j];
+          if (!k1 || !k2 || k1.isMerged || k2.isMerged) continue;
+
+          const dist = Math.hypot(k1.x - k2.x, k1.y - k2.y);
+          const minDist = k1.radius + k2.radius;
+
+          if (dist < minDist) {
+            // Check matching colors (or rainbow wildcard)
+            const isMatch = (k1.typeKey === k2.typeKey) || k1.data.isRainbow || k2.data.isRainbow;
+
+            if (isMatch) {
+              // ============================================
+              // CUDDLE MERGE!
+              // ============================================
+              k1.isMerged = true;
+              k2.isMerged = true;
+
+              sound.playCuteMeow();
+              sound.playCatPurr();
+              sound.playCuddleChime();
+
+              // Spawn Heart Particles
+              const midX = (k1.x + k2.x) / 2;
+              const midY = (k1.y + k2.y) / 2;
+              for (let p = 0; p < 12; p++) {
+                STATE.hearts.push(new HeartParticle(midX, midY));
+              }
+
+              // Upgrade k1 to Crown Mega-Cat (Level 2)
+              k1.level = 2;
+              k1.radius = k1.baseRadius = 36;
+              k1.squishX = 1.35;
+              k1.squishY = 0.75;
+              k1.isMerged = false;
+
+              // Remove k2
+              STATE.kittens.splice(j, 1);
+
+              // Update Score
+              STATE.score += 150;
+
+              // Check if goal met
+              const mergedType = k1.typeKey;
+              let targetBadgeId = null;
+              if (STATE.goals.goal1.type === mergedType && STATE.goals.goal1.count < STATE.goals.goal1.target) {
+                STATE.goals.goal1.count++;
+                targetBadgeId = "goalBadge1";
+              } else if (STATE.goals.goal2.type === mergedType && STATE.goals.goal2.count < STATE.goals.goal2.target) {
+                STATE.goals.goal2.count++;
+                targetBadgeId = "goalBadge2";
+              }
+
+              // Flying goal heart
+              if (targetBadgeId) {
+                const badge = targetBadgeId;
+                STATE.flyingGoalHearts.push(new FlyingGoalHeart(midX, midY, badge, () => {
+                  updateGoalUI();
+                  checkLevelVictory();
+                }));
+              } else {
+                updateGoalUI();
+                checkLevelVictory();
+              }
+
+              return; // recheck on next frame
+            } else {
+              // Elastic soft bounce off each other
+              const angle = Math.atan2(k2.y - k1.y, k2.x - k1.x);
+              const overlap = (minDist - dist) / 2;
+              k1.x -= Math.cos(angle) * overlap;
+              k1.y -= Math.sin(angle) * overlap;
+              k2.x += Math.cos(angle) * overlap;
+              k2.y += Math.sin(angle) * overlap;
+
+              const normalX = Math.cos(angle);
+              const normalY = Math.sin(angle);
+              const relVx = k1.vx - k2.vx;
+              const relVy = k1.vy - k2.vy;
+              const impulse = (relVx * normalX + relVy * normalY) * 0.7;
+
+              k1.vx -= impulse * normalX;
+              k1.vy -= impulse * normalY;
+              k2.vx += impulse * normalX;
+              k2.vy += impulse * normalY;
+
+              k1.squishX = k2.squishX = 1.15;
+              k1.squishY = k2.squishY = 0.85;
+            }
           }
         }
       }
-      if (merges === 0) {
-        showComboBanner("NO MATCHING ADJACENT GEMS FOUND", "text-slate-300");
+    }
+
+    function checkLevelVictory() {
+      const g1 = STATE.goals.goal1;
+      const g2 = STATE.goals.goal2;
+      if (g1.count >= g1.target && g2.count >= g2.target && !STATE.isLevelClear) {
+        STATE.isLevelClear = true;
+        sound.playVictoryFanfare();
+        setTimeout(() => {
+          document.getElementById("victoryScore").innerText = STATE.score;
+          document.getElementById("victoryModal").classList.remove("hidden");
+        }, 900);
       }
-    });
+    }
 
-    // AUDIO MUTE TOGGLE
-    document.getElementById("soundToggle").addEventListener("click", () => {
+    // =========================================================================
+    // 7. INPUT HANDLING (TAP TO RIPPLE / BOOSTER TOYS)
+    // =========================================================================
+    function handlePondTap(clientX, clientY) {
       sound.init();
-      const active = sound.toggleMute();
-      document.getElementById("soundToggle").innerText = active ? "🔊 ASMR" : "🔇 MUTED";
+      const rect = canvas.getBoundingClientRect();
+      const tapX = clientX - rect.left;
+      const tapY = clientY - rect.top;
+
+      // Ensure tap is within pond leaf
+      const distFromCenter = Math.hypot(tapX - centerX, tapY - centerY);
+      if (distFromCenter > pondRadius) return;
+
+      // BOOSTER: YARN HERD (Attract all cats to tap point)
+      if (STATE.activeBooster === 'yarn') {
+        STATE.activeBooster = null;
+        document.getElementById("yarnBoosterBtn").classList.remove("border-pink-300", "scale-105");
+        sound.playCuteMeow();
+        STATE.kittens.forEach(k => {
+          const angle = Math.atan2(tapY - k.y, tapX - k.x);
+          k.vx += Math.cos(angle) * 8.5;
+          k.vy += Math.sin(angle) * 8.5;
+        });
+        for (let i = 0; i < 8; i++) {
+          STATE.hearts.push(new HeartParticle(tapX, tapY));
+        }
+        return;
+      }
+
+      // BOOSTER: TUNA SNACK (Drop snack that draws matching cats)
+      if (STATE.activeBooster === 'tuna') {
+        STATE.activeBooster = null;
+        document.getElementById("tunaBoosterBtn").classList.remove("border-amber-300", "scale-105");
+        sound.playCuteMeow();
+        sound.playCatPurr();
+        STATE.kittens.forEach(k => {
+          const angle = Math.atan2(tapY - k.y, tapX - k.x);
+          k.vx += Math.cos(angle) * 11.0;
+          k.vy += Math.sin(angle) * 11.0;
+        });
+        return;
+      }
+
+      // NORMAL WATER RIPPLE
+      sound.playWaterPlop();
+      STATE.ripples.push(new WaterRipple(tapX, tapY));
+
+      // Dismiss tutorial on first tap
+      if (STATE.tutorialActive) {
+        dismissTutorial();
+      }
+    }
+
+    canvas.addEventListener("pointerdown", (e) => {
+      handlePondTap(e.clientX, e.clientY);
     });
 
-    // MODAL HANDLERS (Clean separation of Rules & Studio Specs)
+    function dismissTutorial() {
+      STATE.tutorialActive = false;
+      const overlay = document.getElementById("tutorialOverlay");
+      if (overlay) overlay.classList.add("hidden");
+    }
+
+    document.getElementById("skipTutorialBtn").addEventListener("click", dismissTutorial);
+
+    // =========================================================================
+    // 8. BOOSTER LISTENERS
+    // =========================================================================
+    document.getElementById("yarnBoosterBtn").addEventListener("click", () => {
+      sound.init();
+      if (STATE.yarnBalls <= 0) return;
+      STATE.yarnBalls--;
+      document.getElementById("yarnCount").innerText = STATE.yarnBalls;
+      STATE.activeBooster = 'yarn';
+      document.getElementById("yarnBoosterBtn").classList.add("border-pink-300", "scale-105");
+    });
+
+    document.getElementById("tunaBoosterBtn").addEventListener("click", () => {
+      sound.init();
+      if (STATE.tunaSnacks <= 0) return;
+      STATE.tunaSnacks--;
+      document.getElementById("tunaCount").innerText = STATE.tunaSnacks;
+      STATE.activeBooster = 'tuna';
+      document.getElementById("tunaBoosterBtn").classList.add("border-amber-300", "scale-105");
+    });
+
+    document.getElementById("restartBtn").addEventListener("click", () => {
+      sound.init();
+      initLevel(STATE.level);
+    });
+
+    // NEXT LEVEL BUTTON
+    document.getElementById("nextLevelBtn").addEventListener("click", () => {
+      sound.init();
+      document.getElementById("victoryModal").classList.add("hidden");
+      initLevel(STATE.level + 1);
+    });
+
+    // =========================================================================
+    // 9. MODALS & SOUND TOGGLE
+    // =========================================================================
     const howToModal = document.getElementById("howToModal");
     const specsModal = document.getElementById("specsModal");
 
-    // RULES ❓ -> Quick Casual How-To-Play Guide
-    document.getElementById("howToPlayBtn").addEventListener("click", () => {
+    document.getElementById("howToBtn").addEventListener("click", () => {
       sound.init();
       howToModal.classList.remove("hidden");
     });
-    document.getElementById("closeHowToBtn").addEventListener("click", () => {
-      howToModal.classList.add("hidden");
-    });
+    document.getElementById("closeHowToBtn").addEventListener("click", () => howToModal.classList.add("hidden"));
 
-    // 👑 STUDIO SPECS -> Executive Pitch & Game Design Playbook for Evaluator
     document.getElementById("specsBtn").addEventListener("click", () => {
       sound.init();
       specsModal.classList.remove("hidden");
@@ -1950,58 +1301,97 @@
     document.getElementById("closeSpecsBtn").addEventListener("click", () => specsModal.classList.add("hidden"));
     document.getElementById("closeSpecsBtn2").addEventListener("click", () => specsModal.classList.add("hidden"));
 
-    // Close on backdrop click
-    howToModal.addEventListener("click", (e) => {
-      if (e.target === howToModal) howToModal.classList.add("hidden");
-    });
-    specsModal.addEventListener("click", (e) => {
-      if (e.target === specsModal) specsModal.classList.add("hidden");
-    });
-
-    // GAME OVER / POND JAMMED RESCUE LISTENERS
-    document.getElementById("rescueHammerBtn").addEventListener("click", () => {
+    document.getElementById("soundToggleBtn").addEventListener("click", () => {
       sound.init();
-      document.getElementById("gameOverModal").classList.add("hidden");
-      STATE.hammers++;
-      document.getElementById("hammerCount").innerText = STATE.hammers;
-      STATE.activeBooster = 'hammer';
-      const btn = document.getElementById("hammerBtn");
-      if (btn) btn.classList.add("border-amber-400", "scale-105");
-      showComboBanner("🔨 FREE RESCUE HAMMER READY: TAP ANY COLUMN TO SMASH TOP GEM!", "text-amber-300");
+      const on = sound.toggleMute();
+      document.getElementById("soundToggleBtn").innerText = on ? "🔊 PURR" : "🔇 MUTED";
     });
 
-    document.getElementById("rescueMagnetBtn").addEventListener("click", () => {
-      sound.init();
-      document.getElementById("gameOverModal").classList.add("hidden");
-      document.getElementById("magnetBtn").click();
-    });
+    // =========================================================================
+    // 10. MAIN RENDER LOOP (Zen Lotus Leaf & Liquid Ripples)
+    // =========================================================================
+    function gameLoop(time) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    document.getElementById("restartLevelBtn").addEventListener("click", () => {
-      sound.init();
-      document.getElementById("gameOverModal").classList.add("hidden");
-      setTargetsForLevel(STATE.level);
-      seedStarterStones();
-      refillTray();
-      showComboBanner("LEVEL RESTARTED! FRESH POND 🪷", "text-emerald-300");
-    });
+      // 1. Draw Giant Emerald Lotus Leaf (The Playable Arena)
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, pondRadius, 0, Math.PI * 2);
 
-    // TUTORIAL SKIP BUTTON LISTENER
-    const skipBtn = document.getElementById("skipTutorialBtn");
-    if (skipBtn) {
-      skipBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        sound.init();
-        dismissTutorial();
-        showComboBanner("TUTORIAL SKIPPED — FREE PLAY MODE! 🪷", "text-emerald-300");
+      // Organic Leaf Gradient
+      const leafGrad = ctx.createRadialGradient(centerX - pondRadius * 0.2, centerY - pondRadius * 0.2, pondRadius * 0.1, centerX, centerY, pondRadius);
+      leafGrad.addColorStop(0, '#10b981');   // bright emerald center
+      leafGrad.addColorStop(0.55, '#059669'); // deep jade
+      leafGrad.addColorStop(0.9, '#047857');  // dark moss
+      leafGrad.addColorStop(1, '#064e3b');    // outer border
+
+      ctx.fillStyle = leafGrad;
+      ctx.fill();
+
+      // Golden Edge Rim
+      ctx.strokeStyle = "#34d399";
+      ctx.lineWidth = 4.5;
+      ctx.stroke();
+
+      // Leaf Veins
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.14)";
+      ctx.lineWidth = 1.6;
+      for (let a = 0; a < 8; a++) {
+        const rad = (a * Math.PI) / 4;
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(centerX + Math.cos(rad) * (pondRadius - 4), centerY + Math.sin(rad) * (pondRadius - 4));
+        ctx.stroke();
+      }
+
+      // Center Lotus Dewdrop Jewel
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 8, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Update & Draw Water Ripples
+      for (let i = STATE.ripples.length - 1; i >= 0; i--) {
+        const r = STATE.ripples[i];
+        const active = r.update(STATE.kittens);
+        r.draw(ctx);
+        if (!active) {
+          STATE.ripples.splice(i, 1);
+        }
+      }
+
+      // 3. Update & Draw Living Kittens
+      STATE.kittens.forEach(k => {
+        k.update(centerX, centerY, pondRadius);
+        k.draw(ctx, time);
       });
+
+      // 4. Check Collisions & Cuddle Merges
+      checkKittenCollisions();
+
+      // 5. Update & Draw Heart Particles
+      for (let i = STATE.hearts.length - 1; i >= 0; i--) {
+        const h = STATE.hearts[i];
+        const active = h.update();
+        h.draw(ctx);
+        if (!active) STATE.hearts.splice(i, 1);
+      }
+
+      // 6. Flying Goal Hearts
+      for (let i = STATE.flyingGoalHearts.length - 1; i >= 0; i--) {
+        const fg = STATE.flyingGoalHearts[i];
+        const active = fg.update();
+        fg.draw(ctx);
+        if (!active) STATE.flyingGoalHearts.splice(i, 1);
+      }
+
+      requestAnimationFrame(gameLoop);
     }
 
-    // START FIRST GAME
-    setTargetsForLevel(1);
-    seedStarterStones();
-    refillTray();
-    setupInputSystem();
-    updateTutorialUI();
+    // START GAME
+    resizeCanvas();
+    initLevel(1);
     requestAnimationFrame(gameLoop);
   </script>
 </body>
