@@ -87,6 +87,40 @@
     .float-score {
       animation: floatUp 1.2s ease-out forwards;
     }
+
+    /* Screen Shake on Lotus Pop */
+    @keyframes screenShakeAnim {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-3px, 2px); }
+      40% { transform: translate(3px, -2px); }
+      60% { transform: translate(-2px, 1px); }
+      80% { transform: translate(2px, -1px); }
+    }
+    .screen-shake {
+      animation: screenShakeAnim 0.28s ease-in-out;
+    }
+
+    /* Hand Tutorial Glide Animation */
+    @keyframes tutorialGlide {
+      0% { transform: translate(0, 0) scale(1); opacity: 0; }
+      15% { transform: translate(0, 0) scale(1.1); opacity: 1; }
+      35% { transform: translate(0, -60px) scale(0.95); opacity: 1; }
+      70% { transform: translate(45px, -140px) scale(1); opacity: 1; }
+      85% { transform: translate(45px, -140px) scale(0.85); opacity: 1; }
+      100% { transform: translate(45px, -140px) scale(1); opacity: 0; }
+    }
+    .tutorial-glide {
+      animation: tutorialGlide 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    /* Glowing Stone Pulse for Anticipation */
+    @keyframes anticipationPulse {
+      0%, 100% { filter: drop-shadow(0 0 4px #fbbf24); }
+      50% { filter: drop-shadow(0 0 16px #fbbf24) brightness(1.25); }
+    }
+    .anticipation-stone {
+      animation: anticipationPulse 0.8s ease-in-out infinite;
+    }
   </style>
 </head>
 <body id="appBody" class="zen-pond flex flex-col justify-between items-center px-2 py-1 md:p-3 h-full max-h-[100dvh] w-full overflow-hidden select-none transition-colors duration-700">
@@ -124,7 +158,7 @@
       </div>
     </div>
 
-    <!-- SCORE & ASMR AUDIO TOGGLE -->
+    <!-- SCORE, ASMR AUDIO & STUDIO SPECS TOGGLE -->
     <div class="flex items-center gap-1.5">
       <div class="text-right">
         <div class="text-[7px] uppercase tracking-wider text-emerald-400/80 font-bold leading-none">Score</div>
@@ -132,6 +166,9 @@
       </div>
       <button id="soundToggle" class="p-1 px-1.5 rounded-lg bg-emerald-900/50 hover:bg-emerald-800/60 border border-emerald-700/50 text-emerald-300 text-[10px] font-bold transition active:scale-95 shadow">
         🔊 ASMR
+      </button>
+      <button id="specsBtn" title="View Studio Pitch & Game Design Specs" class="p-1 px-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-black text-[9px] font-black uppercase tracking-wider transition active:scale-95 shadow-md flex items-center gap-0.5">
+        👑 SPECS
       </button>
     </div>
   </header>
@@ -196,8 +233,21 @@
 
       <!-- MAIN ANIMATED CANVAS -->
       <canvas id="gameCanvas" class="w-full h-full pointer-events-none z-5"></canvas>
+
+      <!-- ONBOARDING HAND TUTORIAL (Animated visual guide for first move) -->
+      <div id="tutorialOverlay" class="absolute inset-0 pointer-events-none z-30 transition-opacity duration-300">
+        <div class="absolute bottom-5 left-1/3 flex flex-col items-center tutorial-glide">
+          <div class="bg-black/90 text-amber-300 text-[9px] font-black px-2 py-0.5 rounded-full border border-amber-400 shadow-xl whitespace-nowrap mb-0.5 animate-pulse">
+            👆 TAP OR DRAG TO COL 2!
+          </div>
+          <span class="text-3xl filter drop-shadow-[0_0_8px_rgba(251,191,36,0.9)]">👆</span>
+        </div>
+      </div>
     </div>
   </main>
+
+  <!-- FLOATING DRAG AVATAR (Follows touch/pointer when dragging) -->
+  <div id="dragAvatar" class="fixed pointer-events-none z-50 hidden -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 scale-110 drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)]"></div>
 
   <!-- TACTICAL BOOSTERS BAR (Hammer & Magnet Vortex) -->
   <div class="w-full max-w-md mx-auto z-20 flex items-center justify-between px-2 py-0.5">
@@ -302,6 +352,64 @@
 
       <button id="closeHowToBtn" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-black font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition active:scale-95">
         GOT IT! PLAY NOW ➔
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- "STUDIO DESIGN SPECS & PITCH" MODAL         -->
+  <!-- ============================================ -->
+  <div id="specsModal" class="absolute inset-0 bg-black/90 z-50 flex items-center justify-center p-3 backdrop-blur-md hidden">
+    <div class="max-w-md w-full max-h-[88vh] bg-[#0c1a13] border-2 border-amber-400/90 rounded-3xl p-4 shadow-2xl flex flex-col justify-between overflow-y-auto space-y-3">
+      <div class="flex items-center justify-between border-b border-emerald-800/60 pb-2">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">👑</span>
+          <div>
+            <h2 class="text-xs sm:text-sm font-black text-amber-300 uppercase tracking-wide">
+              Studio Pitch & Design Specs
+            </h2>
+            <div class="text-[9px] text-emerald-400 font-bold">Cascade Harmony: Zen Flow • Commercial Overview</div>
+          </div>
+        </div>
+        <button id="closeSpecsBtn" class="text-slate-400 hover:text-white text-xl font-black px-2 leading-none">&times;</button>
+      </div>
+
+      <div class="space-y-2 text-[11px] text-slate-200">
+        <!-- 1. The Core Innovation -->
+        <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
+          <strong class="text-amber-300 block text-xs mb-0.5">1. The Market Innovation (100% Unique)</strong>
+          <span>Existing vertical drop games (Drop 7, 2048 Drop) trap pieces in isolated silos. <strong>Cascade Harmony removes the walls</strong>: stones physically leap sideways through the air between columns, pulling the floor from under upper stones to spark automatic domino cascades!</span>
+        </div>
+
+        <!-- 2. The 3-in-1 Genetic Matrix -->
+        <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
+          <strong class="text-emerald-300 block text-xs mb-0.5">2. The 3-in-1 Genetic Hybrid Matrix</strong>
+          <ul class="list-disc pl-4 space-y-1 text-slate-300 text-[10px]">
+            <li><strong>Block Blast:</strong> 3-piece hand tray, cascading domino combos, and full horizontal row clears.</li>
+            <li><strong>Screw Jam:</strong> Vertical gravity column drop physics, tactile weight, and tactical blockers/boosters.</li>
+            <li><strong>Hexa Sort:</strong> Airborne magnetic stack jumping with tactile ASMR feedback.</li>
+          </ul>
+        </div>
+
+        <!-- 3. Audience & Session Psychology -->
+        <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
+          <strong class="text-teal-300 block text-xs mb-0.5">3. Target Audience: Adults 30+</strong>
+          <span>High-stress working adults and commuters seeking <strong>calming yet high-dopamine mental relaxation</strong>. No stress timers, single-thumb drag-or-tap play, water ripples, and procedural Tibetan singing bowl chords (pentatonic C4-C5 scale).</span>
+        </div>
+
+        <!-- 4. Monetization & Retention Hooks -->
+        <div class="bg-black/55 p-2.5 rounded-xl border border-emerald-800/40">
+          <strong class="text-amber-400 block text-xs mb-0.5">4. Retention & Commercial Monetization</strong>
+          <ul class="list-disc pl-4 space-y-0.5 text-slate-300 text-[10px]">
+            <li><strong>Skill Boosters:</strong> Zen Hammer (single block smash) & Magnet Vortex (board pull) earned via 3x combos or rewarded ads.</li>
+            <li><strong>Live-Ops:</strong> Koi Pond Garden customizer & Daily Zen Domino Challenges.</li>
+            <li><strong>High-Conversion Ad Placements:</strong> Rewarded extra moves & cosmetic stone themes.</li>
+          </ul>
+        </div>
+      </div>
+
+      <button id="closeSpecsBtn2" class="w-full py-2.5 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-black font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition active:scale-95">
+        BACK TO PLAYABLE GAME ➔
       </button>
     </div>
   </div>
@@ -452,11 +560,37 @@
       columns: Array.from({ length: COLS }, () => []),
       trayPieces: [null, null, null],
       selectedPieceIdx: 0,
+      hoveredCol: null,
+      isDragging: false,
+      dragPieceIdx: null,
+      tutorialActive: true,
       animatingStones: [],
       ripples: [],
       particles: [],
       scorePopups: []
     };
+
+    function dismissTutorial() {
+      if (!STATE.tutorialActive) return;
+      STATE.tutorialActive = false;
+      const tut = document.getElementById("tutorialOverlay");
+      if (tut) {
+        tut.style.opacity = "0";
+        setTimeout(() => tut.classList.add("hidden"), 300);
+      }
+    }
+
+    function triggerJuice() {
+      const b = document.getElementById("boardContainer");
+      if (b) {
+        b.classList.remove("screen-shake");
+        void b.offsetWidth; // force DOM reflow
+        b.classList.add("screen-shake");
+      }
+      if (window.navigator && window.navigator.vibrate) {
+        try { window.navigator.vibrate([28, 16, 40]); } catch(e) {}
+      }
+    }
 
     // GENERATE TRAY PIECE (WITH CHANCE FOR RAINBOW WILD PIECE!)
     function generateTrayPiece() {
@@ -481,16 +615,38 @@
     // SEED INITIAL STARTER STONES FOR INSTANT VISUAL BEAUTY & IMMEDIATE MATCH HOOK
     function seedStarterStones() {
       STATE.columns = Array.from({ length: COLS }, () => []);
-      // Col 0: Sapphire (Blue)
-      STATE.columns[0].push(PALETTE[0]);
-      // Col 1: Ruby (Red)
-      STATE.columns[1].push(PALETTE[1]);
-      // Col 2: Sapphire (Blue) - ready to bridge with Col 0!
-      STATE.columns[2].push(PALETTE[0]);
-      // Col 4: Emerald (Green)
-      STATE.columns[4].push(PALETTE[2]);
-      // Col 5: Emerald (Green) - ready to bridge!
-      STATE.columns[5].push(PALETTE[2]);
+      
+      if (STATE.level === 1) {
+        // Level 1: Instant Onboarding setup (Column 1 is primed for a 3-way leap!)
+        STATE.columns[0].push(PALETTE[0]); // Sapphire
+        STATE.columns[1].push(PALETTE[1]); // Ruby
+        STATE.columns[2].push(PALETTE[0]); // Sapphire
+        STATE.columns[4].push(PALETTE[2]); // Emerald
+        STATE.columns[5].push(PALETTE[2]); // Emerald
+      } else if (STATE.level === 2) {
+        // Level 2: Rainbow Wildcard Gem in pond!
+        STATE.columns[0].push(PALETTE[3]); // Amethyst
+        STATE.columns[1].push(RAINBOW_STONE); // Rainbow Wildcard
+        STATE.columns[2].push(PALETTE[4]); // Rose Quartz
+        STATE.columns[4].push(PALETTE[1]); // Amber
+        STATE.columns[5].push(PALETTE[1]); // Amber
+      } else {
+        // Level 3+: Golden Lotus Seal (Screw Jam DNA Obstacle!)
+        const GOLDEN_SEAL = {
+          id: 'golden_seal',
+          name: 'Golden Lotus Seal',
+          bg: '#92400e',
+          glow: '#f59e0b',
+          light: '#fef3c7',
+          isObstacle: true,
+          note: 349.23
+        };
+        STATE.columns[2].push(GOLDEN_SEAL);
+        STATE.columns[0].push(PALETTE[0]);
+        STATE.columns[1].push(PALETTE[0]);
+        STATE.columns[3].push(PALETTE[2]);
+        STATE.columns[4].push(PALETTE[2]);
+      }
     }
 
     function refillTray() {
@@ -614,6 +770,7 @@
     // DROP PIECE INTO COLUMN
     function dropPieceIntoColumn(colIdx) {
       sound.init();
+      dismissTutorial();
 
       // If hammer active, smash top stone!
       if (STATE.activeBooster === 'hammer') {
@@ -830,6 +987,7 @@
       }
 
       if (blastTriggered) {
+        triggerJuice();
         document.getElementById("scoreVal").innerText = STATE.score.toLocaleString();
         setTimeout(() => checkMagneticLeapsAndMatches(), 300);
       } else {
@@ -987,7 +1145,18 @@
 
         col.forEach((stone, r) => {
           const stoneY = getSlotY(r);
-          drawRiverStone(stoneX, stoneY, colWidth - 10, 22, stone);
+          // Check if top stone is anticipating a leap with neighbor
+          let isAnticipating = false;
+          if (r === col.length - 1 && STATE.hoveredCol !== null) {
+            const activePiece = STATE.trayPieces[STATE.selectedPieceIdx];
+            if (activePiece && activePiece.stones.length > 0) {
+              const test = activePiece.stones[0];
+              if ((test.id === stone.id || test.isRainbow || stone.isRainbow) && (STATE.hoveredCol === c - 1 || STATE.hoveredCol === c + 1)) {
+                isAnticipating = true;
+              }
+            }
+          }
+          drawRiverStone(stoneX, stoneY, colWidth - 10, 22, stone, false, isAnticipating);
         });
 
         // Draw top stack count badge
@@ -1004,6 +1173,27 @@
             ctx.font = "bold 10px sans-serif";
             ctx.fillText(`${count}/4`, stoneX - 9, topY - 14);
           }
+        }
+      }
+
+      // 3.5. DRAW GHOST PREVIEW ON HOVERED COLUMN (Drag & Drop or Hover)
+      if (STATE.hoveredCol !== null && STATE.hoveredCol >= 0 && STATE.hoveredCol < COLS) {
+        const hCol = STATE.hoveredCol;
+        const targetCol = STATE.columns[hCol];
+        const activePiece = STATE.trayPieces[STATE.selectedPieceIdx];
+
+        if (activePiece && targetCol.length + activePiece.stones.length <= ROWS) {
+          const hX = hCol * colWidth;
+          // Column vertical light beam
+          ctx.fillStyle = "rgba(52, 211, 153, 0.16)";
+          ctx.fillRect(hX + 1, 0, colWidth - 2, canvas.height);
+
+          const ghostStoneX = hX + colWidth / 2;
+          activePiece.stones.forEach((stone, i) => {
+            const destSlot = targetCol.length + i;
+            const ghostY = getSlotY(destSlot);
+            drawRiverStone(ghostStoneX, ghostY, colWidth - 10, 22, stone, true, false);
+          });
         }
       }
 
@@ -1079,36 +1269,72 @@
       requestAnimationFrame(gameLoop);
     }
 
-    // DRAW 3D BEVELED RIVER STONES / GEMS
-    function drawRiverStone(x, y, w, h, stone) {
+    // DRAW 3D BEVELED RIVER STONES / GEMS (With Hyper-Realistic 3D Gloss & Light Refraction)
+    function drawRiverStone(x, y, w, h, stone, isGhost = false, isAnticipating = false) {
       ctx.save();
       ctx.translate(x, y);
 
-      // Shadow
+      if (isGhost) {
+        ctx.globalAlpha = 0.55;
+      }
+
+      // 1. Soft Ambient Drop Shadow
       ctx.beginPath();
-      ctx.ellipse(0, 4, w / 2, h / 2, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+      ctx.ellipse(0, 5, w / 2, h / 2, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
       ctx.fill();
 
-      // Body Gradient
+      // 2. Anticipation Golden Glow Aura
+      if (isAnticipating) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(0, 0, w / 2 + 5, h / 2 + 5, 0, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(251, 191, 36, 0.45)";
+        ctx.shadowColor = "#fbbf24";
+        ctx.shadowBlur = 14;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // 3. Body Color Gradient with 3D Depth
       if (stone.isRainbow) {
-        const grad = ctx.createLinearGradient(-w / 2, 0, w / 2, 0);
+        const time = Date.now() * 0.002;
+        const grad = ctx.createLinearGradient(-w / 2 * Math.cos(time), -h / 2 * Math.sin(time), w / 2 * Math.cos(time), h / 2 * Math.sin(time));
         grad.addColorStop(0, '#f43f5e');
-        grad.addColorStop(0.3, '#fbbf24');
-        grad.addColorStop(0.6, '#10b981');
-        grad.addColorStop(0.8, '#38bdf8');
+        grad.addColorStop(0.25, '#fbbf24');
+        grad.addColorStop(0.5, '#10b981');
+        grad.addColorStop(0.75, '#38bdf8');
         grad.addColorStop(1, '#a855f7');
         ctx.beginPath();
         ctx.ellipse(0, 0, w / 2, h / 2, 0, 0, Math.PI * 2);
         ctx.fillStyle = grad;
         ctx.fill();
         ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2.4;
+        ctx.stroke();
+      } else if (stone.isObstacle) {
+        // Golden Lotus Seal Obstacle (Screw Jam DNA)
+        const grad = ctx.createRadialGradient(-w * 0.1, -h * 0.2, 2, 0, 0, w / 2);
+        grad.addColorStop(0, '#fef3c7');
+        grad.addColorStop(0.3, '#f59e0b');
+        grad.addColorStop(0.7, '#b45309');
+        grad.addColorStop(1, '#451a03');
+        ctx.beginPath();
+        ctx.ellipse(0, 0, w / 2, h / 2, 0, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = '#fef08a';
         ctx.lineWidth = 2.2;
         ctx.stroke();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 11px sans-serif";
+        ctx.fillText("🔒", -6, 4);
       } else {
-        const grad = ctx.createLinearGradient(0, -h / 2, 0, h / 2);
-        grad.addColorStop(0, stone.glow);
-        grad.addColorStop(0.5, stone.bg);
+        const grad = ctx.createRadialGradient(-w * 0.15, -h * 0.25, 2, 0, 0, w / 2);
+        grad.addColorStop(0, stone.light || '#ffffff');
+        grad.addColorStop(0.3, stone.glow);
+        grad.addColorStop(0.75, stone.bg);
         grad.addColorStop(1, '#021810');
 
         ctx.beginPath();
@@ -1121,18 +1347,98 @@
         ctx.stroke();
       }
 
-      // Specular highlight
+      // 4. Top Curved Specular Arc (Glossy Supercell-style Highlight)
       ctx.beginPath();
-      ctx.ellipse(-w * 0.18, -h * 0.22, w * 0.22, h * 0.18, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+      ctx.ellipse(-w * 0.16, -h * 0.22, w * 0.26, h * 0.18, -0.1, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.72)";
+      ctx.fill();
+
+      // 5. Bottom Caustic Glow Reflection
+      ctx.beginPath();
+      ctx.ellipse(0, h * 0.22, w * 0.28, h * 0.12, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.18)";
       ctx.fill();
 
       ctx.restore();
     }
 
+    // DRAG AND DROP TOUCH & MOUSE GESTURE SYSTEM
+    const dragAvatar = document.getElementById("dragAvatar");
+
+    function setupDragAndDrop() {
+      const slots = document.querySelectorAll(".piece-slot");
+      slots.forEach((slot, idx) => {
+        // Pointer down handles both touch and mouse drag smoothly
+        slot.addEventListener("pointerdown", (e) => {
+          if (!STATE.trayPieces[idx]) return;
+          e.preventDefault();
+          sound.init();
+          dismissTutorial();
+          STATE.selectedPieceIdx = idx;
+          STATE.isDragging = true;
+          STATE.dragPieceIdx = idx;
+          STATE.activeBooster = null;
+          renderTrayUI();
+          updateMatchBeacons();
+
+          // Populate drag avatar
+          dragAvatar.innerHTML = "";
+          STATE.trayPieces[idx].stones.forEach(stone => {
+            const pill = document.createElement("div");
+            pill.className = "w-10 h-3.5 sm:w-11 sm:h-4 rounded-full border shadow-2xl";
+            if (stone.isRainbow) {
+              pill.style.background = "linear-gradient(90deg, #f43f5e, #fbbf24, #10b981, #38bdf8, #a855f7)";
+              pill.style.borderColor = "#ffffff";
+            } else {
+              pill.style.background = `linear-gradient(180deg, ${stone.glow} 0%, ${stone.bg} 100%)`;
+              pill.style.borderColor = stone.light;
+            }
+            dragAvatar.appendChild(pill);
+          });
+
+          dragAvatar.style.left = `${e.clientX}px`;
+          dragAvatar.style.top = `${e.clientY - 35}px`;
+          dragAvatar.classList.remove("hidden");
+        });
+      });
+
+      window.addEventListener("pointermove", (e) => {
+        if (!STATE.isDragging) return;
+        dragAvatar.style.left = `${e.clientX}px`;
+        dragAvatar.style.top = `${e.clientY - 35}px`;
+
+        const rect = canvas.getBoundingClientRect();
+        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom + 40) {
+          const colW = rect.width / COLS;
+          const c = Math.floor((e.clientX - rect.left) / colW);
+          STATE.hoveredCol = Math.max(0, Math.min(COLS - 1, c));
+        } else {
+          STATE.hoveredCol = null;
+        }
+      });
+
+      window.addEventListener("pointerup", (e) => {
+        if (!STATE.isDragging) return;
+        STATE.isDragging = false;
+        dragAvatar.classList.add("hidden");
+
+        if (STATE.hoveredCol !== null) {
+          dropPieceIntoColumn(STATE.hoveredCol);
+        }
+        STATE.hoveredCol = null;
+      });
+
+      window.addEventListener("pointercancel", () => {
+        STATE.isDragging = false;
+        dragAvatar.classList.add("hidden");
+        STATE.hoveredCol = null;
+      });
+    }
+
     // COLUMN TAP CLICK LISTENERS
     document.querySelectorAll(".col-tap-btn").forEach(btn => {
       btn.addEventListener("click", () => {
+        dismissTutorial();
         const colIdx = parseInt(btn.getAttribute("data-col"));
         dropPieceIntoColumn(colIdx);
       });
@@ -1145,14 +1451,23 @@
       document.getElementById("soundToggle").innerText = active ? "🔊 ASMR" : "🔇 MUTED";
     });
 
-    // MODAL LISTENERS
+    // MODAL LISTENERS (HOW TO PLAY & STUDIO SPECS)
     const modal = document.getElementById("howToModal");
     document.getElementById("howToPlayBtn").addEventListener("click", () => modal.classList.remove("hidden"));
     document.getElementById("closeHowToBtn").addEventListener("click", () => modal.classList.add("hidden"));
 
+    const specsModal = document.getElementById("specsModal");
+    document.getElementById("specsBtn").addEventListener("click", () => {
+      sound.init();
+      specsModal.classList.remove("hidden");
+    });
+    document.getElementById("closeSpecsBtn").addEventListener("click", () => specsModal.classList.add("hidden"));
+    document.getElementById("closeSpecsBtn2").addEventListener("click", () => specsModal.classList.add("hidden"));
+
     // START FIRST GAME
     seedStarterStones();
     refillTray();
+    setupDragAndDrop();
     requestAnimationFrame(gameLoop);
   </script>
 </body>
