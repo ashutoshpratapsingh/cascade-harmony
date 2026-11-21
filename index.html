@@ -64,6 +64,31 @@
       animation: jarShakeAnim 0.28s cubic-bezier(0.36, 0.07, 0.19, 0.97);
     }
 
+    /* Vigorous Real Jar Shake */
+    @keyframes realJarShakeAnim {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      12% { transform: translate(-16px, 10px) rotate(-3deg); }
+      25% { transform: translate(18px, -12px) rotate(3.5deg); }
+      40% { transform: translate(-15px, -8px) rotate(-2.5deg); }
+      55% { transform: translate(15px, 9px) rotate(3deg); }
+      70% { transform: translate(-10px, 5px) rotate(-1.5deg); }
+      85% { transform: translate(8px, -4px) rotate(1deg); }
+    }
+    .jar-real-shake {
+      animation: realJarShakeAnim 0.62s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    /* Star Pop in Level Modal */
+    @keyframes starPopAnim {
+      0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+      70% { transform: scale(1.35) rotate(10deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .star-pop {
+      display: inline-block;
+      animation: starPopAnim 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
     /* Floating Score Popups */
     @keyframes floatUpFade {
       0% { opacity: 0; transform: translateY(10px) scale(0.8); }
@@ -162,6 +187,17 @@
         <span title="Tier 10: Chonk King">👑</span>
       </div>
     </div>
+
+    <!-- MODE TOGGLE: LEVEL QUEST vs ENDLESS SUIKA -->
+    <div class="mt-1 flex items-center justify-between gap-1 bg-amber-200/50 p-0.5 rounded-2xl border border-amber-300/80">
+      <button id="modeQuestBtn" class="touch-btn flex-1 py-1 rounded-xl text-[11px] font-black transition bg-amber-900 text-amber-50 shadow-sm flex items-center justify-center gap-1.5">
+        <span>⭐ LEVEL QUESTS</span>
+        <span id="headerLevelBadge" class="bg-amber-400 text-amber-950 text-[9px] px-1.5 py-0.2 rounded-full font-black">LVL 1</span>
+      </button>
+      <button id="modeEndlessBtn" class="touch-btn flex-1 py-1 rounded-xl text-[11px] font-black transition text-amber-900 hover:bg-amber-300/60 flex items-center justify-center gap-1">
+        <span>🏆 ENDLESS SUIKA</span>
+      </button>
+    </div>
   </header>
 
   <!-- ========================================================================= -->
@@ -171,6 +207,24 @@
     <!-- COMBO STREAK BANNER -->
     <div id="comboBanner" class="hidden absolute top-2 z-40 bg-gradient-to-r from-amber-400 via-rose-400 to-yellow-400 text-amber-950 px-4 py-1.5 rounded-full font-fun text-sm sm:text-base font-black shadow-lg border-2 border-white animate-bounce">
       ✨ 2X SUIKA COMBO! +100
+    </div>
+
+    <!-- TARGET GOAL POV MISSION BAR (Always visible!) -->
+    <div id="levelMissionBar" class="w-[330px] sm:w-[370px] mb-1.5 bg-gradient-to-r from-amber-100 via-yellow-100 to-amber-100 border-2 border-amber-300 rounded-2xl px-3 py-1 flex items-center justify-between text-xs font-bold text-amber-950 shadow-sm z-30 transition-all duration-300">
+      <div class="flex items-center gap-2">
+        <span id="levelBadge" class="bg-amber-800 text-amber-100 text-[9.5px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">LVL 1</span>
+        <div>
+          <div class="text-[7.5px] font-bold text-amber-800/70 uppercase tracking-widest leading-none">TARGET OBJECTIVE</div>
+          <div id="levelGoalText" class="text-xs font-black text-amber-950 leading-tight">Unlock Chick 🐥</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 text-right">
+        <div>
+          <div class="text-[7.5px] font-bold text-amber-800/70 uppercase tracking-widest leading-none">DROPS LEFT</div>
+          <div id="dropsVal" class="text-sm font-black text-rose-600 font-fun leading-tight tabular-nums">15</div>
+        </div>
+        <div id="levelStars" class="text-xs text-amber-500 font-black tracking-widest">★☆☆</div>
+      </div>
     </div>
 
     <!-- SUIKA GLASS JAR CONTAINER -->
@@ -186,8 +240,6 @@
 
       <!-- MAIN PHYSICS CANVAS -->
       <canvas id="gameCanvas" class="w-full h-full block cursor-pointer"></canvas>
-    </div>
-  </main>
     </div>
   </main>
 
@@ -254,6 +306,77 @@
       <!-- RESTART BUTTON -->
       <button id="playAgainBtn" class="touch-btn w-full py-3.5 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300 border-2 border-amber-500 rounded-2xl text-amber-950 font-black text-base shadow-lg transition active:scale-95">
         PLAY AGAIN ➔
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- LEVEL CLEAR MODAL (QUEST PROGRESSION & REWARDS)                           -->
+  <!-- ========================================================================= -->
+  <div id="levelClearModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm hidden select-none">
+    <div class="max-w-xs w-full bg-[#fffcf5] border-3 border-emerald-400 rounded-3xl p-6 shadow-2xl text-center space-y-4 transform transition-all duration-300 scale-95">
+      <div id="clearModalAvatar" class="w-20 h-20 mx-auto rounded-3xl bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center text-5xl shadow-md">
+        🎉
+      </div>
+
+      <div>
+        <div id="clearLevelBadge" class="inline-block bg-emerald-800 text-emerald-100 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider mb-1">
+          STAGE 1 COMPLETE!
+        </div>
+        <h2 class="font-fun text-3xl font-black text-emerald-950 tracking-wide leading-none">
+          GOAL ACHIEVED!
+        </h2>
+        <div id="clearStarsDisplay" class="text-3xl text-amber-400 font-black tracking-widest mt-2 flex justify-center gap-1">
+          <span class="star-pop">★</span>
+          <span class="star-pop">★</span>
+          <span class="star-pop">★</span>
+        </div>
+      </div>
+
+      <!-- REWARDS & STATS -->
+      <div class="bg-emerald-100/60 p-3.5 rounded-2xl border border-emerald-200 space-y-1.5 text-left text-xs font-bold text-emerald-950">
+        <div class="flex justify-between items-center">
+          <span class="text-emerald-800/80">Drops Left:</span>
+          <span id="clearDropsLeftVal" class="text-sm font-black text-emerald-900 font-fun">8</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-emerald-800/80">Stage Reward:</span>
+          <span id="clearRewardVal" class="font-black text-rose-600 bg-white/70 px-2 py-0.5 rounded-lg border border-emerald-300/60">+1 Hammer 🔨</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-emerald-800/80">Total Score:</span>
+          <span id="clearScoreVal" class="text-sm font-black text-emerald-950 font-fun">1,240</span>
+        </div>
+      </div>
+
+      <!-- NEXT LEVEL BUTTON -->
+      <button id="nextLevelBtn" class="touch-btn w-full py-3.5 bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-300 border-2 border-emerald-500 rounded-2xl text-emerald-950 font-black text-base shadow-lg transition active:scale-95">
+        NEXT LEVEL ➔
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- LEVEL FAILED MODAL (OUT OF DROPS / OVERFLOW)                              -->
+  <!-- ========================================================================= -->
+  <div id="levelFailedModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm hidden select-none">
+    <div class="max-w-xs w-full bg-[#fffcf5] border-3 border-rose-300 rounded-3xl p-6 shadow-2xl text-center space-y-4 transform transition-all duration-300 scale-95">
+      <div class="w-20 h-20 mx-auto rounded-3xl bg-rose-100 border-2 border-rose-300 flex items-center justify-center text-5xl shadow-md">
+        😿
+      </div>
+
+      <div>
+        <h2 class="font-fun text-3xl font-black text-rose-950 tracking-wide leading-none">
+          OUT OF DROPS!
+        </h2>
+        <p id="failedReasonText" class="text-xs text-rose-800 font-bold mt-1">
+          You ran out of drops before unlocking the target animal!
+        </p>
+      </div>
+
+      <!-- RETRY BUTTON -->
+      <button id="retryLevelBtn" class="touch-btn w-full py-3.5 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300 border-2 border-amber-500 rounded-2xl text-amber-950 font-black text-base shadow-lg transition active:scale-95">
+        RETRY LEVEL 🔄
       </button>
     </div>
   </div>
@@ -543,16 +666,17 @@
         osc.stop(now + 0.34);
       }
 
+      // Baby Panda: High-pitched delicate cub squeak & happy chirping whimper
       playPandaVocal() {
         if (!this.enabled || !this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(560, now);
-        osc.frequency.exponentialRampToValueAtTime(450, now + 0.08);
-        osc.frequency.exponentialRampToValueAtTime(580, now + 0.15);
-        gain.gain.setValueAtTime(0.26, now);
+        osc.frequency.setValueAtTime(880, now);
+        osc.frequency.exponentialRampToValueAtTime(1240, now + 0.07);
+        osc.frequency.exponentialRampToValueAtTime(760, now + 0.16);
+        gain.gain.setValueAtTime(0.3, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
@@ -560,34 +684,35 @@
         osc.stop(now + 0.2);
       }
 
+      // Chubby Seal: Deep throaty marine squawk / honk ("ORK! ORK!")
       playSealVocal() {
         if (!this.enabled || !this.ctx) return;
         const now = this.ctx.currentTime;
-        [0, 0.09].forEach((offset, idx) => {
+        [0, 0.11].forEach((offset, idx) => {
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           const filter = this.ctx.createBiquadFilter();
           const t = now + offset;
 
           filter.type = "bandpass";
-          filter.frequency.setValueAtTime(450, t);
-          filter.Q.setValueAtTime(3.0, t);
+          filter.frequency.setValueAtTime(520, t);
+          filter.Q.setValueAtTime(3.8, t);
 
-          osc.type = "square";
-          const f = idx === 0 ? 280 : 320;
+          osc.type = "sawtooth";
+          const f = idx === 0 ? 180 : 210;
           osc.frequency.setValueAtTime(f, t);
-          osc.frequency.exponentialRampToValueAtTime(f * 1.35, t + 0.04);
-          osc.frequency.exponentialRampToValueAtTime(f * 0.9, t + 0.07);
+          osc.frequency.exponentialRampToValueAtTime(f * 1.5, t + 0.045);
+          osc.frequency.exponentialRampToValueAtTime(f * 0.85, t + 0.09);
 
-          gain.gain.setValueAtTime(0.25, t);
-          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.075);
+          gain.gain.setValueAtTime(0.38, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.095);
 
           osc.connect(filter);
           filter.connect(gain);
           gain.connect(this.ctx.destination);
 
           osc.start(t);
-          osc.stop(t + 0.085);
+          osc.stop(t + 0.1);
         });
       }
 
@@ -811,6 +936,152 @@
     let canvasW, canvasH;
     const DANGER_LINE_Y = 85;
 
+    // =========================================================================
+    // LEVEL SYSTEM: 10 PROGRESSIVE STAGES WITH TARGETS, DROPS & POWER-UP REWARDS
+    // =========================================================================
+    const LEVELS = [
+      {
+        level: 1,
+        title: "Baby Chick's First Peep",
+        targetTier: 1, // Chick 🐥
+        targetCount: 1,
+        targetName: "Chubby Chick 🐥",
+        desc: "Merge 2 bunnies into a Chick!",
+        maxDrops: 15,
+        rewardType: "hammer",
+        rewardAmount: 1,
+        rewardName: "+1 Squeaky Hammer 🔨",
+        threeStarDrops: 9,
+        twoStarDrops: 4
+      },
+      {
+        level: 2,
+        title: "Hamster Haven",
+        targetTier: 2, // Hamster 🐹
+        targetCount: 1,
+        targetName: "Cozy Hamster 🐹",
+        desc: "Merge chicks into a Cozy Hamster!",
+        maxDrops: 18,
+        rewardType: "rainbow",
+        rewardAmount: 1,
+        rewardName: "+1 Rainbow Jelly 🌈",
+        threeStarDrops: 11,
+        twoStarDrops: 5
+      },
+      {
+        level: 3,
+        title: "The Shiba Pup",
+        targetTier: 3, // Shiba 🐶
+        targetCount: 1,
+        targetName: "Shiba Inu 🐶",
+        desc: "Reach the joyful Shiba Pup!",
+        maxDrops: 22,
+        rewardType: "hammer",
+        rewardAmount: 1,
+        rewardName: "+1 Squeaky Hammer 🔨",
+        threeStarDrops: 12,
+        twoStarDrops: 6
+      },
+      {
+        level: 4,
+        title: "Calico Cat Lounge",
+        targetTier: 4, // Cat 🐱
+        targetCount: 1,
+        targetName: "Calico Cat 🐱",
+        desc: "Create the purring Calico Cat!",
+        maxDrops: 26,
+        rewardType: "rainbow",
+        rewardAmount: 1,
+        rewardName: "+1 Rainbow Jelly 🌈",
+        threeStarDrops: 14,
+        twoStarDrops: 7
+      },
+      {
+        level: 5,
+        title: "Baby Panda Expedition",
+        targetTier: 5, // Panda 🐼
+        targetCount: 1,
+        targetName: "Baby Panda 🐼",
+        desc: "Chonk up and unlock Baby Panda!",
+        maxDrops: 32,
+        rewardType: "hammer",
+        rewardAmount: 2,
+        rewardName: "+2 Squeaky Hammers 🔨🔨",
+        threeStarDrops: 16,
+        twoStarDrops: 8
+      },
+      {
+        level: 6,
+        title: "Chubby Seal Splash",
+        targetTier: 6, // Seal 🦭
+        targetCount: 1,
+        targetName: "Chubby Seal 🦭",
+        desc: "Forge the squawking Chubby Seal!",
+        maxDrops: 38,
+        rewardType: "rainbow",
+        rewardAmount: 2,
+        rewardName: "+2 Rainbow Jellies 🌈🌈",
+        threeStarDrops: 18,
+        twoStarDrops: 9
+      },
+      {
+        level: 7,
+        title: "Chill Capybara Bath",
+        targetTier: 7, // Capybara 🐹
+        targetCount: 1,
+        targetName: "Chill Capybara 🐹",
+        desc: "Unlock the ultimate Zen Capybara!",
+        maxDrops: 44,
+        rewardType: "hammer",
+        rewardAmount: 2,
+        rewardName: "+2 Squeaky Hammers 🔨🔨",
+        threeStarDrops: 20,
+        twoStarDrops: 10
+      },
+      {
+        level: 8,
+        title: "Honey Bear Forest",
+        targetTier: 8, // Bear 🐻
+        targetCount: 1,
+        targetName: "Honey Bear 🐻",
+        desc: "Merge giant tiers into Honey Bear!",
+        maxDrops: 52,
+        rewardType: "rainbow",
+        rewardAmount: 2,
+        rewardName: "+2 Rainbow Jellies 🌈🌈",
+        threeStarDrops: 24,
+        twoStarDrops: 12
+      },
+      {
+        level: 9,
+        title: "Ascent to the Chonk King",
+        targetTier: 9, // King 👑
+        targetCount: 1,
+        targetName: "CHONK KING 👑",
+        desc: "The legendary Suika animal!",
+        maxDrops: 65,
+        rewardType: "hammer",
+        rewardAmount: 3,
+        rewardName: "+3 Squeaky Hammers 🔨🔨🔨",
+        threeStarDrops: 28,
+        twoStarDrops: 14
+      },
+      {
+        level: 10,
+        title: "Grand Royal Sanctuary",
+        targetTier: 9, // King 👑 x2
+        targetCount: 2,
+        targetName: "2x CHONK KINGS 👑👑",
+        desc: "Merge TWO legendary Chonk Kings!",
+        maxDrops: 85,
+        rewardType: "rainbow",
+        rewardAmount: 3,
+        rewardName: "+3 Rainbow Jellies 🌈🌈🌈",
+        threeStarDrops: 35,
+        twoStarDrops: 15
+      }
+    ];
+
     // Game Variables
     const STATE = {
       score: 0,
@@ -822,6 +1093,16 @@
       dropX: 180,
       currentTier: 0,
       nextTier: 1,
+
+      // Level Quest Mode
+      gameMode: "quest", // "quest" | "endless"
+      currentLevel: 1,
+      dropsRemaining: 15,
+      levelTargetTier: 1,
+      levelTargetCount: 1,
+      levelTargetName: "Chubby Chick 🐥",
+      levelAchievedCount: 0,
+      isLevelCleared: false,
 
       // Power-ups
       hammerActive: false,
@@ -837,6 +1118,10 @@
     try {
       STATE.bestScore = parseInt(localStorage.getItem("mochi_drop_best") || "0", 10);
       document.getElementById("bestScoreVal").innerText = STATE.bestScore.toLocaleString();
+      const savedLvl = parseInt(localStorage.getItem("mochi_drop_current_level") || "1", 10);
+      if (savedLvl >= 1 && savedLvl <= 10) {
+        STATE.currentLevel = savedLvl;
+      }
     } catch(e) {}
 
     function resizeCanvas() {
@@ -936,6 +1221,21 @@
         STATE.isRainbowReady = false;
       }
 
+      // Quest Mode Drops Decrement & Out-Of-Drops Check
+      if (STATE.gameMode === "quest") {
+        STATE.dropsRemaining--;
+        updateLevelUI();
+        if (STATE.dropsRemaining <= 0) {
+          setTimeout(() => {
+            if (!STATE.isLevelCleared && !STATE.isGameOver && STATE.gameMode === "quest") {
+              if (STATE.levelAchievedCount < STATE.levelTargetCount) {
+                triggerLevelFailed("Out of drops! You ran out of moves before unlocking the target animal!");
+              }
+            }
+          }, 2600);
+        }
+      }
+
       // Cool-down before next pet is ready
       setTimeout(() => {
         STATE.currentTier = STATE.nextTier;
@@ -1015,6 +1315,20 @@
               STATE.totalMerges++;
               if (nextTier > STATE.biggestTierUnlocked) {
                 STATE.biggestTierUnlocked = nextTier;
+              }
+
+              // Check Level Quest Objective Progress
+              if (STATE.gameMode === "quest" && !STATE.isLevelCleared) {
+                if (nextTier >= STATE.levelTargetTier) {
+                  STATE.levelAchievedCount++;
+                  updateLevelUI();
+                  if (STATE.levelAchievedCount >= STATE.levelTargetCount) {
+                    STATE.isLevelCleared = true;
+                    setTimeout(() => {
+                      triggerLevelClear();
+                    }, 550);
+                  }
+                }
               }
             }, 10);
             break;
@@ -1909,7 +2223,11 @@
         dangerLabel.innerText = `OVERFLOW IN ${remaining}s!`;
 
         if (elapsed >= 3.2) {
-          triggerGameOver();
+          if (STATE.gameMode === "quest") {
+            triggerLevelFailed("Jar overflowed! The mochi pets piled up too high past the danger line.");
+          } else {
+            triggerGameOver();
+          }
         }
       } else {
         STATE.overflowStartTime = null;
@@ -1928,6 +2246,147 @@
       modal.classList.remove("hidden");
     }
 
+    // =========================================================================
+    // LEVEL SYSTEM: STAGE GOALS, DROPS COUNTER, STARS & REWARD LOGIC
+    // =========================================================================
+    function updateLevelUI() {
+      if (STATE.gameMode === "quest") {
+        const cfg = LEVELS[STATE.currentLevel - 1];
+        if (!cfg) return;
+
+        document.getElementById("levelBadge").innerText = `LVL ${STATE.currentLevel}`;
+        document.getElementById("headerLevelBadge").innerText = `LVL ${STATE.currentLevel}`;
+        document.getElementById("levelGoalText").innerText = `${cfg.targetName} (${STATE.levelAchievedCount}/${cfg.targetCount})`;
+        document.getElementById("dropsVal").innerText = Math.max(0, STATE.dropsRemaining);
+
+        // Compute Live Stars preview
+        let starsStr = "★☆☆";
+        if (STATE.dropsRemaining >= cfg.threeStarDrops) {
+          starsStr = "★★★";
+        } else if (STATE.dropsRemaining >= cfg.twoStarDrops) {
+          starsStr = "★★☆";
+        }
+        document.getElementById("levelStars").innerText = starsStr;
+      } else {
+        document.getElementById("levelBadge").innerText = "ENDLESS";
+        document.getElementById("headerLevelBadge").innerText = "ENDLESS";
+        document.getElementById("levelGoalText").innerText = "Chonk King 👑 & Max Score!";
+        document.getElementById("dropsVal").innerText = "∞";
+        document.getElementById("levelStars").innerText = "🏆🏆🏆";
+      }
+    }
+
+    function initLevel(lvlNum) {
+      STATE.currentLevel = Math.max(1, Math.min(LEVELS.length, lvlNum));
+      try {
+        localStorage.setItem("mochi_drop_current_level", STATE.currentLevel);
+      } catch(e) {}
+
+      const cfg = LEVELS[STATE.currentLevel - 1];
+      STATE.dropsRemaining = cfg.maxDrops;
+      STATE.levelTargetTier = cfg.targetTier;
+      STATE.levelTargetCount = cfg.targetCount;
+      STATE.levelTargetName = cfg.targetName;
+      STATE.levelAchievedCount = 0;
+      STATE.isLevelCleared = false;
+      STATE.isGameOver = false;
+      STATE.isDropping = false;
+      STATE.overflowStartTime = null;
+
+      // Hide all modals
+      document.getElementById("levelClearModal").classList.add("hidden");
+      document.getElementById("levelFailedModal").classList.add("hidden");
+      document.getElementById("gameOverModal").classList.add("hidden");
+      document.getElementById("dangerCountdown").classList.add("hidden");
+
+      // Clear physics bodies in jar for a clean stage start
+      const bodies = Matter.Composite.allBodies(world);
+      bodies.forEach(b => {
+        if (b.tier !== undefined) Matter.World.remove(world, b);
+      });
+
+      STATE.currentTier = getNextRandomTier();
+      STATE.nextTier = getNextRandomTier();
+      updateNextPreviewUI();
+      updateLevelUI();
+    }
+
+    function triggerLevelClear() {
+      STATE.isGameOver = true;
+      const cfg = LEVELS[STATE.currentLevel - 1];
+
+      let starsHtml = '<span class="star-pop">★</span><span class="text-zinc-300">★</span><span class="text-zinc-300">★</span>';
+      if (STATE.dropsRemaining >= cfg.threeStarDrops) {
+        starsHtml = '<span class="star-pop">★</span><span class="star-pop" style="animation-delay:0.15s">★</span><span class="star-pop" style="animation-delay:0.3s">★</span>';
+      } else if (STATE.dropsRemaining >= cfg.twoStarDrops) {
+        starsHtml = '<span class="star-pop">★</span><span class="star-pop" style="animation-delay:0.15s">★</span><span class="text-zinc-300">★</span>';
+      }
+
+      // Award stage power-up
+      if (cfg.rewardType === "hammer") {
+        STATE.hammersRemaining += cfg.rewardAmount;
+        document.getElementById("hammerCountBadge").innerText = STATE.hammersRemaining;
+      } else if (cfg.rewardType === "rainbow") {
+        STATE.rainbowRemaining += cfg.rewardAmount;
+        document.getElementById("rainbowCountBadge").innerText = STATE.rainbowRemaining;
+      }
+
+      document.getElementById("clearLevelBadge").innerText = `STAGE ${STATE.currentLevel} COMPLETE!`;
+      document.getElementById("clearStarsDisplay").innerHTML = starsHtml;
+      document.getElementById("clearDropsLeftVal").innerText = `${STATE.dropsRemaining} drops`;
+      document.getElementById("clearRewardVal").innerText = cfg.rewardName;
+      document.getElementById("clearScoreVal").innerText = STATE.score.toLocaleString();
+      document.getElementById("clearModalAvatar").innerText = TIERS[cfg.targetTier].icon;
+
+      document.getElementById("levelClearModal").classList.remove("hidden");
+
+      try {
+        const kingAudio = REAL_ANIMAL_AUDIO[9];
+        if (kingAudio) {
+          kingAudio.currentTime = 0;
+          kingAudio.play().catch(() => {});
+        }
+      } catch(e) {}
+    }
+
+    function triggerLevelFailed(reason = "You ran out of drops before unlocking the target animal!") {
+      STATE.isGameOver = true;
+      document.getElementById("failedReasonText").innerText = reason;
+      document.getElementById("levelFailedModal").classList.remove("hidden");
+    }
+
+    function startNextLevel() {
+      document.getElementById("levelClearModal").classList.add("hidden");
+      if (STATE.currentLevel < LEVELS.length) {
+        initLevel(STATE.currentLevel + 1);
+      } else {
+        initLevel(1);
+      }
+    }
+
+    function retryLevel() {
+      document.getElementById("levelFailedModal").classList.add("hidden");
+      document.getElementById("gameOverModal").classList.add("hidden");
+      initLevel(STATE.currentLevel);
+    }
+
+    function switchMode(mode) {
+      STATE.gameMode = mode;
+      const questBtn = document.getElementById("modeQuestBtn");
+      const endlessBtn = document.getElementById("modeEndlessBtn");
+
+      if (mode === "quest") {
+        questBtn.className = "touch-btn flex-1 py-1 rounded-xl text-[11px] font-black transition bg-amber-900 text-amber-50 shadow-sm flex items-center justify-center gap-1.5";
+        endlessBtn.className = "touch-btn flex-1 py-1 rounded-xl text-[11px] font-black transition text-amber-900 hover:bg-amber-300/60 flex items-center justify-center gap-1";
+        initLevel(STATE.currentLevel || 1);
+      } else {
+        endlessBtn.className = "touch-btn flex-1 py-1 rounded-xl text-[11px] font-black transition bg-amber-900 text-amber-50 shadow-sm flex items-center justify-center gap-1";
+        questBtn.className = "touch-btn flex-1 py-1 rounded-xl text-[11px] font-black transition text-amber-900 hover:bg-amber-300/60 flex items-center justify-center gap-1.5";
+        resetGame();
+        updateLevelUI();
+      }
+    }
+
     function resetGame() {
       STATE.score = 0;
       STATE.totalMerges = 0;
@@ -1944,6 +2403,8 @@
       document.getElementById("hammerCountBadge").innerText = "2";
       document.getElementById("rainbowCountBadge").innerText = "1";
       document.getElementById("gameOverModal").classList.add("hidden");
+      document.getElementById("levelClearModal").classList.add("hidden");
+      document.getElementById("levelFailedModal").classList.add("hidden");
 
       // Clear physics bodies
       const bodies = Matter.Composite.allBodies(world);
@@ -1954,36 +2415,66 @@
       STATE.currentTier = getNextRandomTier();
       STATE.nextTier = getNextRandomTier();
       updateNextPreviewUI();
+
+      if (STATE.gameMode === "quest") {
+        initLevel(STATE.currentLevel);
+      }
     }
 
     // =========================================================================
-    // 8. POWER-UPS (SHAKE JAR, SQUEAKY HAMMER, RAINBOW JELLY)
+    // 8. POWER-UPS (AUTHENTIC JAR SHAKE, SQUEAKY HAMMER, RAINBOW JELLY)
     // =========================================================================
-    // 1. Shake Jar Button
-    document.getElementById("shakeBtn").addEventListener("click", () => {
+    // 1. Shake Jar: Multi-Burst Violent Turbulence & Swirl Physics
+    function executeRealJarShake() {
       sound.init();
       if (STATE.shakeCooldown || STATE.isGameOver) return;
       STATE.shakeCooldown = true;
 
       sound.playShake();
-      triggerJarShake();
+      sound.playAnimalVoice(6); // Playful seal squawk when jar is agitated!
 
-      // Apply turbulence physics force to all pets
-      const bodies = Matter.Composite.allBodies(world);
-      bodies.forEach(b => {
-        if (b.tier !== undefined) {
-          Matter.Body.applyForce(b, b.position, {
-            x: (Math.random() - 0.5) * 0.045,
-            y: -0.02
+      // Trigger intense CSS jar shaking
+      const jar = document.getElementById("jarWrapper");
+      if (jar) {
+        jar.classList.remove("jar-real-shake");
+        void jar.offsetWidth;
+        jar.classList.add("jar-real-shake");
+        setTimeout(() => jar.classList.remove("jar-real-shake"), 750);
+      }
+
+      // 5 Staggered Physics Impulse bursts flinging, swirling and unstirring all animals
+      const bursts = [
+        { delay: 0,   dirX:  1, forceY: -9,  tumble:  0.15 },
+        { delay: 110, dirX: -1, forceY: -11, tumble: -0.18 },
+        { delay: 220, dirX:  1, forceY: -8,  tumble:  0.14 },
+        { delay: 330, dirX: -1, forceY: -6,  tumble: -0.12 },
+        { delay: 440, dirX:  0.5, forceY: -5, tumble:  0.08 }
+      ];
+
+      bursts.forEach(b => {
+        setTimeout(() => {
+          const bodies = Matter.Composite.allBodies(world);
+          bodies.forEach(body => {
+            if (body.tier !== undefined && !body.isStatic) {
+              const lateralJitter = (Math.random() * 6 + 7) * b.dirX;
+              const upwardJitter = b.forceY - Math.random() * 4;
+              Matter.Body.setVelocity(body, {
+                x: (body.velocity.x * 0.25) + lateralJitter,
+                y: Math.min(body.velocity.y, upwardJitter)
+              });
+              Matter.Body.setAngularVelocity(body, b.tumble + (Math.random() - 0.5) * 0.1);
+            }
           });
-        }
+        }, b.delay);
       });
 
+      showFloatingScore("📳 JAR SHAKEN!", canvasW / 2 - 50, 120);
+
       const badge = document.getElementById("shakeCooldownBadge");
-      badge.innerText = "5s";
+      badge.innerText = "4s";
       badge.className = "bg-zinc-600 text-white text-[9px] font-black px-1.5 rounded-full";
 
-      let secs = 5;
+      let secs = 4;
       const interval = setInterval(() => {
         secs--;
         if (secs <= 0) {
@@ -1995,7 +2486,9 @@
           badge.innerText = `${secs}s`;
         }
       }, 1000);
-    });
+    }
+
+    document.getElementById("shakeBtn").addEventListener("click", executeRealJarShake);
 
     // 2. Squeaky Hammer Button
     document.getElementById("hammerBtn").addEventListener("click", () => {
@@ -2160,6 +2653,27 @@
       resetGame();
     });
 
+    // Level Quest Modals & Mode Buttons
+    document.getElementById("nextLevelBtn").addEventListener("click", () => {
+      sound.init();
+      startNextLevel();
+    });
+
+    document.getElementById("retryLevelBtn").addEventListener("click", () => {
+      sound.init();
+      retryLevel();
+    });
+
+    document.getElementById("modeQuestBtn").addEventListener("click", () => {
+      sound.init();
+      switchMode("quest");
+    });
+
+    document.getElementById("modeEndlessBtn").addEventListener("click", () => {
+      sound.init();
+      switchMode("endless");
+    });
+
     // MAIN 60 FPS GAME LOOP
     function gameLoop() {
       Matter.Engine.update(engine, 1000 / 60);
@@ -2181,7 +2695,7 @@
 
     initPhysics();
     resizeCanvas();
-    resetGame();
+    initLevel(STATE.currentLevel || 1);
     requestAnimationFrame(gameLoop);
   </script>
 </body>
