@@ -3,15 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Mochi Pets: Squeeze & Cuddle — Animals Are Liquid!</title>
+  <title>Mochi Drop: Chonky Animal Merge — Suika Physics Game!</title>
 
-  <!-- Google Fonts: Fredoka, Quicksand, Bubblegum Sans -->
+  <!-- Google Fonts: Fredoka & Bubblegum Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Fredoka:wght@400;600;700;800&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Matter.js (2D Physics Engine) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
 
   <style>
     * {
@@ -22,69 +25,53 @@
       font-family: 'Fredoka', 'Quicksand', sans-serif;
     }
 
-    body {
-      background: radial-gradient(circle at 50% 15%, #fffdf7 0%, #fef3c7 45%, #fae8b4 100%);
-      color: #451a03;
-    }
-
     .font-fun {
       font-family: 'Bubblegum Sans', 'Fredoka', cursive;
     }
 
-    /* Mochi Squish Animations */
-    @keyframes mochiBreathe {
-      0%, 100% { transform: scale(1, 1); }
-      50% { transform: scale(1.04, 0.96); }
-    }
-    .mochi-idle {
-      animation: mochiBreathe 2.8s ease-in-out infinite;
+    body {
+      background: radial-gradient(circle at 50% 15%, #fffdf8 0%, #fef3c7 50%, #fae8b4 100%);
+      color: #451a03;
     }
 
-    @keyframes mochiPick {
-      0% { transform: scale(1, 1) translateY(0); }
-      40% { transform: scale(0.85, 1.25) translateY(-16px); }
-      100% { transform: scale(1.05, 0.95) translateY(-12px); }
-    }
-    .mochi-picked {
-      animation: mochiPick 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-      filter: drop-shadow(0 12px 16px rgba(180, 83, 9, 0.3));
-    }
-
-    @keyframes mochiLand {
-      0% { transform: scale(0.8, 1.3); }
-      50% { transform: scale(1.25, 0.8); }
-      75% { transform: scale(0.95, 1.05); }
-      100% { transform: scale(1, 1); }
-    }
-    .mochi-landed {
-      animation: mochiLand 0.35s ease-out;
+    /* Glass Terrarium Border & Wooden Base */
+    .jar-container {
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(8px);
+      border: 3.5px solid #d97706;
+      border-top: none;
+      border-radius: 0 0 32px 32px;
+      box-shadow: 
+        0 20px 40px -10px rgba(180, 83, 9, 0.25),
+        inset 0 0 25px rgba(255, 255, 255, 0.7);
     }
 
-    @keyframes cuddleGlow {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.4)); }
-      50% { transform: scale(1.08); filter: drop-shadow(0 8px 20px rgba(236, 72, 153, 0.6)); }
-    }
-    .cuddle-complete {
-      animation: cuddleGlow 1.2s ease-in-out infinite;
+    /* Dotted Danger Line */
+    .danger-line {
+      border-top: 2.5px dashed #f43f5e;
+      box-shadow: 0 0 8px rgba(244, 63, 94, 0.4);
     }
 
-    /* Floating Hearts on Cuddle */
-    @keyframes floatHeart {
-      0% { opacity: 0; transform: translateY(0) scale(0.6) rotate(-10deg); }
-      30% { opacity: 1; transform: translateY(-16px) scale(1.1) rotate(10deg); }
-      100% { opacity: 0; transform: translateY(-45px) scale(0.9) rotate(-15deg); }
+    /* Screen Shake on Big Merge */
+    @keyframes jarShakeAnim {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-6px, 4px) rotate(-0.5deg); }
+      40% { transform: translate(6px, -4px) rotate(0.5deg); }
+      60% { transform: translate(-4px, 2px); }
+      80% { transform: translate(4px, -2px); }
     }
-    .heart-particle {
-      animation: floatHeart 1.1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    .jar-shake {
+      animation: jarShakeAnim 0.28s cubic-bezier(0.36, 0.07, 0.19, 0.97);
     }
 
-    /* Woven Basket Styles */
-    .basket-shadow {
-      box-shadow: 0 10px 25px -5px rgba(120, 53, 15, 0.18), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+    /* Floating Score Popups */
+    @keyframes floatUpFade {
+      0% { opacity: 0; transform: translateY(10px) scale(0.8); }
+      25% { opacity: 1; transform: translateY(0) scale(1.15); }
+      100% { opacity: 0; transform: translateY(-38px) scale(0.9); }
     }
-    .basket-active {
-      box-shadow: 0 0 0 3px #f59e0b, 0 12px 28px -4px rgba(245, 158, 11, 0.4) !important;
-      transform: translateY(-4px);
+    .floating-score {
+      animation: floatUpFade 0.9s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
     }
 
     /* Tactile Buttons */
@@ -92,139 +79,191 @@
       transform: scale(0.92);
       filter: brightness(0.95);
     }
+
+    .hammer-active {
+      cursor: crosshair !important;
+      animation: pulse 1s infinite;
+    }
   </style>
 </head>
 <body id="appBody" class="flex flex-col justify-between items-center h-full max-h-[100dvh] w-full overflow-hidden select-none">
 
   <!-- ========================================================================= -->
-  <!-- TOP HEADER (Level, Stars, Cute Logo & Audio Controls)                     -->
+  <!-- TOP BAR: SCORE, HIGH SCORE, NEXT PET PREVIEW & SOUND CONTROLS            -->
   <!-- ========================================================================= -->
-  <header class="w-full max-w-md mx-auto flex items-center justify-between z-20 px-4 pt-3 pb-2">
-    <!-- LEFT: LEVEL BADGE -->
-    <div class="flex items-center gap-2">
-      <div class="bg-amber-100 border-2 border-amber-300 px-3 py-1 rounded-2xl flex items-center gap-1.5 shadow-sm">
-        <span class="text-base leading-none">🐾</span>
-        <span id="levelLabel" class="text-amber-900 font-extrabold text-sm sm:text-base leading-none">LEVEL 1</span>
+  <header class="w-full max-w-md mx-auto flex flex-col z-20 px-3.5 pt-2 pb-1">
+    <div class="flex items-center justify-between">
+      <!-- CURRENT SCORE -->
+      <div class="flex items-center gap-2">
+        <div class="bg-amber-100/90 border-2 border-amber-300 px-3 py-1 rounded-2xl shadow-sm">
+          <div class="text-[8.5px] font-bold text-amber-900/70 uppercase tracking-widest leading-none">SCORE</div>
+          <div id="scoreVal" class="text-xl sm:text-2xl font-black text-amber-950 font-fun leading-tight tabular-nums">
+            0
+          </div>
+        </div>
+
+        <!-- HIGH SCORE -->
+        <div class="bg-amber-50/80 border border-amber-200 px-2.5 py-1 rounded-2xl shadow-sm">
+          <div class="text-[8px] font-bold text-amber-800/60 uppercase tracking-widest leading-none">BEST</div>
+          <div id="bestScoreVal" class="text-sm font-extrabold text-amber-900 font-fun leading-tight tabular-nums">
+            0
+          </div>
+        </div>
       </div>
-      <div id="cuddleCounter" class="bg-rose-100 border-2 border-rose-300 px-2.5 py-1 rounded-2xl flex items-center gap-1 text-rose-700 font-bold text-xs shadow-sm">
-        <span>💖</span>
-        <span id="cuddleText">0/2 CUDDLED</span>
+
+      <!-- NEXT ANIMAL PREVIEW -->
+      <div class="flex items-center gap-2 bg-amber-100/80 border-2 border-amber-300 px-3 py-1 rounded-2xl shadow-sm">
+        <div class="text-right">
+          <div class="text-[8px] font-bold text-amber-900/70 uppercase tracking-widest leading-none">NEXT</div>
+          <div id="nextPetName" class="text-[10px] font-black text-amber-950 leading-tight">Bunny</div>
+        </div>
+        <div id="nextPetIcon" class="w-8 h-8 rounded-xl bg-white/90 border border-amber-300 flex items-center justify-center text-xl shadow-inner">
+          🐰
+        </div>
+      </div>
+
+      <!-- SOUND & RESET -->
+      <div class="flex items-center gap-1.5">
+        <button id="soundToggleBtn" class="touch-btn w-9 h-9 rounded-2xl bg-amber-100/90 border-2 border-amber-300 text-amber-900 text-sm font-black flex items-center justify-center shadow-sm">
+          🔊
+        </button>
+        <button id="restartBtn" class="touch-btn w-9 h-9 rounded-2xl bg-amber-100/90 border-2 border-amber-300 text-amber-900 text-sm font-black flex items-center justify-center shadow-sm">
+          🔄
+        </button>
       </div>
     </div>
 
-    <!-- RIGHT: SOUND & RESET BUTTONS -->
-    <div class="flex items-center gap-2">
-      <button id="undoBtn" class="touch-btn w-9 h-9 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-800 text-sm font-black flex items-center justify-center shadow-sm disabled:opacity-40" title="Undo Move">
-        ↩️
-      </button>
-      <button id="restartBtn" class="touch-btn w-9 h-9 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-800 text-sm font-black flex items-center justify-center shadow-sm" title="Restart Level">
-        🔄
-      </button>
-      <button id="soundToggleBtn" class="touch-btn w-9 h-9 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-800 text-sm font-black flex items-center justify-center shadow-sm" title="Toggle Sound">
-        🔊
-      </button>
+    <!-- EVOLUTION TIER ROADMAP (Progress Guide) -->
+    <div class="mt-1.5 flex items-center justify-between gap-1 bg-amber-200/50 p-1 rounded-xl text-xs overflow-x-auto border border-amber-300/60">
+      <span class="text-[9px] font-bold text-amber-900/80 uppercase px-1">EVOLUTION:</span>
+      <div class="flex items-center gap-1 text-sm leading-none">
+        <span title="Tier 1: Bunny">🐰</span>➔
+        <span title="Tier 2: Chick">🐥</span>➔
+        <span title="Tier 3: Hamster">🐹</span>➔
+        <span title="Tier 4: Shiba">🐶</span>➔
+        <span title="Tier 5: Cat">🐱</span>➔
+        <span title="Tier 6: Panda">🐼</span>➔
+        <span title="Tier 7: Seal">🦭</span>➔
+        <span title="Tier 8: Capybara">🐹</span>➔
+        <span title="Tier 9: Honey Bear">🐻</span>➔
+        <span title="Tier 10: Chonk King">👑</span>
+      </div>
     </div>
   </header>
 
   <!-- ========================================================================= -->
-  <!-- TITLE & COZY INSTRUCTION BANNER                                          -->
+  <!-- MAIN GAMEPLAY: SUIKA GLASS JAR & 2D PHYSICS CANVAS                        -->
   <!-- ========================================================================= -->
-  <div class="w-full max-w-md mx-auto px-4 text-center z-10">
-    <h1 class="font-fun text-2xl sm:text-3xl text-amber-950 font-black tracking-wide leading-none drop-shadow-sm flex items-center justify-center gap-2">
-      <span>Mochi Pets</span>
-      <span class="text-xs bg-amber-400/30 text-amber-900 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Squeeze & Cuddle</span>
-    </h1>
-    <p id="instructionText" class="text-xs text-amber-800/80 font-bold mt-1">
-      Tap a basket to pick up a cute pet, then tap where it fits! 🐾
-    </p>
-  </div>
+  <main class="relative w-full flex-1 flex flex-col items-center justify-center px-2 py-0 min-h-0 overflow-hidden">
+    <!-- COMBO STREAK BANNER -->
+    <div id="comboBanner" class="hidden absolute top-2 z-40 bg-gradient-to-r from-amber-400 via-rose-400 to-yellow-400 text-amber-950 px-4 py-1.5 rounded-full font-fun text-sm sm:text-base font-black shadow-lg border-2 border-white animate-bounce">
+      ✨ 2X SUIKA COMBO! +100
+    </div>
 
-  <!-- ========================================================================= -->
-  <!-- MAIN COZY PLAY AREA: BASKETS WITH SQUISHY MOCHI PETS                      -->
-  <!-- ========================================================================= -->
-  <main class="relative w-full flex-1 flex flex-col items-center justify-center px-4 py-2 min-h-0 overflow-hidden">
-    <!-- FLOATING HEARTS & PARTICLES CONTAINER -->
-    <div id="particleOverlay" class="absolute inset-0 pointer-events-none z-30 overflow-hidden"></div>
+    <!-- SUIKA GLASS JAR CONTAINER -->
+    <div id="jarWrapper" class="relative jar-container w-[330px] sm:w-[370px] h-[480px] sm:h-[530px] flex items-center justify-center overflow-hidden">
+      <!-- FLOATING SCORES & POPUPS OVERLAY (Inside Jar for Exact Canvas Position) -->
+      <div id="floatingOverlay" class="absolute inset-0 pointer-events-none z-30 overflow-hidden"></div>
 
-    <!-- BASKETS CONTAINER (FLEX / GRID AUTO-ADAPTIVE) -->
-    <div id="basketsContainer" class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 max-w-sm sm:max-w-md w-full z-10 transition-all duration-300">
-      <!-- Baskets generated dynamically by JavaScript -->
+      <!-- RED DANGER OVERFLOW LINE (Top Warning) -->
+      <div class="absolute top-[85px] left-2 right-2 danger-line z-20 flex items-center justify-between px-2 text-[9px] font-extrabold text-rose-500/80 uppercase tracking-widest pointer-events-none">
+        <span>⚠️ DANGER LINE</span>
+        <span id="dangerCountdown" class="hidden text-rose-600 font-black animate-pulse">OVERFLOW IN 3s!</span>
+      </div>
+
+      <!-- MAIN PHYSICS CANVAS -->
+      <canvas id="gameCanvas" class="w-full h-full block cursor-pointer"></canvas>
+    </div>
+  </main>
     </div>
   </main>
 
   <!-- ========================================================================= -->
-  <!-- BOTTOM COZY CONTROLS & EXTRA BASKET PERK                                  -->
+  <!-- BOTTOM ACTION BAR: POWER-UPS (SHAKE, HAMMER, RAINBOW)                     -->
   <!-- ========================================================================= -->
-  <footer class="w-full max-w-md mx-auto flex items-center justify-between z-20 px-4 pb-4 pt-1">
-    <!-- PET ROSTER DISPLAY -->
-    <div class="flex items-center gap-1.5 bg-amber-100/70 border border-amber-200 px-3 py-1.5 rounded-2xl text-xs font-bold text-amber-900">
-      <span>Friends:</span>
-      <span id="petIconsRow" class="flex items-center gap-1 text-sm">🐱 🐶 🐹 🐼</span>
-    </div>
+  <footer class="w-full max-w-md mx-auto flex items-center justify-between gap-2 z-20 px-4 pb-3 pt-1">
+    <!-- SHAKE JAR BUTTON (TURBULENCE TO UNSTICK PETS) -->
+    <button id="shakeBtn" class="touch-btn flex-1 py-2 rounded-2xl bg-gradient-to-r from-amber-300 to-yellow-300 border-2 border-amber-400/80 shadow-md flex items-center justify-center gap-1.5 text-amber-950 font-black text-xs active:scale-95 transition">
+      <span class="text-base">📳</span>
+      <span>SHAKE JAR</span>
+      <span id="shakeCooldownBadge" class="bg-amber-900 text-amber-100 text-[9px] font-black px-1.5 py-0.2 rounded-full">READY</span>
+    </button>
 
-    <!-- EXTRA BASKET BUTTON -->
-    <button id="addBasketBtn" class="touch-btn px-4 py-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300 hover:brightness-105 border-2 border-amber-500/60 rounded-2xl text-amber-950 font-bold text-xs flex items-center gap-1.5 shadow-md transition active:scale-95">
-      <span>🧺</span>
-      <span>Add Extra Bed</span>
-      <span id="extraBedBadge" class="bg-amber-900 text-amber-100 text-[10px] font-black px-1.5 py-0.2 rounded-full">1</span>
+    <!-- SQUEAKY HAMMER (POP OBSTACLE PET) -->
+    <button id="hammerBtn" class="touch-btn px-4 py-2 rounded-2xl bg-gradient-to-r from-rose-200 to-pink-200 border-2 border-rose-300 shadow-md flex items-center justify-center gap-1.5 text-rose-950 font-black text-xs active:scale-95 transition">
+      <span class="text-base">🔨</span>
+      <span>HAMMER</span>
+      <span id="hammerCountBadge" class="bg-rose-600 text-white text-[9px] font-black px-1.5 rounded-full">2</span>
+    </button>
+
+    <!-- RAINBOW JELLY (UNIVERSAL MERGE) -->
+    <button id="rainbowBtn" class="touch-btn px-4 py-2 rounded-2xl bg-gradient-to-r from-purple-200 via-pink-200 to-sky-200 border-2 border-purple-300 shadow-md flex items-center justify-center gap-1.5 text-purple-950 font-black text-xs active:scale-95 transition">
+      <span class="text-base">🌈</span>
+      <span>RAINBOW</span>
+      <span id="rainbowCountBadge" class="bg-purple-600 text-white text-[9px] font-black px-1.5 rounded-full">1</span>
     </button>
   </footer>
 
   <!-- ========================================================================= -->
-  <!-- LEVEL COMPLETE / SO COZY MODAL                                            -->
+  <!-- GAME OVER / HIGH SCORE MODAL                                              -->
   <!-- ========================================================================= -->
-  <div id="victoryModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm hidden select-none">
-    <div class="max-w-xs w-full bg-[#fffcf5] border-3 border-amber-300 rounded-3xl p-6 shadow-2xl text-center space-y-4 transform transition-all duration-300 scale-95 animate-bounce">
-      <!-- BIG HAPPY CHUBBY PET -->
-      <div id="victoryPetAvatar" class="w-20 h-20 mx-auto rounded-3xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-5xl shadow-md">
-        🐱
+  <div id="gameOverModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm hidden select-none">
+    <div class="max-w-xs w-full bg-[#fffcf5] border-3 border-amber-300 rounded-3xl p-6 shadow-2xl text-center space-y-4 transform transition-all duration-300 scale-95">
+      <div id="modalAvatar" class="w-20 h-20 mx-auto rounded-3xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-5xl shadow-md">
+        🐹
       </div>
 
       <div>
-        <h2 class="font-fun text-3xl font-black text-amber-950 tracking-wide">
-          SO COZY!
+        <h2 class="font-fun text-3xl font-black text-amber-950 tracking-wide leading-none">
+          JAR OVERFLOWED!
         </h2>
-        <p id="victoryQuote" class="text-xs text-amber-800 font-bold tracking-wide mt-1">
-          All the mochi pets are snuggled together and happily purring! 💖
+        <p class="text-xs text-amber-800 font-bold mt-1">
+          The mochi pets piled up too high! But look how chonky they got! 💖
         </p>
       </div>
 
-      <!-- 3 GOLDEN STARS -->
-      <div class="flex items-center justify-center gap-2 text-3xl">
-        <span class="text-amber-400 drop-shadow">⭐</span>
-        <span class="text-amber-400 drop-shadow">⭐</span>
-        <span class="text-amber-400 drop-shadow">⭐</span>
+      <!-- SCORE STATS -->
+      <div class="bg-amber-100/60 p-3.5 rounded-2xl border border-amber-200 space-y-1.5 text-left text-xs font-bold text-amber-950">
+        <div class="flex justify-between items-center">
+          <span class="text-amber-800/80">Final Score:</span>
+          <span id="finalScoreVal" class="text-base font-black text-amber-950 font-fun">0</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-amber-800/80">Total Merges:</span>
+          <span id="finalMergesVal" class="font-black text-amber-900">0</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-amber-800/80">Biggest Pet Unlocked:</span>
+          <span id="finalBiggestPetVal" class="font-black text-rose-600">Chill Capybara 🐹</span>
+        </div>
       </div>
 
-      <!-- NEXT LEVEL BUTTON -->
-      <button id="nextLevelBtn" class="touch-btn w-full py-3.5 bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 border-2 border-amber-500/80 rounded-2xl text-amber-950 font-black text-base shadow-lg transition active:scale-95">
-        NEXT COZY LEVEL ➔
+      <!-- RESTART BUTTON -->
+      <button id="playAgainBtn" class="touch-btn w-full py-3.5 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300 border-2 border-amber-500 rounded-2xl text-amber-950 font-black text-base shadow-lg transition active:scale-95">
+        PLAY AGAIN ➔
       </button>
     </div>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- JAVASCRIPT: MOCHI PETS SQUEEZE & CUDDLE ENGINE                            -->
+  <!-- JAVASCRIPT: THE COMPLETE MOCHI DROP 2D PHYSICS ENGINE                     -->
   <!-- ========================================================================= -->
   <script>
     /**
-     * MOCHI PETS: SQUEEZE & CUDDLE
-     * -----------------------------
-     * 1. Animals Are Liquid! Tap to stretch and squeeze into cozy baskets.
-     * 2. Handcrafted SVG Vector Mochi Animals:
-     *    - 🐱 Calico Orange Cat (Meow, cute whiskers)
-     *    - 🐶 Shiba Inu Doggo (Happy blep, golden ears)
-     *    - 🐹 Sleepy Capybara (Chill king with orange on head)
-     *    - 🐼 Baby Bamboo Panda (Chubby cheeks & green sprout)
-     *    - 🐰 Marshmallow Bunny (Floppy ears & twitching nose)
-     * 3. ASMR Web Audio Synthesizer: Soft kalimba notes, cute squeaks, warm purrs, and victory chime.
-     * 4. 100% responsive, accessible in 2 seconds, pure cute dopamine!
+     * MOCHI DROP: CHONKY ANIMAL MERGE (SUIKA PHYSICS)
+     * ------------------------------------------------
+     * 1. 2D Matter.js real physics with squishy restitution, friction & gravity
+     * 2. 10 Tiers of Adorable Mochi Animals (Bunny -> Chick -> Hamster -> Shiba -> Cat -> Panda -> Seal -> Capybara -> Bear -> Chonk King)
+     * 3. Tactile drag & release drop mechanics with trajectory dotted line
+     * 4. Chain combo explosions, shockwaves, floating scores, and screen shake
+     * 5. Interactive power-ups: Shake Jar, Squeaky Hammer, Rainbow Jelly
+     * 6. Bug-free Web Audio ASMR pop & chime synthesizer
      */
 
     // =========================================================================
-    // 1. ASMR COZY AUDIO ENGINE (Pure Web Audio API — Zero External Files)
+    // 1. ASMR SOUND SYNTHESIZER (Pure Web Audio API — 100% Error-Free)
     // =========================================================================
-    class CozyAudioEngine {
+    class MochiSoundEngine {
       constructor() {
         this.ctx = null;
         this.enabled = true;
@@ -245,619 +284,931 @@
         return this.enabled;
       }
 
-      // Soft Cute Pick-Up Pop (Kalimba Note)
-      playPick() {
+      // Soft Cute Drop Sound (Kalimba Note)
+      playDrop() {
         if (!this.enabled || !this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(440, now); // A4
-        osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
-        gain.gain.setValueAtTime(0.22, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(260, now + 0.12);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.14);
+        osc.stop(now + 0.15);
       }
 
-      // Squishy Mochi Plop / Land Sound
-      playPlop() {
+      // Merge Bubble Pop (Pitch increases with tier!)
+      playMerge(tier) {
         if (!this.enabled || !this.ctx) return;
         const now = this.ctx.currentTime;
+
+        // Base Pop
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(620, now);
-        osc.frequency.exponentialRampToValueAtTime(260, now + 0.14);
-        gain.gain.setValueAtTime(0.28, now);
+        const baseFreq = 340 + tier * 75;
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(baseFreq * 2.2, now + 0.08);
+        gain.gain.setValueAtTime(0.3, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.18);
+
+        // Chime for big tiers (Tier 4+)
+        if (tier >= 4) {
+          const chime = this.ctx.createOscillator();
+          const cGain = this.ctx.createGain();
+          chime.type = "triangle";
+          chime.frequency.setValueAtTime(880 + tier * 60, now + 0.04);
+          cGain.gain.setValueAtTime(0.2, now + 0.04);
+          cGain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          chime.connect(cGain);
+          cGain.connect(this.ctx.destination);
+          chime.start(now + 0.04);
+          chime.stop(now + 0.3);
+        }
       }
 
-      // Happy Cuddle Purr / Snuggle Chime
-      playCuddle() {
+      // Combo Arpeggio
+      playCombo(combo) {
         if (!this.enabled || !this.ctx) return;
         const now = this.ctx.currentTime;
         [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
           const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          const t = now + idx * 0.08;
-          osc.type = "sine";
+          const g = this.ctx.createGain();
+          const t = now + idx * 0.06;
+          osc.type = "triangle";
           osc.frequency.setValueAtTime(freq, t);
-          gain.gain.setValueAtTime(0.18, t);
-          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
+          g.gain.setValueAtTime(0.18, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+          osc.connect(g);
+          g.connect(this.ctx.destination);
           osc.start(t);
-          osc.stop(t + 0.28);
+          osc.stop(t + 0.18);
         });
       }
 
-      // Level Complete Victory Fanfare (Sparkling Music Box)
-      playVictory() {
+      // Squeaky Hammer Bonk
+      playHammer() {
         if (!this.enabled || !this.ctx) return;
         const now = this.ctx.currentTime;
-        const melody = [523.25, 659.25, 783.99, 1046.5, 1318.51, 1567.98];
-        melody.forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(820, now);
+        osc.frequency.exponentialRampToValueAtTime(280, now + 0.15);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.22);
+      }
+
+      // Shake Jar Wooden Rattle
+      playShake() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        for (let i = 0; i < 3; i++) {
           const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          const t = now + idx * 0.11;
+          const g = this.ctx.createGain();
+          const t = now + i * 0.07;
           osc.type = "triangle";
-          osc.frequency.setValueAtTime(freq, t);
-          gain.gain.setValueAtTime(0.25, t);
-          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
+          osc.frequency.setValueAtTime(140 + Math.random() * 80, t);
+          g.gain.setValueAtTime(0.2, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+          osc.connect(g);
+          g.connect(this.ctx.destination);
           osc.start(t);
-          osc.stop(t + 0.45);
-        });
+          osc.stop(t + 0.12);
+        }
       }
     }
 
-    const sound = new CozyAudioEngine();
+    const sound = new MochiSoundEngine();
 
     // =========================================================================
-    // 2. THE OG CUTE ANIMAL DEFINITIONS & CUTE SVG ARTWORK
+    // 2. THE 10 MOCHI ANIMAL TIERS (OG CUTE ANIMALS)
     // =========================================================================
-    const PET_DEFS = {
-      CAT: {
-        id: "cat",
-        name: "Calico Cat",
-        icon: "🐱",
-        color: "#fb923c",
-        bgGrad: "from-amber-200 to-orange-300",
-        quote: "Purrr! The kitties found their soft blanket!",
-        svg: `
-          <svg viewBox="0 0 100 90" class="w-full h-full drop-shadow-md">
-            <!-- Round chubby body -->
-            <ellipse cx="50" cy="52" rx="42" ry="34" fill="#fed7aa" stroke="#ea580c" stroke-width="2.5"/>
-            <!-- Orange Calico Patches -->
-            <path d="M22 28 Q35 32 30 48 Q20 44 22 28 Z" fill="#fb923c"/>
-            <path d="M78 30 Q65 35 70 50 Q82 46 78 30 Z" fill="#fdba74"/>
-            <!-- Cute triangular ears with pink inside -->
-            <polygon points="20,32 12,10 36,22" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
-            <polygon points="20,29 16,14 32,23" fill="#f472b6"/>
-            <polygon points="80,32 88,10 64,22" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
-            <polygon points="80,29 84,14 68,23" fill="#f472b6"/>
-            <!-- Happy closed curved eyes ( ^ ω ^ ) -->
-            <path d="M32 46 Q40 40 48 46" fill="none" stroke="#431407" stroke-width="3" stroke-linecap="round"/>
-            <path d="M52 46 Q60 40 68 46" fill="none" stroke="#431407" stroke-width="3" stroke-linecap="round"/>
-            <!-- Tiny nose & cat mouth -->
-            <polygon points="50,50 47,48 53,48" fill="#f43f5e"/>
-            <path d="M46 52 Q50 56 50 53 Q50 56 54 52" fill="none" stroke="#431407" stroke-width="2.2" stroke-linecap="round"/>
-            <!-- Cute Whiskers -->
-            <line x1="16" y1="48" x2="28" y2="50" stroke="#7c2d12" stroke-width="1.8" stroke-linecap="round"/>
-            <line x1="16" y1="54" x2="28" y2="54" stroke="#7c2d12" stroke-width="1.8" stroke-linecap="round"/>
-            <line x1="84" y1="48" x2="72" y2="50" stroke="#7c2d12" stroke-width="1.8" stroke-linecap="round"/>
-            <line x1="84" y1="54" x2="72" y2="54" stroke="#7c2d12" stroke-width="1.8" stroke-linecap="round"/>
-            <!-- Rosy blushing cheeks -->
-            <circle cx="28" cy="54" r="5" fill="#f472b6" opacity="0.6"/>
-            <circle cx="72" cy="54" r="5" fill="#f472b6" opacity="0.6"/>
-          </svg>
-        `
+    const TIERS = [
+      {
+        tier: 0,
+        name: "Tiny Bunny",
+        icon: "🐰",
+        radius: 17,
+        color: "#fbcfe8",
+        border: "#f472b6",
+        score: 10
       },
-      SHIBA: {
-        id: "shiba",
+      {
+        tier: 1,
+        name: "Chubby Chick",
+        icon: "🐥",
+        radius: 23,
+        color: "#fef08a",
+        border: "#facc15",
+        score: 25
+      },
+      {
+        tier: 2,
+        name: "Cozy Hamster",
+        icon: "🐹",
+        radius: 30,
+        color: "#fed7aa",
+        border: "#fb923c",
+        score: 50
+      },
+      {
+        tier: 3,
         name: "Shiba Inu",
         icon: "🐶",
-        color: "#f59e0b",
-        bgGrad: "from-amber-100 to-amber-300",
-        quote: "Woof! The good doggos are all cuddled up!",
-        svg: `
-          <svg viewBox="0 0 100 90" class="w-full h-full drop-shadow-md">
-            <!-- Body -->
-            <ellipse cx="50" cy="52" rx="42" ry="34" fill="#f59e0b" stroke="#b45309" stroke-width="2.5"/>
-            <!-- White Muzzle Mask -->
-            <ellipse cx="50" cy="58" rx="26" ry="18" fill="#fffbeb"/>
-            <!-- Soft Shiba ears -->
-            <polygon points="18,34 16,12 36,25" fill="#d97706" stroke="#b45309" stroke-width="2"/>
-            <polygon points="82,34 84,12 64,25" fill="#d97706" stroke="#b45309" stroke-width="2"/>
-            <!-- White eyebrows -->
-            <circle cx="36" cy="38" r="3.5" fill="#fffbeb"/>
-            <circle cx="64" cy="38" r="3.5" fill="#fffbeb"/>
-            <!-- Happy eyes -->
-            <circle cx="36" cy="46" r="3.5" fill="#451a03"/>
-            <circle cx="64" cy="46" r="3.5" fill="#451a03"/>
-            <!-- Nose & Tongue Blep ( ᵔ ᴥ ᵔ ) -->
-            <ellipse cx="50" cy="52" rx="3.5" ry="2.5" fill="#1c1917"/>
-            <path d="M46 56 Q50 59 54 56" fill="none" stroke="#451a03" stroke-width="2" stroke-linecap="round"/>
-            <path d="M48 57 C48 62 52 62 52 57 Z" fill="#f43f5e"/>
-            <!-- Cheeks -->
-            <circle cx="26" cy="56" r="4.5" fill="#fb7185" opacity="0.5"/>
-            <circle cx="74" cy="56" r="4.5" fill="#fb7185" opacity="0.5"/>
-          </svg>
-        `
+        radius: 38,
+        color: "#fde68a",
+        border: "#f59e0b",
+        score: 100
       },
-      CAPYBARA: {
-        id: "capybara",
-        name: "Capybara",
-        icon: "🐹",
-        color: "#a16207",
-        bgGrad: "from-amber-200 to-yellow-600",
-        quote: "Ok I pull up! The chillest capybaras are cozy!",
-        svg: `
-          <svg viewBox="0 0 100 90" class="w-full h-full drop-shadow-md">
-            <!-- Body -->
-            <ellipse cx="50" cy="54" rx="43" ry="32" fill="#b45309" stroke="#78350f" stroke-width="2.5"/>
-            <!-- Tiny Round Ears -->
-            <circle cx="22" cy="30" r="7" fill="#92400e" stroke="#78350f" stroke-width="1.8"/>
-            <circle cx="78" cy="30" r="7" fill="#92400e" stroke="#78350f" stroke-width="1.8"/>
-            <!-- Sleepy Chill Eyelids ( - ‿ - ) -->
-            <line x1="32" y1="46" x2="44" y2="46" stroke="#451a03" stroke-width="3" stroke-linecap="round"/>
-            <line x1="56" y1="46" x2="68" y2="46" stroke="#451a03" stroke-width="3" stroke-linecap="round"/>
-            <!-- Flat Capy Snout -->
-            <ellipse cx="50" cy="58" rx="14" ry="10" fill="#92400e"/>
-            <circle cx="46" cy="56" r="2" fill="#451a03"/>
-            <circle cx="54" cy="56" r="2" fill="#451a03"/>
-            <line x1="50" y1="58" x2="50" y2="63" stroke="#451a03" stroke-width="2" stroke-linecap="round"/>
-            <!-- Orange Fruit on Head (Signature Capy!) -->
-            <circle cx="50" cy="22" r="9" fill="#f97316" stroke="#ea580c" stroke-width="1.8"/>
-            <path d="M50 13 Q53 10 56 12" fill="none" stroke="#15803d" stroke-width="2.2" stroke-linecap="round"/>
-            <!-- Cheeks -->
-            <circle cx="26" cy="56" r="4.5" fill="#f43f5e" opacity="0.4"/>
-            <circle cx="74" cy="56" r="4.5" fill="#f43f5e" opacity="0.4"/>
-          </svg>
-        `
+      {
+        tier: 4,
+        name: "Calico Cat",
+        icon: "🐱",
+        radius: 47,
+        color: "#fdba74",
+        border: "#ea580c",
+        score: 200
       },
-      PANDA: {
-        id: "panda",
+      {
+        tier: 5,
         name: "Baby Panda",
         icon: "🐼",
-        color: "#3f3f46",
-        bgGrad: "from-zinc-100 to-zinc-300",
-        quote: "Munch munch! The baby pandas love their cozy bed!",
-        svg: `
-          <svg viewBox="0 0 100 90" class="w-full h-full drop-shadow-md">
-            <!-- Body -->
-            <ellipse cx="50" cy="52" rx="42" ry="34" fill="#ffffff" stroke="#27272a" stroke-width="2.5"/>
-            <!-- Black Panda Ears -->
-            <circle cx="20" cy="24" r="10" fill="#27272a"/>
-            <circle cx="80" cy="24" r="10" fill="#27272a"/>
-            <!-- Black Eye Patches -->
-            <ellipse cx="34" cy="46" rx="8" ry="11" fill="#27272a" transform="rotate(-15 34 46)"/>
-            <ellipse cx="66" cy="46" rx="8" ry="11" fill="#27272a" transform="rotate(15 66 46)"/>
-            <!-- Gentle Sparkly Eyes -->
-            <circle cx="35" cy="45" r="3" fill="#ffffff"/>
-            <circle cx="65" cy="45" r="3" fill="#ffffff"/>
-            <!-- Cute Triangle Nose & Smile -->
-            <polygon points="50,54 46,51 54,51" fill="#27272a"/>
-            <path d="M46 56 Q50 60 54 56" fill="none" stroke="#27272a" stroke-width="2" stroke-linecap="round"/>
-            <!-- Bamboo Sprout in Mouth -->
-            <path d="M54 58 Q66 58 72 54" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"/>
-            <ellipse cx="72" cy="52" rx="4" ry="2" fill="#22c55e" transform="rotate(-20 72 52)"/>
-            <!-- Cheeks -->
-            <circle cx="22" cy="54" r="4.5" fill="#f472b6" opacity="0.5"/>
-            <circle cx="78" cy="54" r="4.5" fill="#f472b6" opacity="0.5"/>
-          </svg>
-        `
+        radius: 58,
+        color: "#ffffff",
+        border: "#3f3f46",
+        score: 400
       },
-      BUNNY: {
-        id: "bunny",
-        name: "Marshmallow Bunny",
-        icon: "🐰",
-        color: "#ec4899",
-        bgGrad: "from-pink-100 to-rose-200",
-        quote: "Hop hop! The soft marshmallow bunnies are sleeping!",
-        svg: `
-          <svg viewBox="0 0 100 90" class="w-full h-full drop-shadow-md">
-            <!-- Long Floppy Bunny Ears -->
-            <ellipse cx="32" cy="18" rx="7" ry="16" fill="#ffffff" stroke="#f472b6" stroke-width="2" transform="rotate(-10 32 18)"/>
-            <ellipse cx="32" cy="18" rx="4" ry="12" fill="#fbcfe8" transform="rotate(-10 32 18)"/>
-            <ellipse cx="68" cy="18" rx="7" ry="16" fill="#ffffff" stroke="#f472b6" stroke-width="2" transform="rotate(10 68 18)"/>
-            <ellipse cx="68" cy="18" rx="4" ry="12" fill="#fbcfe8" transform="rotate(10 68 18)"/>
-            <!-- Round Body -->
-            <ellipse cx="50" cy="54" rx="42" ry="32" fill="#ffffff" stroke="#f472b6" stroke-width="2.2"/>
-            <!-- Big Cute Anime Eyes -->
-            <circle cx="36" cy="48" r="4" fill="#374151"/>
-            <circle cx="37" cy="46.5" r="1.5" fill="#ffffff"/>
-            <circle cx="64" cy="48" r="4" fill="#374151"/>
-            <circle cx="65" cy="46.5" r="1.5" fill="#ffffff"/>
-            <!-- Heart Nose & Tiny Mouth -->
-            <polygon points="50,54 48,52 52,52" fill="#ec4899"/>
-            <path d="M47 56 Q50 58 53 56" fill="none" stroke="#4b5563" stroke-width="1.8" stroke-linecap="round"/>
-            <!-- Cheeks -->
-            <circle cx="26" cy="54" r="5" fill="#f472b6" opacity="0.5"/>
-            <circle cx="74" cy="54" r="5" fill="#f472b6" opacity="0.5"/>
-          </svg>
-        `
-      }
-    };
-
-    // =========================================================================
-    // 3. LEVEL DESIGN (Progressive, Engaging, 100% Solvable)
-    // =========================================================================
-    const BASKET_CAPACITY = 3; // Each basket holds 3 cuddled pets
-
-    const LEVELS = [
-      // Level 1: Gentle Warmup (Cats & Puppies, 3 baskets)
       {
-        baskets: [
-          ["CAT", "SHIBA", "CAT"],
-          ["SHIBA", "CAT", "SHIBA"],
-          [] // Empty cozy basket
-        ]
+        tier: 6,
+        name: "Chubby Seal",
+        icon: "🦭",
+        radius: 70,
+        color: "#bae6fd",
+        border: "#38bdf8",
+        score: 800
       },
-      // Level 2: Meet the Capybara! (Cats, Shibas, Capybaras, 4 baskets)
       {
-        baskets: [
-          ["CAT", "CAPYBARA", "SHIBA"],
-          ["SHIBA", "CAT", "CAPYBARA"],
-          ["CAPYBARA", "SHIBA", "CAT"],
-          [] // Empty
-        ]
+        tier: 7,
+        name: "Chill Capybara",
+        icon: "🐹",
+        isCapy: true,
+        radius: 83,
+        color: "#d97706",
+        border: "#92400e",
+        score: 1600
       },
-      // Level 3: Panda Joins the Cuddle! (4 animal types, 5 baskets)
       {
-        baskets: [
-          ["PANDA", "CAT", "PANDA"],
-          ["SHIBA", "CAPYBARA", "CAT"],
-          ["CAPYBARA", "SHIBA", "PANDA"],
-          ["CAT", "CAPYBARA", "SHIBA"],
-          [] // Empty
-        ]
+        tier: 8,
+        name: "Honey Bear",
+        icon: "🐻",
+        radius: 98,
+        color: "#b45309",
+        border: "#78350f",
+        score: 3200
       },
-      // Level 4: Bunny Hop! (5 animal types, 6 baskets)
       {
-        baskets: [
-          ["BUNNY", "CAT", "SHIBA"],
-          ["PANDA", "CAPYBARA", "BUNNY"],
-          ["CAT", "SHIBA", "PANDA"],
-          ["CAPYBARA", "BUNNY", "CAT"],
-          ["SHIBA", "PANDA", "CAPYBARA"],
-          [] // Empty
-        ]
-      },
-      // Level 5: Master Cuddler (5 types with 2 empty beds, deeper strategy)
-      {
-        baskets: [
-          ["CAT", "PANDA", "SHIBA"],
-          ["BUNNY", "CAPYBARA", "CAT"],
-          ["PANDA", "SHIBA", "BUNNY"],
-          ["CAPYBARA", "CAT", "PANDA"],
-          ["SHIBA", "BUNNY", "CAPYBARA"],
-          [], // Empty
-          []  // Empty
-        ]
+        tier: 9,
+        name: "CHONK KING",
+        icon: "👑",
+        isKing: true,
+        radius: 114,
+        color: "#facc15",
+        border: "#ca8a04",
+        score: 8000
       }
     ];
 
     // =========================================================================
-    // 4. GAME STATE & HISTORY FOR UNDO
+    // 3. MATTER.JS PHYSICS SETUP & CANVAS INITIALIZATION
     // =========================================================================
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let engine, world;
+    let canvasW, canvasH;
+    const DANGER_LINE_Y = 85;
+
+    // Game Variables
     const STATE = {
-      levelIdx: 0,
-      baskets: [],
-      selectedBasketIdx: null,
-      history: [],
-      isWon: false,
-      extraBedUsed: false
+      score: 0,
+      bestScore: 0,
+      totalMerges: 0,
+      biggestTierUnlocked: 0,
+      isGameOver: false,
+      isDropping: false,
+      dropX: 180,
+      currentTier: 0,
+      nextTier: 1,
+
+      // Power-ups
+      hammerActive: false,
+      hammersRemaining: 2,
+      isRainbowReady: false,
+      rainbowRemaining: 1,
+      shakeCooldown: false,
+
+      // Danger overflow timer
+      overflowStartTime: null
     };
 
+    try {
+      STATE.bestScore = parseInt(localStorage.getItem("mochi_drop_best") || "0", 10);
+      document.getElementById("bestScoreVal").innerText = STATE.bestScore.toLocaleString();
+    } catch(e) {}
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvasW = rect.width;
+      canvasH = rect.height;
+      canvas.width = canvasW * dpr;
+      canvas.height = canvasH * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      STATE.dropX = canvasW / 2;
+      rebuildPhysicsWalls();
+    }
+
+    function initPhysics() {
+      engine = Matter.Engine.create({
+        gravity: { x: 0, y: 1.15 } // Cozy bouncy gravity
+      });
+      world = engine.world;
+
+      // Collision Event for Merging
+      Matter.Events.on(engine, "collisionStart", handleCollisions);
+    }
+
+    let leftWall, rightWall, ground;
+
+    function rebuildPhysicsWalls() {
+      if (!world) return;
+      if (leftWall) Matter.World.remove(world, [leftWall, rightWall, ground]);
+
+      const wallThick = 40;
+      leftWall = Matter.Bodies.rectangle(-wallThick / 2, canvasH / 2, wallThick, canvasH * 2, {
+        isStatic: true,
+        friction: 0.1,
+        restitution: 0.4
+      });
+      rightWall = Matter.Bodies.rectangle(canvasW + wallThick / 2, canvasH / 2, wallThick, canvasH * 2, {
+        isStatic: true,
+        friction: 0.1,
+        restitution: 0.4
+      });
+      ground = Matter.Bodies.rectangle(canvasW / 2, canvasH + wallThick / 2 - 4, canvasW * 2, wallThick, {
+        isStatic: true,
+        friction: 0.2,
+        restitution: 0.35
+      });
+
+      Matter.World.add(world, [leftWall, rightWall, ground]);
+    }
+
     // =========================================================================
-    // 5. BASKET RENDERING & SQUISHY MOCHI ART
+    // 4. PET SPAWNING, DROPPING & AIMING
     // =========================================================================
-    const container = document.getElementById("basketsContainer");
+    function getNextRandomTier() {
+      // Spawn small tiers (0 to 3) for the drop queue
+      const choices = [0, 0, 0, 1, 1, 2, 2, 3];
+      return choices[Math.floor(Math.random() * choices.length)];
+    }
 
-    function renderLevel() {
-      container.innerHTML = "";
-      const totalBaskets = STATE.baskets.length;
+    function createPetBody(x, y, tier, isRainbow = false) {
+      const tDef = TIERS[tier];
+      const radius = tDef.radius;
 
-      // Update Header Info
-      document.getElementById("levelLabel").innerText = `LEVEL ${STATE.levelIdx + 1}`;
-      document.getElementById("undoBtn").disabled = STATE.history.length === 0;
+      const body = Matter.Bodies.circle(x, y, radius, {
+        restitution: 0.38, // Squishy bounce
+        friction: 0.15,
+        frictionAir: 0.015,
+        density: 0.002
+      });
 
-      // Count cuddled complete baskets
-      const cuddledCount = STATE.baskets.filter(isBasketComplete).length;
-      const totalNeeded = STATE.baskets.filter(b => b.length > 0).length;
-      document.getElementById("cuddleText").innerText = `${cuddledCount} CUDDLED`;
+      body.tier = tier;
+      body.isRainbow = isRainbow;
+      body.isMerging = false;
+      body.wobble = 0;
+      body.spawnTime = Date.now();
 
-      // Update Friends Icons in Footer
-      const activeTypes = new Set();
-      STATE.baskets.forEach(b => b.forEach(type => activeTypes.add(type)));
-      const iconsHtml = Array.from(activeTypes).map(t => PET_DEFS[t]?.icon || "🐾").join(" ");
-      document.getElementById("petIconsRow").innerText = iconsHtml;
+      return body;
+    }
 
-      // Render Each Woven Basket
-      STATE.baskets.forEach((basketPets, bIdx) => {
-        const isSelected = STATE.selectedBasketIdx === bIdx;
-        const isComplete = isBasketComplete(basketPets);
+    function dropCurrentPet() {
+      if (STATE.isDropping || STATE.isGameOver || STATE.hammerActive) return;
+      sound.init();
 
-        const basketWrap = document.createElement("div");
-        basketWrap.className = `flex flex-col items-center justify-end relative cursor-pointer transition-all duration-200 select-none ${isSelected ? 'basket-active' : ''}`;
-        basketWrap.style.width = totalBaskets > 5 ? "85px" : (totalBaskets > 4 ? "95px" : "105px");
+      STATE.isDropping = true;
+      sound.playDrop();
 
-        // The Woven Basket Dish
-        const basketDish = document.createElement("div");
-        basketDish.className = `w-full rounded-3xl p-2 sm:p-2.5 flex flex-col-reverse items-center gap-1.5 transition-all duration-200 basket-shadow ${
-          isComplete 
-            ? 'bg-gradient-to-b from-amber-200 to-amber-300 border-2 border-amber-400 cuddle-complete' 
-            : (isSelected ? 'bg-amber-100 border-2 border-amber-400' : 'bg-[#fffcf7] border-2 border-amber-200/80 hover:border-amber-300')
-        }`;
-        basketDish.style.minHeight = totalBaskets > 5 ? "150px" : "175px";
+      // Clamp drop X inside jar boundaries
+      const curDef = TIERS[STATE.currentTier];
+      const clampedX = Math.max(curDef.radius + 6, Math.min(canvasW - curDef.radius - 6, STATE.dropX));
 
-        // If basket is complete -> Show giant cuddling mega-pet!
-        if (isComplete) {
-          const petDef = PET_DEFS[basketPets[0]];
-          basketDish.innerHTML = `
-            <div class="w-full flex flex-col items-center justify-center py-2 animate-bounce">
-              <div class="w-16 h-16 sm:w-20 sm:h-20">
-                ${petDef.svg}
-              </div>
-              <div class="mt-1 bg-amber-900/10 text-amber-950 font-black text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1">
-                <span>💖</span> COZY!
-              </div>
-            </div>
-          `;
-        } else {
-          // Render individual pets stacked in basket (from bottom to top)
-          for (let pIdx = 0; pIdx < BASKET_CAPACITY; pIdx++) {
-            const petType = basketPets[pIdx];
-            const slot = document.createElement("div");
-            slot.className = "w-full flex items-center justify-center relative";
-            slot.style.height = totalBaskets > 5 ? "40px" : "48px";
+      const isRainbow = STATE.isRainbowReady;
+      const pet = createPetBody(clampedX, 48, STATE.currentTier, isRainbow);
+      Matter.World.add(world, pet);
 
-            if (petType) {
-              const petDef = PET_DEFS[petType];
-              const isTop = (pIdx === basketPets.length - 1);
-              const isBeingHeld = (isSelected && isTop);
+      if (isRainbow) {
+        STATE.isRainbowReady = false;
+      }
 
-              slot.innerHTML = `
-                <div class="w-12 h-12 sm:w-14 sm:h-14 transition-all duration-200 ${isBeingHeld ? 'mochi-picked' : 'mochi-idle'}">
-                  ${petDef.svg}
-                </div>
-              `;
-            } else {
-              // Empty slot placeholder (soft cushion indicator)
-              slot.innerHTML = `
-                <div class="w-8 h-2 rounded-full bg-amber-900/5 border border-dashed border-amber-900/15"></div>
-              `;
-            }
-            basketDish.appendChild(slot);
+      // Cool-down before next pet is ready
+      setTimeout(() => {
+        STATE.currentTier = STATE.nextTier;
+        STATE.nextTier = getNextRandomTier();
+        updateNextPreviewUI();
+        STATE.isDropping = false;
+      }, 480);
+    }
+
+    function updateNextPreviewUI() {
+      const nextDef = TIERS[STATE.nextTier];
+      document.getElementById("nextPetName").innerText = nextDef.name;
+      document.getElementById("nextPetIcon").innerText = nextDef.icon;
+    }
+
+    // =========================================================================
+    // 5. COLLISION & MERGE REACTIONS (THE SUIKA MAGIC!)
+    // =========================================================================
+    let comboStreak = 0;
+    let lastMergeTime = 0;
+
+    function handleCollisions(event) {
+      const pairs = event.pairs;
+
+      for (let i = 0; i < pairs.length; i++) {
+        const { bodyA, bodyB } = pairs[i];
+
+        if (bodyA.tier !== undefined && bodyB.tier !== undefined) {
+          // Check Rainbow Wildcard merge
+          const hasRainbow = bodyA.isRainbow || bodyB.isRainbow;
+
+          if ((bodyA.tier === bodyB.tier || hasRainbow) && !bodyA.isMerging && !bodyB.isMerging) {
+            const nextTier = Math.min(TIERS.length - 1, Math.max(bodyA.tier, bodyB.tier) + 1);
+
+            // Mark merging to avoid double execution
+            bodyA.isMerging = true;
+            bodyB.isMerging = true;
+
+            // Compute midpoint
+            const midX = (bodyA.position.x + bodyB.position.x) / 2;
+            const midY = (bodyA.position.y + bodyB.position.y) / 2;
+
+            // Remove bodies next tick
+            setTimeout(() => {
+              Matter.World.remove(world, [bodyA, bodyB]);
+
+              // Spawn upgraded pet
+              const upgradedPet = createPetBody(midX, midY, nextTier);
+              Matter.World.add(world, upgradedPet);
+
+              // Add physics pop impulse
+              Matter.Body.setVelocity(upgradedPet, {
+                x: (Math.random() - 0.5) * 3,
+                y: -2.8
+              });
+
+              // Sounds & Effects
+              sound.playMerge(nextTier);
+              triggerScreenShake();
+              spawnMergeParticles(midX, midY, TIERS[nextTier].color);
+
+              // Check Combo Streak
+              const now = Date.now();
+              if (now - lastMergeTime < 1400) {
+                comboStreak++;
+                sound.playCombo(comboStreak);
+                showComboBanner(comboStreak, (nextTier + 1) * 30);
+              } else {
+                comboStreak = 1;
+              }
+              lastMergeTime = now;
+
+              // Award Score
+              const pts = TIERS[nextTier].score * comboStreak;
+              addScore(pts, midX, midY);
+
+              STATE.totalMerges++;
+              if (nextTier > STATE.biggestTierUnlocked) {
+                STATE.biggestTierUnlocked = nextTier;
+              }
+            }, 10);
+            break;
           }
         }
+      }
+    }
 
-        // Basket Base Label / Tag
-        const tag = document.createElement("div");
-        tag.className = "mt-1.5 text-[10px] font-bold text-amber-900/70 flex items-center gap-1";
-        if (isComplete) {
-          tag.innerHTML = `<span class="text-rose-500">💖</span> Done`;
-        } else if (basketPets.length === 0) {
-          tag.innerHTML = `<span class="opacity-60">Cozy Bed</span>`;
-        } else {
-          tag.innerHTML = `<span>${basketPets.length}/${BASKET_CAPACITY}</span>`;
+    function addScore(pts, x, y) {
+      STATE.score += pts;
+      document.getElementById("scoreVal").innerText = STATE.score.toLocaleString();
+
+      if (STATE.score > STATE.bestScore) {
+        STATE.bestScore = STATE.score;
+        document.getElementById("bestScoreVal").innerText = STATE.bestScore.toLocaleString();
+        try { localStorage.setItem("mochi_drop_best", STATE.bestScore); } catch(e) {}
+      }
+
+      showFloatingScore(`+${pts}`, x, y);
+    }
+
+    // =========================================================================
+    // 6. RENDER LOOP (CUTE KAWAII ANIMAL SPRITES ON CANVAS)
+    // =========================================================================
+    function drawScene() {
+      ctx.clearRect(0, 0, canvasW, canvasH);
+
+      // 1. Draw Aim Trajectory Dotted Line
+      if (!STATE.isDropping && !STATE.isGameOver && !STATE.hammerActive) {
+        const curDef = TIERS[STATE.currentTier];
+        const clampedX = Math.max(curDef.radius + 6, Math.min(canvasW - curDef.radius - 6, STATE.dropX));
+
+        ctx.save();
+        ctx.strokeStyle = "rgba(245, 158, 11, 0.4)";
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(clampedX, 55);
+        ctx.lineTo(clampedX, canvasH - 10);
+        ctx.stroke();
+        ctx.restore();
+
+        // Draw Ready-to-Drop Preview Pet
+        drawMochiAnimal(clampedX, 48, curDef, 0, 1.0, STATE.isRainbowReady);
+      }
+
+      // 2. Draw All Physical Bodies in Matter.js World
+      const bodies = Matter.Composite.allBodies(world);
+      bodies.forEach(body => {
+        if (body.tier !== undefined && !body.isMerging) {
+          const tDef = TIERS[body.tier];
+          drawMochiAnimal(body.position.x, body.position.y, tDef, body.angle, 1.0, body.isRainbow);
         }
-
-        basketWrap.appendChild(basketDish);
-        basketWrap.appendChild(tag);
-
-        // Tap on Basket to Select or Move
-        basketWrap.addEventListener("click", () => handleBasketTap(bIdx));
-
-        container.appendChild(basketWrap);
       });
+
+      // 3. Check Danger Line Overflow
+      checkDangerLineOverflow(bodies);
     }
 
-    function isBasketComplete(pets) {
-      if (pets.length !== BASKET_CAPACITY) return false;
-      return pets.every(p => p === pets[0]);
+    // Handcrafted Kawaii Vector Renderer on HTML5 Canvas
+    function drawMochiAnimal(x, y, tDef, angle = 0, scale = 1.0, isRainbow = false) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+
+      const r = tDef.radius * scale;
+
+      // Soft Shadow
+      ctx.beginPath();
+      ctx.arc(0, r * 0.12, r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(180, 83, 9, 0.18)";
+      ctx.fill();
+
+      // Main Chubby Body
+      ctx.beginPath();
+      ctx.arc(0, 0, r, 0, Math.PI * 2);
+      ctx.fillStyle = isRainbow ? getRainbowGradient() : tDef.color;
+      ctx.fill();
+      ctx.strokeStyle = isRainbow ? "#c084fc" : tDef.border;
+      ctx.lineWidth = Math.max(2, r * 0.08);
+      ctx.stroke();
+
+      // SPECIFIC CUTE ANIMAL DETAILS
+      if (tDef.tier === 0) {
+        // 🐰 Marshmallow Bunny: Long Floppy Pink Ears
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.35, -r * 0.85, r * 0.22, r * 0.5, -0.2, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.35, -r * 0.85, r * 0.22, r * 0.5, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#f472b6";
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.35, -r * 0.85, r * 0.12, r * 0.35, -0.2, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.35, -r * 0.85, r * 0.12, r * 0.35, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (tDef.tier === 1) {
+        // 🐥 Chubby Chick: Orange Beak
+        ctx.fillStyle = "#ea580c";
+        ctx.beginPath();
+        ctx.moveTo(0, r * 0.05);
+        ctx.lineTo(-r * 0.2, r * 0.25);
+        ctx.lineTo(r * 0.2, r * 0.25);
+        ctx.closePath();
+        ctx.fill();
+      } else if (tDef.tier === 3) {
+        // 🐶 Shiba Inu: White Muzzle
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.ellipse(0, r * 0.25, r * 0.55, r * 0.35, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Golden Shiba Ears
+        ctx.fillStyle = "#d97706";
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.7, -r * 0.4);
+        ctx.lineTo(-r * 0.4, -r * 0.9);
+        ctx.lineTo(-r * 0.15, -r * 0.5);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(r * 0.7, -r * 0.4);
+        ctx.lineTo(r * 0.4, -r * 0.9);
+        ctx.lineTo(r * 0.15, -r * 0.5);
+        ctx.fill();
+      } else if (tDef.tier === 4) {
+        // 🐱 Calico Cat: Triangular Ears & Whiskers
+        ctx.fillStyle = "#ea580c";
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.7, -r * 0.4);
+        ctx.lineTo(-r * 0.45, -r * 0.95);
+        ctx.lineTo(-r * 0.2, -r * 0.55);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(r * 0.7, -r * 0.4);
+        ctx.lineTo(r * 0.45, -r * 0.95);
+        ctx.lineTo(r * 0.2, -r * 0.55);
+        ctx.fill();
+        // Whiskers
+        ctx.strokeStyle = "#431407";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.4, r * 0.15); ctx.lineTo(-r * 0.85, r * 0.1);
+        ctx.moveTo(-r * 0.4, r * 0.3); ctx.lineTo(-r * 0.85, r * 0.35);
+        ctx.moveTo(r * 0.4, r * 0.15); ctx.lineTo(r * 0.85, r * 0.1);
+        ctx.moveTo(r * 0.4, r * 0.3); ctx.lineTo(r * 0.85, r * 0.35);
+        ctx.stroke();
+      } else if (tDef.tier === 5) {
+        // 🐼 Baby Panda: Black Ears & Eye Patches
+        ctx.fillStyle = "#27272a";
+        ctx.beginPath();
+        ctx.arc(-r * 0.65, -r * 0.65, r * 0.25, 0, Math.PI * 2);
+        ctx.arc(r * 0.65, -r * 0.65, r * 0.25, 0, Math.PI * 2);
+        ctx.fill();
+        // Eye patches
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.35, -r * 0.05, r * 0.22, r * 0.28, -0.2, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.35, -r * 0.05, r * 0.22, r * 0.28, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (tDef.tier === 7) {
+        // 🐹 Chill Capybara: Orange Fruit On Head!
+        ctx.fillStyle = "#f97316";
+        ctx.beginPath();
+        ctx.arc(0, -r * 0.9, r * 0.22, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#15803d";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, -r * 1.1); ctx.lineTo(r * 0.1, -r * 1.25);
+        ctx.stroke();
+      } else if (tDef.tier === 9) {
+        // 👑 CHONK KING: Golden Crown!
+        ctx.fillStyle = "#fbbf24";
+        ctx.strokeStyle = "#b45309";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.5, -r * 0.85);
+        ctx.lineTo(-r * 0.6, -r * 1.25);
+        ctx.lineTo(-r * 0.2, -r * 1.05);
+        ctx.lineTo(0, -r * 1.35);
+        ctx.lineTo(r * 0.2, -r * 1.05);
+        ctx.lineTo(r * 0.6, -r * 1.25);
+        ctx.lineTo(r * 0.5, -r * 0.85);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // KAWAII EYES & BLUSHING CHEEKS
+      // 1. Eyes
+      ctx.fillStyle = (tDef.tier === 5) ? "#ffffff" : "#451a03";
+      ctx.beginPath();
+      ctx.arc(-r * 0.32, -r * 0.08, r * 0.1, 0, Math.PI * 2);
+      ctx.arc(r * 0.32, -r * 0.08, r * 0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Eye Sparkles
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(-r * 0.35, -r * 0.11, r * 0.04, 0, Math.PI * 2);
+      ctx.arc(r * 0.29, -r * 0.11, r * 0.04, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 2. Rosy Cheeks
+      ctx.fillStyle = "rgba(244, 63, 94, 0.45)";
+      ctx.beginPath();
+      ctx.arc(-r * 0.48, r * 0.18, r * 0.15, 0, Math.PI * 2);
+      ctx.arc(r * 0.48, r * 0.18, r * 0.15, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 3. Happy Cute Smile
+      ctx.strokeStyle = "#451a03";
+      ctx.lineWidth = Math.max(1.8, r * 0.06);
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.arc(-r * 0.1, r * 0.2, r * 0.12, 0, Math.PI);
+      ctx.arc(r * 0.1, r * 0.2, r * 0.12, 0, Math.PI);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function getRainbowGradient() {
+      const grad = ctx.createLinearGradient(-30, -30, 30, 30);
+      grad.addColorStop(0, '#f43f5e');
+      grad.addColorStop(0.25, '#fbbf24');
+      grad.addColorStop(0.5, '#34d399');
+      grad.addColorStop(0.75, '#38bdf8');
+      grad.addColorStop(1, '#c084fc');
+      return grad;
     }
 
     // =========================================================================
-    // 6. CORE GAMEPLAY INTERACTION (TAP & SQUEEZE)
+    // 7. DANGER LINE & GAME OVER VERIFICATION
     // =========================================================================
-    function handleBasketTap(targetIdx) {
-      sound.init();
-      if (STATE.isWon) return;
+    function checkDangerLineOverflow(bodies) {
+      if (STATE.isGameOver) return;
 
-      const currentSelected = STATE.selectedBasketIdx;
+      let hasOverflow = false;
+      const now = Date.now();
 
-      // 1. If NO basket is selected yet: Pick up top pet from target
-      if (currentSelected === null) {
-        const sourcePets = STATE.baskets[targetIdx];
-        if (sourcePets.length === 0) return; // Can't pick from empty basket
-        if (isBasketComplete(sourcePets)) return; // Already happily cuddled!
-
-        STATE.selectedBasketIdx = targetIdx;
-        sound.playPick();
-        renderLevel();
-        return;
-      }
-
-      // 2. If clicking the SAME basket again: Deselect
-      if (currentSelected === targetIdx) {
-        STATE.selectedBasketIdx = null;
-        renderLevel();
-        return;
-      }
-
-      // 3. Move pet from currentSelected -> targetIdx
-      const sourcePets = STATE.baskets[currentSelected];
-      const destPets = STATE.baskets[targetIdx];
-
-      // Validate destination basket
-      if (destPets.length >= BASKET_CAPACITY) {
-        // Destination is full!
-        STATE.selectedBasketIdx = targetIdx; // Switch selection
-        sound.playPick();
-        renderLevel();
-        return;
-      }
-
-      const movingPet = sourcePets[sourcePets.length - 1];
-      const destTopPet = destPets.length > 0 ? destPets[destPets.length - 1] : null;
-
-      // Move is valid if dest is empty OR dest top pet matches moving pet
-      if (destTopPet === null || destTopPet === movingPet) {
-        // Save history for Undo
-        saveHistory();
-
-        // Perform move
-        sourcePets.pop();
-        destPets.push(movingPet);
-        STATE.selectedBasketIdx = null;
-
-        sound.playPlop();
-
-        // Check if destination just cuddled same species
-        if (destPets.length > 1 && destPets[destPets.length - 2] === movingPet) {
-          sound.playCuddle();
-          spawnHearts(targetIdx);
+      bodies.forEach(b => {
+        // Only settled bodies that aren't newly spawned at top
+        if (b.tier !== undefined && b.position.y - TIERS[b.tier].radius < DANGER_LINE_Y && now - b.spawnTime > 1800) {
+          hasOverflow = true;
         }
+      });
 
-        renderLevel();
-        checkVictoryCondition();
+      const dangerLabel = document.getElementById("dangerCountdown");
+
+      if (hasOverflow) {
+        if (!STATE.overflowStartTime) {
+          STATE.overflowStartTime = now;
+        }
+        const elapsed = (now - STATE.overflowStartTime) / 1000;
+        const remaining = Math.max(0, (3.2 - elapsed).toFixed(0));
+
+        dangerLabel.classList.remove("hidden");
+        dangerLabel.innerText = `OVERFLOW IN ${remaining}s!`;
+
+        if (elapsed >= 3.2) {
+          triggerGameOver();
+        }
       } else {
-        // Invalid destination: switch selection to target
-        if (destPets.length > 0 && !isBasketComplete(destPets)) {
-          STATE.selectedBasketIdx = targetIdx;
-          sound.playPick();
-        } else {
-          STATE.selectedBasketIdx = null;
-        }
-        renderLevel();
+        STATE.overflowStartTime = null;
+        dangerLabel.classList.add("hidden");
       }
     }
 
-    function saveHistory() {
-      const snap = STATE.baskets.map(b => [...b]);
-      STATE.history.push(snap);
-      if (STATE.history.length > 15) STATE.history.shift();
-    }
-
-    function undoMove() {
-      if (STATE.history.length === 0) return;
-      sound.init();
-      const lastSnap = STATE.history.pop();
-      STATE.baskets = lastSnap;
-      STATE.selectedBasketIdx = null;
-      renderLevel();
-    }
-
-    // =========================================================================
-    // 7. VICTORY CHECK & LEVEL PROGRESSION
-    // =========================================================================
-    function checkVictoryCondition() {
-      // Level is won if all non-empty baskets are complete
-      const allComplete = STATE.baskets.every(b => b.length === 0 || isBasketComplete(b));
-
-      if (allComplete) {
-        STATE.isWon = true;
-        sound.playVictory();
-
-        setTimeout(() => {
-          showVictoryModal();
-        }, 500);
-      }
-    }
-
-    function showVictoryModal() {
-      const modal = document.getElementById("victoryModal");
-      const quote = document.getElementById("victoryQuote");
-      const avatar = document.getElementById("victoryPetAvatar");
-
-      // Pick random completed pet for avatar
-      const completedTypes = STATE.baskets.filter(b => b.length > 0).map(b => b[0]);
-      const chosenType = completedTypes[Math.floor(Math.random() * completedTypes.length)] || "CAT";
-      const petDef = PET_DEFS[chosenType];
-
-      avatar.innerText = petDef.icon;
-      quote.innerText = petDef.quote;
+    function triggerGameOver() {
+      STATE.isGameOver = true;
+      const modal = document.getElementById("gameOverModal");
+      document.getElementById("finalScoreVal").innerText = STATE.score.toLocaleString();
+      document.getElementById("finalMergesVal").innerText = STATE.totalMerges;
+      document.getElementById("finalBiggestPetVal").innerText = `${TIERS[STATE.biggestTierUnlocked].name} ${TIERS[STATE.biggestTierUnlocked].icon}`;
+      document.getElementById("modalAvatar").innerText = TIERS[STATE.biggestTierUnlocked].icon;
 
       modal.classList.remove("hidden");
     }
 
-    function startLevel(lvlIdx) {
-      STATE.levelIdx = lvlIdx % LEVELS.length;
-      const levelData = LEVELS[STATE.levelIdx];
+    function resetGame() {
+      STATE.score = 0;
+      STATE.totalMerges = 0;
+      STATE.biggestTierUnlocked = 0;
+      STATE.isGameOver = false;
+      STATE.isDropping = false;
+      STATE.overflowStartTime = null;
+      STATE.hammersRemaining = 2;
+      STATE.rainbowRemaining = 1;
+      STATE.hammerActive = false;
+      STATE.isRainbowReady = false;
 
-      // Deep copy level baskets
-      STATE.baskets = levelData.baskets.map(b => [...b]);
-      STATE.selectedBasketIdx = null;
-      STATE.history = [];
-      STATE.isWon = false;
-      STATE.extraBedUsed = false;
+      document.getElementById("scoreVal").innerText = "0";
+      document.getElementById("hammerCountBadge").innerText = "2";
+      document.getElementById("rainbowCountBadge").innerText = "1";
+      document.getElementById("gameOverModal").classList.add("hidden");
 
-      document.getElementById("addBasketBtn").disabled = false;
-      document.getElementById("extraBedBadge").innerText = "1";
-      document.getElementById("victoryModal").classList.add("hidden");
+      // Clear physics bodies
+      const bodies = Matter.Composite.allBodies(world);
+      bodies.forEach(b => {
+        if (b.tier !== undefined) Matter.World.remove(world, b);
+      });
 
-      renderLevel();
+      STATE.currentTier = getNextRandomTier();
+      STATE.nextTier = getNextRandomTier();
+      updateNextPreviewUI();
     }
 
-    // Extra Basket Helper Perk
-    document.getElementById("addBasketBtn").addEventListener("click", () => {
+    // =========================================================================
+    // 8. POWER-UPS (SHAKE JAR, SQUEAKY HAMMER, RAINBOW JELLY)
+    // =========================================================================
+    // 1. Shake Jar Button
+    document.getElementById("shakeBtn").addEventListener("click", () => {
       sound.init();
-      if (!STATE.extraBedUsed && !STATE.isWon) {
-        STATE.extraBedUsed = true;
-        saveHistory();
-        STATE.baskets.push([]); // Add new empty cozy basket!
-        document.getElementById("addBasketBtn").disabled = true;
-        document.getElementById("extraBedBadge").innerText = "0";
-        sound.playCuddle();
-        renderLevel();
+      if (STATE.shakeCooldown || STATE.isGameOver) return;
+      STATE.shakeCooldown = true;
+
+      sound.playShake();
+      triggerJarShake();
+
+      // Apply turbulence physics force to all pets
+      const bodies = Matter.Composite.allBodies(world);
+      bodies.forEach(b => {
+        if (b.tier !== undefined) {
+          Matter.Body.applyForce(b, b.position, {
+            x: (Math.random() - 0.5) * 0.045,
+            y: -0.02
+          });
+        }
+      });
+
+      const badge = document.getElementById("shakeCooldownBadge");
+      badge.innerText = "5s";
+      badge.className = "bg-zinc-600 text-white text-[9px] font-black px-1.5 rounded-full";
+
+      let secs = 5;
+      const interval = setInterval(() => {
+        secs--;
+        if (secs <= 0) {
+          clearInterval(interval);
+          STATE.shakeCooldown = false;
+          badge.innerText = "READY";
+          badge.className = "bg-amber-900 text-amber-100 text-[9px] font-black px-1.5 py-0.2 rounded-full";
+        } else {
+          badge.innerText = `${secs}s`;
+        }
+      }, 1000);
+    });
+
+    // 2. Squeaky Hammer Button
+    document.getElementById("hammerBtn").addEventListener("click", () => {
+      sound.init();
+      if (STATE.hammersRemaining <= 0 || STATE.isGameOver) return;
+      STATE.hammerActive = !STATE.hammerActive;
+      canvas.classList.toggle("hammer-active", STATE.hammerActive);
+    });
+
+    // 3. Rainbow Wild Jelly
+    document.getElementById("rainbowBtn").addEventListener("click", () => {
+      sound.init();
+      if (STATE.rainbowRemaining <= 0 || STATE.isGameOver || STATE.isRainbowReady) return;
+      STATE.rainbowRemaining--;
+      document.getElementById("rainbowCountBadge").innerText = STATE.rainbowRemaining;
+      STATE.isRainbowReady = true;
+      sound.playDrop();
+    });
+
+    // =========================================================================
+    // 9. USER TOUCH & MOUSE INTERACTION (DRAG & DROP AIMING)
+    // =========================================================================
+    function getPointerX(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      return clientX - rect.left;
+    }
+
+    function getPointerPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    canvas.addEventListener("pointerdown", (e) => {
+      sound.init();
+      const pos = getPointerPos(e);
+
+      // Hammer Mode Click to Pop
+      if (STATE.hammerActive) {
+        const bodies = Matter.Composite.allBodies(world);
+        for (let b of bodies) {
+          if (b.tier !== undefined) {
+            const dist = Math.hypot(b.position.x - pos.x, b.position.y - pos.y);
+            if (dist < TIERS[b.tier].radius) {
+              sound.playHammer();
+              spawnMergeParticles(b.position.x, b.position.y, "#f43f5e");
+              Matter.World.remove(world, b);
+              STATE.hammersRemaining--;
+              document.getElementById("hammerCountBadge").innerText = STATE.hammersRemaining;
+              STATE.hammerActive = false;
+              canvas.classList.remove("hammer-active");
+              return;
+            }
+          }
+        }
+        STATE.hammerActive = false;
+        canvas.classList.remove("hammer-active");
+        return;
+      }
+
+      STATE.dropX = getPointerX(e);
+    });
+
+    canvas.addEventListener("pointermove", (e) => {
+      if (!STATE.hammerActive) {
+        STATE.dropX = getPointerX(e);
       }
     });
 
-    // Spawn Floating Hearts Particles
-    function spawnHearts(basketIdx) {
-      const overlay = document.getElementById("particleOverlay");
-      for (let i = 0; i < 4; i++) {
-        const heart = document.createElement("div");
-        heart.className = "heart-particle absolute text-xl pointer-events-none select-none";
-        heart.innerText = ["💖", "💕", "✨", "🌸"][Math.floor(Math.random() * 4)];
+    canvas.addEventListener("pointerup", () => {
+      if (!STATE.hammerActive) {
+        dropCurrentPet();
+      }
+    });
 
-        const x = window.innerWidth / 2 + (Math.random() - 0.5) * 160;
-        const y = window.innerHeight / 2 + (Math.random() - 0.5) * 80;
-        heart.style.left = `${x}px`;
-        heart.style.top = `${y}px`;
+    // =========================================================================
+    // 10. JUICE, PARTICLES & ANIMATIONS
+    // =========================================================================
+    function triggerScreenShake() {
+      const jar = document.getElementById("jarWrapper");
+      jar.classList.remove("jar-shake");
+      void jar.offsetWidth;
+      jar.classList.add("jar-shake");
+    }
 
-        overlay.appendChild(heart);
-        setTimeout(() => heart.remove(), 1100);
+    function triggerJarShake() {
+      const jar = document.getElementById("jarWrapper");
+      jar.classList.remove("jar-shake");
+      void jar.offsetWidth;
+      jar.classList.add("jar-shake");
+    }
+
+    function showFloatingScore(text, x, y) {
+      const overlay = document.getElementById("floatingOverlay");
+      const el = document.createElement("div");
+      el.className = "floating-score absolute font-fun text-sm sm:text-base font-black text-amber-900 bg-amber-200/90 border border-amber-300 px-2.5 py-0.5 rounded-full shadow-md pointer-events-none select-none";
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      el.innerText = text;
+      overlay.appendChild(el);
+      setTimeout(() => el.remove(), 900);
+    }
+
+    function showComboBanner(streak, bonus) {
+      const banner = document.getElementById("comboBanner");
+      banner.innerText = `✨ ${streak}X COMBO SPREE! +${bonus}`;
+      banner.classList.remove("hidden");
+      setTimeout(() => banner.classList.add("hidden"), 1300);
+    }
+
+    function spawnMergeParticles(x, y, color) {
+      const overlay = document.getElementById("floatingOverlay");
+      for (let i = 0; i < 6; i++) {
+        const star = document.createElement("div");
+        star.className = "floating-score absolute text-sm pointer-events-none select-none";
+        star.innerText = ["✨", "⭐", "💖", "🌸"][Math.floor(Math.random() * 4)];
+        star.style.left = `${x + (Math.random() - 0.5) * 45}px`;
+        star.style.top = `${y + (Math.random() - 0.5) * 45}px`;
+        overlay.appendChild(star);
+        setTimeout(() => star.remove(), 850);
       }
     }
 
     // =========================================================================
-    // 8. BUTTON LISTENERS & STARTUP
+    // 11. BUTTONS & MAIN RAF LOOP
     // =========================================================================
-    document.getElementById("undoBtn").addEventListener("click", undoMove);
-    document.getElementById("restartBtn").addEventListener("click", () => startLevel(STATE.levelIdx));
-    document.getElementById("nextLevelBtn").addEventListener("click", () => startLevel(STATE.levelIdx + 1));
-
     document.getElementById("soundToggleBtn").addEventListener("click", () => {
       sound.init();
       const on = sound.toggle();
       document.getElementById("soundToggleBtn").innerText = on ? "🔊" : "🔇";
     });
 
+    document.getElementById("restartBtn").addEventListener("click", () => {
+      sound.init();
+      resetGame();
+    });
+
+    document.getElementById("playAgainBtn").addEventListener("click", () => {
+      sound.init();
+      resetGame();
+    });
+
+    // MAIN 60 FPS GAME LOOP
+    function gameLoop() {
+      Matter.Engine.update(engine, 1000 / 60);
+      drawScene();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // START ENGINE
+    window.addEventListener("resize", resizeCanvas);
     window.addEventListener("pointerdown", () => sound.init(), { once: true });
 
-    // START FIRST COZY LEVEL
-    startLevel(0);
+    initPhysics();
+    resizeCanvas();
+    resetGame();
+    requestAnimationFrame(gameLoop);
   </script>
 </body>
 </html>
