@@ -1367,6 +1367,8 @@
       body.isMerging = false;
       body.wobble = 0;
       body.spawnTime = Date.now();
+      body.emotion = "normal"; // "normal" | "happy" | "angry" | "shocked"
+      body.emotionUntil = 0;
 
       return body;
     }
@@ -1391,6 +1393,8 @@
 
       const isRainbow = STATE.isRainbowReady;
       const pet = createPetBody(clampedX, 48, STATE.currentTier, isRainbow);
+      pet.emotion = "happy"; // Excited smiling face while falling!
+      pet.emotionUntil = Date.now() + 2500;
       Matter.World.add(world, pet);
 
       if (isRainbow) {
@@ -1462,6 +1466,8 @@
 
               // Spawn upgraded pet
               const upgradedPet = createPetBody(midX, midY, nextTier);
+              upgradedPet.emotion = "happy";
+              upgradedPet.emotionUntil = Date.now() + 2200;
               Matter.World.add(world, upgradedPet);
 
               // Add physics pop impulse
@@ -1521,6 +1527,42 @@
               }
             }, 10);
             break;
+          } else if (!bodyA.isMerging && !bodyB.isMerging) {
+            // Non-merging collision between two pets:
+            // Dynamic Facial Reaction System: Happy Falling, Angry Squished, Shocked Bystanders!
+            const topBody = bodyA.position.y < bodyB.position.y ? bodyA : bodyB;
+            const bottomBody = bodyA.position.y < bodyB.position.y ? bodyB : bodyA;
+
+            const vertDiff = bottomBody.position.y - topBody.position.y;
+            const relVy = topBody.velocity.y - bottomBody.velocity.y;
+            const now = Date.now();
+
+            // Detect true downward crush / landing impact:
+            if (vertDiff > 10 && (relVy > 0.4 || Math.abs(topBody.velocity.y) > 0.45)) {
+              // 1. Falling animal that lands on top gets a HAPPY smiling face 😄
+              topBody.emotion = "happy";
+              topBody.emotionUntil = now + 1700;
+
+              // 2. Animal underneath that gets crushed gets an ANGRY face 😠 (sharp brows, teeth, 💢 vein)
+              bottomBody.emotion = "angry";
+              bottomBody.emotionUntil = now + 2000;
+              bottomBody.wobble = -0.85; // squishy bounce compression
+
+              // 3. Bystander animals seeing this happen gasp with wide open SHOCKED mouth 😲
+              const impactX = (topBody.position.x + bottomBody.position.x) / 2;
+              const impactY = (topBody.position.y + bottomBody.position.y) / 2;
+              const allB = Matter.Composite.allBodies(world);
+              for (let j = 0; j < allB.length; j++) {
+                const spectator = allB[j];
+                if (spectator.tier !== undefined && spectator.id !== topBody.id && spectator.id !== bottomBody.id && !spectator.isMerging) {
+                  const d = Math.hypot(spectator.position.x - impactX, spectator.position.y - impactY);
+                  if (d < 145) {
+                    spectator.emotion = "shocked";
+                    spectator.emotionUntil = now + 1600;
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1675,31 +1717,60 @@
         }
       }
 
+      // Find active falling body or player aiming cursor for pet eye gaze tracking
+      let activeGazeTarget = null;
+      const bodies = Matter.Composite.allBodies(world);
+
+      let maxFallingVy = 0.55;
+      let fallingBody = null;
+      for (let i = 0; i < bodies.length; i++) {
+        const b = bodies[i];
+        if (b.tier !== undefined && !b.isMerging && b.velocity.y > maxFallingVy && b.position.y < canvasH - 50) {
+          maxFallingVy = b.velocity.y;
+          fallingBody = b;
+        }
+      }
+
+      const curDef = TIERS[STATE.currentTier];
+      const clampedAimX = Math.max(curDef.radius + 6, Math.min(canvasW - curDef.radius - 6, STATE.dropX));
+
+      if (fallingBody) {
+        // While an animal is falling, all pets in the jar watch that falling animal!
+        activeGazeTarget = {
+          x: fallingBody.position.x,
+          y: fallingBody.position.y,
+          bodyId: fallingBody.id
+        };
+      } else if (!STATE.isDropping && !STATE.isGameOver && !STATE.hammerActive) {
+        // When no animal is falling, pets watch the player's aiming cursor at the top!
+        activeGazeTarget = {
+          x: clampedAimX,
+          y: 48,
+          bodyId: null
+        };
+      }
+
       // 1. Draw Aim Trajectory Dotted Line
       if (!STATE.isDropping && !STATE.isGameOver && !STATE.hammerActive) {
-        const curDef = TIERS[STATE.currentTier];
-        const clampedX = Math.max(curDef.radius + 6, Math.min(canvasW - curDef.radius - 6, STATE.dropX));
-
         ctx.save();
         ctx.strokeStyle = "rgba(245, 158, 11, 0.4)";
         ctx.lineWidth = 2.5;
         ctx.setLineDash([6, 6]);
         ctx.beginPath();
-        ctx.moveTo(clampedX, 55);
-        ctx.lineTo(clampedX, canvasH - 10);
+        ctx.moveTo(clampedAimX, 55);
+        ctx.lineTo(clampedAimX, canvasH - 10);
         ctx.stroke();
         ctx.restore();
 
         // Draw Ready-to-Drop Preview Pet
-        drawMochiAnimal(clampedX, 48, curDef, 0, 1.0, STATE.isRainbowReady, null);
+        drawMochiAnimal(clampedAimX, 48, curDef, 0, 1.0, STATE.isRainbowReady, null, activeGazeTarget);
       }
 
       // 2. Draw All Physical Bodies in Matter.js World
-      const bodies = Matter.Composite.allBodies(world);
       bodies.forEach(body => {
         if (body.tier !== undefined && !body.isMerging) {
           const tDef = TIERS[body.tier];
-          drawMochiAnimal(body.position.x, body.position.y, tDef, body.angle, 1.0, body.isRainbow, body);
+          drawMochiAnimal(body.position.x, body.position.y, tDef, body.angle, 1.0, body.isRainbow, body, activeGazeTarget);
         }
       });
 
@@ -1710,7 +1781,7 @@
     // =========================================================================
     // 6. RENDER LOOP: 10 BESPOKE LIVING ANIMAL FACES ON CANVAS
     // =========================================================================
-    function drawMochiAnimal(x, y, tDef, angle = 0, scale = 1.0, isRainbow = false, body = null) {
+    function drawMochiAnimal(x, y, tDef, angle = 0, scale = 1.0, isRainbow = false, body = null, activeGazeTarget = null) {
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(angle);
@@ -1721,6 +1792,12 @@
       const breath = Math.sin((now + seed) * 0.0035) * 0.026;
       const blinkCycle = (now + seed) % 3600;
       const isBlinking = blinkCycle > 3420; // Natural 180ms blink every 3.6s
+
+      // Active dynamic emotion (happy, angry, shocked, normal)
+      let activeEmotion = "normal";
+      if (body && body.emotion && body.emotionUntil > now) {
+        activeEmotion = body.emotion;
+      }
 
       const r = tDef.radius * scale * (1 + breath);
 
@@ -1751,38 +1828,119 @@
         ctx.fill();
       }
 
-      // Helper: Sparkling Anime Eyes with Interactive Aim Tracking & Startled Expressions
+      // Comic FX Helpers: Anime Red Angry Vein Mark 💢
+      function drawAngryVein(vx, vy, size) {
+        const pulse = 1 + Math.sin(now * 0.016) * 0.15;
+        const s = size * pulse;
+        ctx.save();
+        ctx.translate(vx, vy);
+        ctx.strokeStyle = "#ef4444";
+        ctx.lineWidth = Math.max(2, s * 0.16);
+        ctx.lineCap = "round";
+        const d = s * 0.38;
+        ctx.beginPath();
+        ctx.arc(-d, -d, d * 0.72, 0, Math.PI * 0.5);
+        ctx.arc(d, -d, d * 0.72, Math.PI * 0.5, Math.PI);
+        ctx.arc(d, d, d * 0.72, Math.PI, Math.PI * 1.5);
+        ctx.arc(-d, d, d * 0.72, Math.PI * 1.5, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Comic FX Helpers: Anime Blue Sweat Drop 💧
+      function drawSweatDrop(sx, sy, size) {
+        ctx.save();
+        ctx.translate(sx, sy);
+        ctx.fillStyle = "#38bdf8";
+        ctx.strokeStyle = "#0284c7";
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(0, -size * 0.5);
+        ctx.bezierCurveTo(size * 0.45, 0, size * 0.45, size * 0.5, 0, size * 0.5);
+        ctx.bezierCurveTo(-size * 0.45, size * 0.5, -size * 0.45, 0, 0, -size * 0.5);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(-size * 0.12, size * 0.18, size * 0.1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Helper: Sparkling Anime Eyes with Dynamic Falling Animal & Aim Pupil Tracking
       function drawSparkleEyes(lx, rx, ey, eyeR, irisColor = "#3d1308") {
         let lookX = 0;
         let lookY = 0;
-        let isStartled = false;
 
-        // Living Pet Eye Tracking: Pets in the jar watch where the player aims!
-        if (body && body.position.y > 90) {
-          const dx = STATE.dropX - body.position.x;
-          const dy = 48 - body.position.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist > 1) {
-            lookX = (dx / dist) * Math.min(eyeR * 0.42, Math.abs(dx) * 0.04);
-            lookY = (dy / dist) * Math.min(eyeR * 0.42, 6);
-          }
-          // If a large pet is aiming right above a tiny pet, show shocked/startled wide eyes!
-          if (STATE.currentTier >= 4 && tDef.tier <= 2 && Math.abs(dx) < 55) {
-            isStartled = true;
+        // Dynamic Pupil Tracking: All animals in the jar turn their eyes & pupils towards the falling animal!
+        if (body && activeGazeTarget) {
+          if (activeGazeTarget.bodyId === body.id) {
+            // The falling animal eagerly looks downward towards landing!
+            lookX = 0;
+            lookY = eyeR * 0.4;
+          } else {
+            const dx = activeGazeTarget.x - body.position.x;
+            const dy = activeGazeTarget.y - body.position.y;
+            const dist = Math.hypot(dx, dy);
+            if (dist > 1) {
+              const maxLook = eyeR * 0.52;
+              lookX = (dx / dist) * Math.min(maxLook, Math.abs(dx) * 0.08);
+              lookY = (dy / dist) * Math.min(maxLook, Math.abs(dy) * 0.08);
+            }
           }
         }
 
         [-1, 1].forEach((dir) => {
           const ex = dir === -1 ? lx : rx;
-          if (isStartled) {
-            // Startled wide anime eyes (Incoming giant chonk!)
-            ctx.fillStyle = irisColor;
+
+          if (activeEmotion === "happy") {
+            // Joyful Happy Smiling Eyes ^ ^
+            ctx.strokeStyle = irisColor;
+            ctx.lineWidth = Math.max(2.4, eyeR * 0.48);
+            ctx.lineCap = "round";
             ctx.beginPath();
-            ctx.arc(ex, ey - eyeR * 0.1, eyeR * 1.25, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.arc(ex, ey + eyeR * 0.15, eyeR * 0.85, 1.15 * Math.PI, 1.85 * Math.PI);
+            ctx.stroke();
+          } else if (activeEmotion === "shocked") {
+            // Wide Open Circular Shocked Eyes with Tiny Pinpoint Pupils 😲
             ctx.fillStyle = "#ffffff";
             ctx.beginPath();
-            ctx.arc(ex + (dir * eyeR * 0.2), ey - eyeR * 0.35, eyeR * 0.55, 0, Math.PI * 2);
+            ctx.arc(ex, ey, eyeR * 1.35, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = irisColor;
+            ctx.lineWidth = Math.max(1.8, eyeR * 0.25);
+            ctx.stroke();
+            // Tiny pinpoint pupil tracking
+            ctx.fillStyle = irisColor;
+            ctx.beginPath();
+            ctx.arc(ex + lookX * 0.35, ey + lookY * 0.35, eyeR * 0.34, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (activeEmotion === "angry") {
+            // Angry sharp fierce eyebrows \ /
+            ctx.strokeStyle = "#ef4444";
+            ctx.lineWidth = Math.max(2.4, eyeR * 0.45);
+            ctx.lineCap = "round";
+            ctx.beginPath();
+            if (dir === -1) {
+              // Left brow slanting down towards center
+              ctx.moveTo(ex - eyeR * 0.9, ey - eyeR * 1.25);
+              ctx.lineTo(ex + eyeR * 0.9, ey - eyeR * 0.5);
+            } else {
+              // Right brow slanting down towards center
+              ctx.moveTo(ex + eyeR * 0.9, ey - eyeR * 1.25);
+              ctx.lineTo(ex - eyeR * 0.9, ey - eyeR * 0.5);
+            }
+            ctx.stroke();
+
+            // Narrowed fierce glare
+            ctx.fillStyle = irisColor;
+            ctx.beginPath();
+            ctx.arc(ex + lookX * 0.45, ey + lookY * 0.45, eyeR * 0.88, 0, Math.PI * 2);
+            ctx.fill();
+            // Tiny glint
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.arc(ex + lookX * 0.45 - eyeR * 0.25, ey + lookY * 0.45 - eyeR * 0.25, eyeR * 0.28, 0, Math.PI * 2);
             ctx.fill();
           } else if (isBlinking) {
             // Cute closed happy sleeping/smiling eye curve
@@ -1793,7 +1951,7 @@
             ctx.arc(ex, ey - eyeR * 0.15, eyeR * 0.85, 0.2 * Math.PI, 0.8 * Math.PI);
             ctx.stroke();
           } else {
-            // Big sparkling anime iris gazing towards aim cursor
+            // Big sparkling anime iris gazing towards target
             ctx.fillStyle = irisColor;
             ctx.beginPath();
             ctx.arc(ex + lookX, ey + lookY, eyeR, 0, Math.PI * 2);
@@ -1812,6 +1970,63 @@
             ctx.fill();
           }
         });
+      }
+
+      // Helper: Emotion Mouth Reaction System (Happy smile, Angry grimace + 💢, Shocked gasp "O" + 💧, Normal)
+      function drawAnimalMouth(defaultDrawFn, mouthY = r * 0.22, mouthScale = 1.0) {
+        if (activeEmotion === "happy") {
+          // Beaming Joyful Open Mouth "D" with pink tongue
+          ctx.save();
+          ctx.fillStyle = "#881337";
+          ctx.beginPath();
+          ctx.arc(0, mouthY, r * 0.15 * mouthScale, 0, Math.PI);
+          ctx.fill();
+          ctx.fillStyle = "#f43f5e";
+          ctx.beginPath();
+          ctx.arc(0, mouthY + r * 0.07 * mouthScale, r * 0.09 * mouthScale, 0, Math.PI);
+          ctx.fill();
+          ctx.restore();
+        } else if (activeEmotion === "angry") {
+          // Gritted Teeth / Grumpy Grimace > 皿 < + Pulsing 💢 Red Anger Vein!
+          ctx.save();
+          const mw = r * 0.28 * mouthScale;
+          const mh = r * 0.13 * mouthScale;
+          ctx.fillStyle = "#ffffff";
+          ctx.strokeStyle = "#451a03";
+          ctx.lineWidth = Math.max(1.8, r * 0.05);
+          ctx.fillRect(-mw / 2, mouthY - mh / 2, mw, mh);
+          ctx.strokeRect(-mw / 2, mouthY - mh / 2, mw, mh);
+          // Tooth dividers
+          ctx.beginPath();
+          ctx.moveTo(-mw * 0.2, mouthY - mh / 2); ctx.lineTo(-mw * 0.2, mouthY + mh / 2);
+          ctx.moveTo(mw * 0.2, mouthY - mh / 2); ctx.lineTo(mw * 0.2, mouthY + mh / 2);
+          ctx.moveTo(-mw / 2, mouthY); ctx.lineTo(mw / 2, mouthY);
+          ctx.stroke();
+          ctx.restore();
+          // Anime red angry vein mark on head
+          drawAngryVein(r * 0.52, -r * 0.55, r * 0.28);
+        } else if (activeEmotion === "shocked") {
+          // Wide Open Circular Gasping Mouth "O" + Anime Blue Sweat Drop 💧
+          ctx.save();
+          ctx.fillStyle = "#1e1b4b";
+          ctx.strokeStyle = "#451a03";
+          ctx.lineWidth = Math.max(1.8, r * 0.05);
+          ctx.beginPath();
+          ctx.ellipse(0, mouthY, r * 0.13 * mouthScale, r * 0.18 * mouthScale, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          // Interior tongue depth
+          ctx.fillStyle = "#f43f5e";
+          ctx.beginPath();
+          ctx.arc(0, mouthY + r * 0.07 * mouthScale, r * 0.07 * mouthScale, 0, Math.PI);
+          ctx.fill();
+          ctx.restore();
+          // Anime blue sweat drop on temple
+          drawSweatDrop(r * 0.62, -r * 0.38, r * 0.24);
+        } else {
+          // Normal bespoke animal mouth
+          if (defaultDrawFn) defaultDrawFn();
+        }
       }
 
       // =======================================================================
@@ -1862,16 +2077,18 @@
         ctx.bezierCurveTo(r * 0.07, r * 0.1, r * 0.07, r * 0.02, 0, r * 0.06);
         ctx.fill();
 
-        // W Bunny Mouth
-        ctx.strokeStyle = "#831843";
-        ctx.lineWidth = Math.max(1.8, r * 0.06);
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.arc(-r * 0.08, r * 0.21, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(r * 0.08, r * 0.21, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
-        ctx.stroke();
+        // W Bunny Mouth with Dynamic Emotion Reaction
+        drawAnimalMouth(() => {
+          ctx.strokeStyle = "#831843";
+          ctx.lineWidth = Math.max(1.8, r * 0.06);
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.arc(-r * 0.08, r * 0.21, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(r * 0.08, r * 0.21, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+          ctx.stroke();
+        }, r * 0.21, 0.9);
 
         // Whiskers
         ctx.strokeStyle = "#f472b6";
@@ -1921,25 +2138,27 @@
         drawSoftBlush(-r * 0.5, r * 0.18, r * 0.26, "249, 115, 22");
         drawSoftBlush(r * 0.5, r * 0.18, r * 0.26, "249, 115, 22");
 
-        // Open Orange Beak with Inner Pink Tongue!
-        ctx.fillStyle = "#ea580c";
-        ctx.beginPath();
-        ctx.moveTo(0, -r * 0.02);
-        ctx.lineTo(-r * 0.22, r * 0.14);
-        ctx.lineTo(r * 0.22, r * 0.14);
-        ctx.closePath();
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(-r * 0.16, r * 0.13);
-        ctx.lineTo(0, r * 0.25);
-        ctx.lineTo(r * 0.16, r * 0.13);
-        ctx.closePath();
-        ctx.fill();
-        // Tiny interior pink tongue
-        ctx.fillStyle = "#f43f5e";
-        ctx.beginPath();
-        ctx.arc(0, r * 0.15, r * 0.065, 0, Math.PI);
-        ctx.fill();
+        // Open Orange Beak with Inner Pink Tongue & Dynamic Emotion
+        drawAnimalMouth(() => {
+          ctx.fillStyle = "#ea580c";
+          ctx.beginPath();
+          ctx.moveTo(0, -r * 0.02);
+          ctx.lineTo(-r * 0.22, r * 0.14);
+          ctx.lineTo(r * 0.22, r * 0.14);
+          ctx.closePath();
+          ctx.fill();
+          ctx.beginPath();
+          ctx.moveTo(-r * 0.16, r * 0.13);
+          ctx.lineTo(0, r * 0.25);
+          ctx.lineTo(r * 0.16, r * 0.13);
+          ctx.closePath();
+          ctx.fill();
+          // Tiny interior pink tongue
+          ctx.fillStyle = "#f43f5e";
+          ctx.beginPath();
+          ctx.arc(0, r * 0.15, r * 0.065, 0, Math.PI);
+          ctx.fill();
+        }, r * 0.16, 0.9);
 
       } else if (tDef.tier === 2) {
         // =====================================================================
@@ -1991,24 +2210,26 @@
         ctx.beginPath();
         ctx.arc(0, r * 0.11, r * 0.05, 0, Math.PI * 2);
         ctx.fill();
-        // Buckteeth
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(-r * 0.075, r * 0.2, r * 0.065, r * 0.09);
-        ctx.fillRect(r * 0.01, r * 0.2, r * 0.065, r * 0.09);
-        ctx.strokeStyle = "#fed7aa";
-        ctx.lineWidth = 1;
-        ctx.strokeRect(-r * 0.075, r * 0.2, r * 0.065, r * 0.09);
-        ctx.strokeRect(r * 0.01, r * 0.2, r * 0.065, r * 0.09);
-        // Mouth outline
-        ctx.strokeStyle = "#7c2d12";
-        ctx.lineWidth = Math.max(1.8, r * 0.055);
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.arc(-r * 0.08, r * 0.2, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(r * 0.08, r * 0.2, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
-        ctx.stroke();
+        // Buckteeth & mouth with Dynamic Emotion
+        drawAnimalMouth(() => {
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(-r * 0.075, r * 0.2, r * 0.065, r * 0.09);
+          ctx.fillRect(r * 0.01, r * 0.2, r * 0.065, r * 0.09);
+          ctx.strokeStyle = "#fed7aa";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(-r * 0.075, r * 0.2, r * 0.065, r * 0.09);
+          ctx.strokeRect(r * 0.01, r * 0.2, r * 0.065, r * 0.09);
+          // Mouth outline
+          ctx.strokeStyle = "#7c2d12";
+          ctx.lineWidth = Math.max(1.8, r * 0.055);
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.arc(-r * 0.08, r * 0.2, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(r * 0.08, r * 0.2, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+          ctx.stroke();
+        }, r * 0.22, 1.0);
 
         // Holding a Striped Sunflower Seed in Tiny Paws
         ctx.fillStyle = "#292524";
@@ -2086,26 +2307,28 @@
         ctx.ellipse(0, r * 0.14, r * 0.08, r * 0.055, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Happy Open Dog Mouth with a Pink Blep Tongue
-        ctx.fillStyle = "#881337";
-        ctx.beginPath();
-        ctx.arc(0, r * 0.27, r * 0.16, 0, Math.PI);
-        ctx.fill();
-        // Blep Tongue
-        ctx.fillStyle = "#f43f5e";
-        ctx.beginPath();
-        ctx.ellipse(r * 0.02, r * 0.37, r * 0.09, r * 0.13, 0.08, 0, Math.PI * 2);
-        ctx.fill();
-        // Shiba Smile line
-        ctx.strokeStyle = "#451a03";
-        ctx.lineWidth = Math.max(1.8, r * 0.055);
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.arc(-r * 0.08, r * 0.21, r * 0.09, 0.2 * Math.PI, 0.9 * Math.PI);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(r * 0.08, r * 0.21, r * 0.09, 0.1 * Math.PI, 0.8 * Math.PI);
-        ctx.stroke();
+        // Happy Open Dog Mouth with Blep Tongue & Dynamic Emotion
+        drawAnimalMouth(() => {
+          ctx.fillStyle = "#881337";
+          ctx.beginPath();
+          ctx.arc(0, r * 0.27, r * 0.16, 0, Math.PI);
+          ctx.fill();
+          // Blep Tongue
+          ctx.fillStyle = "#f43f5e";
+          ctx.beginPath();
+          ctx.ellipse(r * 0.02, r * 0.37, r * 0.09, r * 0.13, 0.08, 0, Math.PI * 2);
+          ctx.fill();
+          // Shiba Smile line
+          ctx.strokeStyle = "#451a03";
+          ctx.lineWidth = Math.max(1.8, r * 0.055);
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.arc(-r * 0.08, r * 0.21, r * 0.09, 0.2 * Math.PI, 0.9 * Math.PI);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(r * 0.08, r * 0.21, r * 0.09, 0.1 * Math.PI, 0.8 * Math.PI);
+          ctx.stroke();
+        }, r * 0.28, 1.0);
 
       } else if (tDef.tier === 4) {
         // =====================================================================
@@ -2172,16 +2395,18 @@
         ctx.closePath();
         ctx.fill();
 
-        // Classic 3 Cat Mouth
-        ctx.strokeStyle = "#431407";
-        ctx.lineWidth = Math.max(1.8, r * 0.055);
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.arc(-r * 0.08, r * 0.22, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(r * 0.08, r * 0.22, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
-        ctx.stroke();
+        // Classic 3 Cat Mouth with Dynamic Emotion
+        drawAnimalMouth(() => {
+          ctx.strokeStyle = "#431407";
+          ctx.lineWidth = Math.max(1.8, r * 0.055);
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.arc(-r * 0.08, r * 0.22, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(r * 0.08, r * 0.22, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+          ctx.stroke();
+        }, r * 0.22, 1.0);
 
         // 3 Delicate Cat Whiskers per cheek
         ctx.strokeStyle = "#431407";
@@ -2235,13 +2460,15 @@
         ctx.ellipse(0, r * 0.13, r * 0.07, r * 0.05, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Smile
-        ctx.strokeStyle = "#18181b";
-        ctx.lineWidth = Math.max(1.8, r * 0.055);
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.arc(0, r * 0.18, r * 0.11, 0.15 * Math.PI, 0.85 * Math.PI);
-        ctx.stroke();
+        // Smile with Dynamic Emotion
+        drawAnimalMouth(() => {
+          ctx.strokeStyle = "#18181b";
+          ctx.lineWidth = Math.max(1.8, r * 0.055);
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.arc(0, r * 0.18, r * 0.11, 0.15 * Math.PI, 0.85 * Math.PI);
+          ctx.stroke();
+        }, r * 0.18, 1.0);
 
         // Chewing on a Fresh Green Bamboo Stalk with Leaf!
         ctx.save();
@@ -2310,15 +2537,17 @@
         ctx.bezierCurveTo(r * 0.06, r * 0.14, r * 0.06, r * 0.06, 0, r * 0.1);
         ctx.fill();
 
-        // Cute Seal Smile
-        ctx.strokeStyle = "#0f172a";
-        ctx.lineWidth = Math.max(1.8, r * 0.055);
-        ctx.beginPath();
-        ctx.arc(-r * 0.08, r * 0.24, r * 0.08, 0.15 * Math.PI, 0.85 * Math.PI);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(r * 0.08, r * 0.24, r * 0.08, 0.15 * Math.PI, 0.85 * Math.PI);
-        ctx.stroke();
+        // Cute Seal Smile with Dynamic Emotion
+        drawAnimalMouth(() => {
+          ctx.strokeStyle = "#0f172a";
+          ctx.lineWidth = Math.max(1.8, r * 0.055);
+          ctx.beginPath();
+          ctx.arc(-r * 0.08, r * 0.24, r * 0.08, 0.15 * Math.PI, 0.85 * Math.PI);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.arc(r * 0.08, r * 0.24, r * 0.08, 0.15 * Math.PI, 0.85 * Math.PI);
+          ctx.stroke();
+        }, r * 0.24, 1.0);
 
       } else if (tDef.tier === 7) {
         // =====================================================================
@@ -2360,13 +2589,15 @@
         drawSoftBlush(-r * 0.54, r * 0.24, r * 0.26, "249, 115, 22");
         drawSoftBlush(r * 0.54, r * 0.24, r * 0.26, "249, 115, 22");
 
-        // Gentle Contented Zen Smile
-        ctx.strokeStyle = "#451a03";
-        ctx.lineWidth = Math.max(2, r * 0.06);
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.arc(0, r * 0.32, r * 0.16, 0.15 * Math.PI, 0.85 * Math.PI);
-        ctx.stroke();
+        // Gentle Contented Zen Smile with Dynamic Emotion
+        drawAnimalMouth(() => {
+          ctx.strokeStyle = "#451a03";
+          ctx.lineWidth = Math.max(2, r * 0.06);
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.arc(0, r * 0.32, r * 0.16, 0.15 * Math.PI, 0.85 * Math.PI);
+          ctx.stroke();
+        }, r * 0.32, 1.05);
 
         // The Legendary Yuzu / Mandarin Orange Bobbing on Head with Breath!
         const yuzuY = -r * 0.96 + Math.sin((now + seed) * 0.004) * (r * 0.03);
@@ -2432,14 +2663,16 @@
         ctx.ellipse(-r * 0.03, r * 0.12, r * 0.04, r * 0.02, -0.2, 0, Math.PI * 2);
         ctx.fill();
 
-        // Gentle Teddy Smile
-        ctx.strokeStyle = "#451a03";
-        ctx.lineWidth = Math.max(2.2, r * 0.06);
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(0, r * 0.23); ctx.lineTo(0, r * 0.32);
-        ctx.arc(0, r * 0.32, r * 0.14, 0.1 * Math.PI, 0.9 * Math.PI);
-        ctx.stroke();
+        // Gentle Teddy Smile with Dynamic Emotion
+        drawAnimalMouth(() => {
+          ctx.strokeStyle = "#451a03";
+          ctx.lineWidth = Math.max(2.2, r * 0.06);
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(0, r * 0.23); ctx.lineTo(0, r * 0.32);
+          ctx.arc(0, r * 0.32, r * 0.14, 0.1 * Math.PI, 0.9 * Math.PI);
+          ctx.stroke();
+        }, r * 0.3, 1.05);
 
         // Cute Golden Honey Drip Badge on Cheek
         ctx.fillStyle = "#facc15";
@@ -2520,13 +2753,15 @@
         ctx.arc(0, r * 0.12, r * 0.05, 0, Math.PI * 2);
         ctx.fill();
 
-        // Confident Smug Royal Smirk!
-        ctx.strokeStyle = "#451a03";
-        ctx.lineWidth = Math.max(2.4, r * 0.065);
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.arc(r * 0.06, r * 0.24, r * 0.18, 0.15 * Math.PI, 0.75 * Math.PI);
-        ctx.stroke();
+        // Confident Smug Royal Smirk with Dynamic Emotion!
+        drawAnimalMouth(() => {
+          ctx.strokeStyle = "#451a03";
+          ctx.lineWidth = Math.max(2.4, r * 0.065);
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.arc(r * 0.06, r * 0.24, r * 0.18, 0.15 * Math.PI, 0.75 * Math.PI);
+          ctx.stroke();
+        }, r * 0.24, 1.1);
       }
 
       ctx.restore();
@@ -2804,6 +3039,8 @@
             y: Math.min(body.velocity.y, lift)
           });
           Matter.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.03);
+          body.emotion = "shocked";
+          body.emotionUntil = Date.now() + 1200;
         }
       });
 
