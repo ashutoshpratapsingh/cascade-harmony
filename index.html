@@ -160,8 +160,11 @@
         </div>
       </div>
 
-      <!-- SOUND & RESET -->
+      <!-- TUTORIAL, SOUND & RESET -->
       <div class="flex items-center gap-1.5">
+        <button id="tutorialBtn" title="How to Play Tutorial" class="touch-btn w-9 h-9 rounded-2xl bg-amber-100/90 border-2 border-amber-300 text-amber-900 text-sm font-black flex items-center justify-center shadow-sm hover:bg-amber-200 transition">
+          ❓
+        </button>
         <button id="soundToggleBtn" class="touch-btn w-9 h-9 rounded-2xl bg-amber-100/90 border-2 border-amber-300 text-amber-900 text-sm font-black flex items-center justify-center shadow-sm">
           🔊
         </button>
@@ -236,6 +239,15 @@
       <div class="absolute top-[85px] left-2 right-2 danger-line z-20 flex items-center justify-between px-2 text-[9px] font-extrabold text-rose-500/80 uppercase tracking-widest pointer-events-none">
         <span>⚠️ DANGER LINE</span>
         <span id="dangerCountdown" class="hidden text-rose-600 font-black animate-pulse">OVERFLOW IN 3s!</span>
+      </div>
+
+      <!-- IN-JAR FIRST-DROP TUTORIAL HINT (Guides new players on where to aim & drop) -->
+      <div id="firstDropHint" class="absolute top-[135px] left-0 right-0 z-30 flex flex-col items-center pointer-events-none transition-all duration-500">
+        <div class="bg-amber-950/85 text-amber-100 px-3.5 py-1.5 rounded-full text-[11px] font-black shadow-xl border border-amber-300/50 flex items-center gap-2 backdrop-blur-xs animate-bounce">
+          <span>👈</span>
+          <span>SLIDE TO AIM & RELEASE TO DROP</span>
+          <span>👉</span>
+        </div>
       </div>
 
       <!-- MAIN PHYSICS CANVAS -->
@@ -377,6 +389,100 @@
       <!-- RETRY BUTTON -->
       <button id="retryLevelBtn" class="touch-btn w-full py-3.5 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300 border-2 border-amber-500 rounded-2xl text-amber-950 font-black text-base shadow-lg transition active:scale-95">
         RETRY LEVEL 🔄
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- HOW TO PLAY / TUTORIAL MODAL (GUIDES NEW PLAYERS STEP-BY-STEP)           -->
+  <!-- ========================================================================= -->
+  <div id="tutorialModal" class="fixed inset-0 bg-black/65 z-50 flex items-center justify-center p-4 backdrop-blur-sm hidden select-none">
+    <div class="max-w-sm w-full bg-[#fffcf5] border-3 border-amber-300 rounded-3xl p-5 shadow-2xl space-y-3.5 transform transition-all duration-300 scale-95 relative max-h-[92vh] overflow-y-auto">
+      <!-- Close X button -->
+      <button id="closeTutorialBtn" class="touch-btn absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-amber-100 border border-amber-300 text-amber-950 font-black text-xs flex items-center justify-center shadow-sm hover:bg-amber-200 transition">
+        ✕
+      </button>
+
+      <!-- Modal Header -->
+      <div class="text-center pt-1">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-3xl shadow-sm mb-1.5 animate-bounce">
+          🐾
+        </div>
+        <h2 class="font-fun text-2xl font-black text-amber-950 tracking-wide leading-none">
+          HOW TO PLAY MOCHI DROP
+        </h2>
+        <p class="text-[11px] text-amber-800 font-bold mt-1">
+          Master the art of dropping & merging cute chonky pets!
+        </p>
+      </div>
+
+      <!-- STEP CARDS GUIDE -->
+      <div class="space-y-2.5 text-xs text-amber-950 font-bold">
+        <!-- Step 1: Aim & Drop -->
+        <div class="bg-amber-100/70 p-3 rounded-2xl border border-amber-200 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-amber-200 border border-amber-300 flex-shrink-0 flex items-center justify-center text-xl shadow-inner">
+            🎯
+          </div>
+          <div>
+            <div class="text-[10px] uppercase font-black tracking-wider text-amber-800">Step 1</div>
+            <div class="font-black text-amber-950 text-xs">Slide to Aim & Release to Drop</div>
+            <p class="text-[11px] text-amber-900/90 font-medium leading-tight mt-0.5">
+              Drag your finger or mouse left and right to line up the dotted trajectory. Release to drop your pet into the jar!
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2: Merge Same Animals -->
+        <div class="bg-amber-100/70 p-3 rounded-2xl border border-amber-200 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-rose-200 border border-rose-300 flex-shrink-0 flex items-center justify-center text-xl shadow-inner">
+            ✨
+          </div>
+          <div>
+            <div class="text-[10px] uppercase font-black tracking-wider text-rose-800">Step 2</div>
+            <div class="font-black text-amber-950 text-xs">Touch Same Animals to Merge</div>
+            <p class="text-[11px] text-amber-900/90 font-medium leading-tight mt-0.5">
+              When 2 identical animals touch, they merge into the next bigger pet and play their real animal voice!
+            </p>
+            <div class="mt-1.5 bg-white/85 px-2 py-1 rounded-lg border border-amber-200 flex items-center justify-center gap-1.5 text-xs">
+              <span>🐰</span> + <span>🐰</span> ➔ <span>🐥</span> + <span>🐥</span> ➔ <span class="font-black text-amber-950">🐹 (Evolves to 👑)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Power-ups -->
+        <div class="bg-amber-100/70 p-3 rounded-2xl border border-amber-200 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-purple-200 border border-purple-300 flex-shrink-0 flex items-center justify-center text-xl shadow-inner">
+            📳
+          </div>
+          <div>
+            <div class="text-[10px] uppercase font-black tracking-wider text-purple-800">Step 3</div>
+            <div class="font-black text-amber-950 text-xs">Use Power-Ups When In Trouble</div>
+            <div class="mt-1 space-y-1 text-[10.5px] text-amber-900/90 font-medium leading-tight">
+              <div><strong class="text-amber-950">📳 Shake Jar:</strong> Swirls & flings animals in the jar to unstick clumps!</div>
+              <div><strong class="text-rose-700">🔨 Hammer:</strong> Tap any unwanted pet in the jar to pop it!</div>
+              <div><strong class="text-purple-700">🌈 Rainbow:</strong> Wildcard pet that merges with ANY animal!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Danger Line & Missions -->
+        <div class="bg-amber-100/70 p-3 rounded-2xl border border-amber-200 flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-200 border border-emerald-300 flex-shrink-0 flex items-center justify-center text-xl shadow-inner">
+            ⭐
+          </div>
+          <div>
+            <div class="text-[10px] uppercase font-black tracking-wider text-emerald-800">Step 4</div>
+            <div class="font-black text-amber-950 text-xs">Watch the Danger Line & Clear Quests!</div>
+            <p class="text-[11px] text-amber-900/90 font-medium leading-tight mt-0.5">
+              Complete the stage target before your drops run out to earn 3 stars! Don't let pets stay above the red <span class="text-rose-600 font-black">⚠️ DANGER LINE</span> for 3 seconds!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button id="startGameBtn" class="touch-btn w-full py-3 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300 border-2 border-amber-500 rounded-2xl text-amber-950 font-black text-sm shadow-lg transition active:scale-95">
+        GOT IT! LET'S PLAY ➔
       </button>
     </div>
   </div>
@@ -1205,6 +1311,13 @@
     function dropCurrentPet() {
       if (STATE.isDropping || STATE.isGameOver || STATE.hammerActive) return;
       sound.init();
+
+      // Dismiss First-Drop Tutorial Hint on user's first drop
+      const hint = document.getElementById("firstDropHint");
+      if (hint) {
+        hint.style.opacity = "0";
+        setTimeout(() => hint.remove(), 400);
+      }
 
       STATE.isDropping = true;
       sound.playDrop();
@@ -2653,6 +2766,26 @@
       resetGame();
     });
 
+    // Tutorial Modal Handlers
+    function openTutorial() {
+      sound.init();
+      const modal = document.getElementById("tutorialModal");
+      if (modal) modal.classList.remove("hidden");
+    }
+
+    function closeTutorial() {
+      sound.init();
+      const modal = document.getElementById("tutorialModal");
+      if (modal) modal.classList.add("hidden");
+      try {
+        localStorage.setItem("mochi_drop_tutorial_seen", "true");
+      } catch(e) {}
+    }
+
+    document.getElementById("tutorialBtn").addEventListener("click", openTutorial);
+    document.getElementById("closeTutorialBtn").addEventListener("click", closeTutorial);
+    document.getElementById("startGameBtn").addEventListener("click", closeTutorial);
+
     // Level Quest Modals & Mode Buttons
     document.getElementById("nextLevelBtn").addEventListener("click", () => {
       sound.init();
@@ -2696,6 +2829,14 @@
     initPhysics();
     resizeCanvas();
     initLevel(STATE.currentLevel || 1);
+
+    // Auto-open tutorial on very first player visit
+    try {
+      if (!localStorage.getItem("mochi_drop_tutorial_seen")) {
+        setTimeout(openTutorial, 300);
+      }
+    } catch(e) {}
+
     requestAnimationFrame(gameLoop);
   </script>
 </body>
