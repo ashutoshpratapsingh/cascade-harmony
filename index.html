@@ -389,6 +389,286 @@
           osc.stop(t + 0.12);
         }
       }
+
+      // =====================================================================
+      // BESPOKE MERGE ANIMAL VOCALIZATIONS (Only plays on merge creation!)
+      // =====================================================================
+      playBunnyVocal() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1250, now);
+        osc.frequency.exponentialRampToValueAtTime(1900, now + 0.06);
+        osc.frequency.exponentialRampToValueAtTime(1450, now + 0.12);
+        gain.gain.setValueAtTime(0.28, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      }
+
+      playChickVocal() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        [0, 0.075].forEach((offset, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = now + offset;
+          osc.type = "triangle";
+          const startF = idx === 0 ? 2700 : 3100;
+          const endF = idx === 0 ? 1900 : 2200;
+          osc.frequency.setValueAtTime(startF, t);
+          osc.frequency.exponentialRampToValueAtTime(endF, t + 0.055);
+          gain.gain.setValueAtTime(0.24, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.065);
+        });
+      }
+
+      playHamsterVocal() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        [0, 0.045, 0.09].forEach((offset, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = now + offset;
+          osc.type = "sine";
+          const freqs = [1850, 2250, 2050];
+          osc.frequency.setValueAtTime(freqs[i], t);
+          osc.frequency.exponentialRampToValueAtTime(freqs[i] * 1.25, t + 0.035);
+          gain.gain.setValueAtTime(0.22, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.045);
+        });
+      }
+
+      playShibaVocal() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(680, now);
+        filter.Q.setValueAtTime(2.2, now);
+
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(340, now);
+        osc.frequency.exponentialRampToValueAtTime(740, now + 0.05);
+        osc.frequency.exponentialRampToValueAtTime(420, now + 0.14);
+
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.18);
+      }
+
+      playCatVocal() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(750, now);
+        filter.frequency.exponentialRampToValueAtTime(1100, now + 0.12);
+        filter.frequency.exponentialRampToValueAtTime(600, now + 0.28);
+        filter.Q.setValueAtTime(2.5, now);
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(780, now + 0.1);
+        osc.frequency.exponentialRampToValueAtTime(520, now + 0.26);
+
+        // Subtle 6.5Hz vocal vibrato LFO
+        const lfo = this.ctx.createOscillator();
+        const lfoGain = this.ctx.createGain();
+        lfo.type = "sine";
+        lfo.frequency.setValueAtTime(6.5, now);
+        lfoGain.gain.setValueAtTime(12, now);
+        lfo.connect(osc.frequency);
+        lfo.start(now);
+        lfo.stop(now + 0.28);
+
+        gain.gain.setValueAtTime(0.28, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+
+      playPandaVocal() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(560, now);
+        osc.frequency.exponentialRampToValueAtTime(450, now + 0.08);
+        osc.frequency.exponentialRampToValueAtTime(580, now + 0.15);
+        gain.gain.setValueAtTime(0.26, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.2);
+      }
+
+      playSealVocal() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        [0, 0.09].forEach((offset, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const filter = this.ctx.createBiquadFilter();
+          const t = now + offset;
+
+          filter.type = "bandpass";
+          filter.frequency.setValueAtTime(450, t);
+          filter.Q.setValueAtTime(3.0, t);
+
+          osc.type = "square";
+          const f = idx === 0 ? 280 : 320;
+          osc.frequency.setValueAtTime(f, t);
+          osc.frequency.exponentialRampToValueAtTime(f * 1.35, t + 0.04);
+          osc.frequency.exponentialRampToValueAtTime(f * 0.9, t + 0.07);
+
+          gain.gain.setValueAtTime(0.25, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.075);
+
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(t);
+          osc.stop(t + 0.085);
+        });
+      }
+
+      playCapybaraVocal() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1150, now);
+        osc.frequency.exponentialRampToValueAtTime(1280, now + 0.12);
+        osc.frequency.exponentialRampToValueAtTime(980, now + 0.22);
+
+        // Fast 22Hz flutter trill LFO
+        const lfo = this.ctx.createOscillator();
+        const lfoGain = this.ctx.createGain();
+        lfo.type = "sine";
+        lfo.frequency.setValueAtTime(22, now);
+        lfoGain.gain.setValueAtTime(45, now);
+        lfo.connect(osc.frequency);
+        lfo.start(now);
+        lfo.stop(now + 0.23);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+
+      playBearVocal() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(380, now);
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(155, now);
+        osc.frequency.exponentialRampToValueAtTime(210, now + 0.09);
+        osc.frequency.exponentialRampToValueAtTime(130, now + 0.24);
+
+        gain.gain.setValueAtTime(0.32, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.28);
+      }
+
+      playKingVocal() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.5];
+        notes.forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = now + i * 0.065;
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.24, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.26);
+        });
+
+        // Golden shimmer purr
+        const purr = this.ctx.createOscillator();
+        const pGain = this.ctx.createGain();
+        purr.type = "sine";
+        purr.frequency.setValueAtTime(220, now + 0.15);
+        purr.frequency.exponentialRampToValueAtTime(440, now + 0.4);
+        pGain.gain.setValueAtTime(0.18, now + 0.15);
+        pGain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+        purr.connect(pGain);
+        pGain.connect(this.ctx.destination);
+        purr.start(now + 0.15);
+        purr.stop(now + 0.45);
+      }
+
+      playAnimalVocal(tier) {
+        switch (tier) {
+          case 0: this.playBunnyVocal(); break;
+          case 1: this.playChickVocal(); break;
+          case 2: this.playHamsterVocal(); break;
+          case 3: this.playShibaVocal(); break;
+          case 4: this.playCatVocal(); break;
+          case 5: this.playPandaVocal(); break;
+          case 6: this.playSealVocal(); break;
+          case 7: this.playCapybaraVocal(); break;
+          case 8: this.playBearVocal(); break;
+          case 9: this.playKingVocal(); break;
+          default: this.playChickVocal(); break;
+        }
+      }
     }
 
     const sound = new MochiSoundEngine();
@@ -682,8 +962,9 @@
                 y: -2.8
               });
 
-              // Sounds & Effects
+              // Sounds & Effects: Suika pop chime + bespoke animal vocal on new pet appearance!
               sound.playMerge(nextTier);
+              sound.playAnimalVocal(nextTier);
               triggerScreenShake();
               spawnMergeParticles(midX, midY, TIERS[nextTier].color);
 
@@ -748,7 +1029,7 @@
         ctx.restore();
 
         // Draw Ready-to-Drop Preview Pet
-        drawMochiAnimal(clampedX, 48, curDef, 0, 1.0, STATE.isRainbowReady);
+        drawMochiAnimal(clampedX, 48, curDef, 0, 1.0, STATE.isRainbowReady, null);
       }
 
       // 2. Draw All Physical Bodies in Matter.js World
@@ -756,7 +1037,7 @@
       bodies.forEach(body => {
         if (body.tier !== undefined && !body.isMerging) {
           const tDef = TIERS[body.tier];
-          drawMochiAnimal(body.position.x, body.position.y, tDef, body.angle, 1.0, body.isRainbow);
+          drawMochiAnimal(body.position.x, body.position.y, tDef, body.angle, 1.0, body.isRainbow, body);
         }
       });
 
@@ -764,18 +1045,27 @@
       checkDangerLineOverflow(bodies);
     }
 
-    // Handcrafted Kawaii Vector Renderer on HTML5 Canvas
-    function drawMochiAnimal(x, y, tDef, angle = 0, scale = 1.0, isRainbow = false) {
+    // =========================================================================
+    // 6. RENDER LOOP: 10 BESPOKE LIVING ANIMAL FACES ON CANVAS
+    // =========================================================================
+    function drawMochiAnimal(x, y, tDef, angle = 0, scale = 1.0, isRainbow = false, body = null) {
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(angle);
 
-      const r = tDef.radius * scale;
+      // Unique living seed for staggered blinking, breathing & wiggles
+      const now = Date.now();
+      const seed = body ? (body.id * 7919 + 107) : 42;
+      const breath = Math.sin((now + seed) * 0.0035) * 0.026;
+      const blinkCycle = (now + seed) % 3600;
+      const isBlinking = blinkCycle > 3420; // Natural 180ms blink every 3.6s
 
-      // Soft Shadow
+      const r = tDef.radius * scale * (1 + breath);
+
+      // Soft Ambient Ground Shadow
       ctx.beginPath();
-      ctx.arc(0, r * 0.12, r, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(180, 83, 9, 0.18)";
+      ctx.arc(0, r * 0.14, r * 0.98, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(180, 83, 9, 0.16)";
       ctx.fill();
 
       // Main Chubby Body
@@ -784,142 +1074,769 @@
       ctx.fillStyle = isRainbow ? getRainbowGradient() : tDef.color;
       ctx.fill();
       ctx.strokeStyle = isRainbow ? "#c084fc" : tDef.border;
-      ctx.lineWidth = Math.max(2, r * 0.08);
+      ctx.lineWidth = Math.max(2.2, r * 0.075);
       ctx.stroke();
 
-      // SPECIFIC CUTE ANIMAL DETAILS
-      if (tDef.tier === 0) {
-        // 🐰 Marshmallow Bunny: Long Floppy Pink Ears
-        ctx.fillStyle = "#ffffff";
+      // Helper: Airbrushed Soft Glowing Cheeks (Radial Gradient)
+      function drawSoftBlush(bx, by, blushR, rgb = "244, 63, 94") {
+        const g = ctx.createRadialGradient(bx, by, 0, bx, by, blushR);
+        g.addColorStop(0, `rgba(${rgb}, 0.72)`);
+        g.addColorStop(0.55, `rgba(${rgb}, 0.35)`);
+        g.addColorStop(1, `rgba(${rgb}, 0)`);
+        ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.ellipse(-r * 0.35, -r * 0.85, r * 0.22, r * 0.5, -0.2, 0, Math.PI * 2);
-        ctx.ellipse(r * 0.35, -r * 0.85, r * 0.22, r * 0.5, 0.2, 0, Math.PI * 2);
+        ctx.arc(bx, by, blushR, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = "#f472b6";
-        ctx.beginPath();
-        ctx.ellipse(-r * 0.35, -r * 0.85, r * 0.12, r * 0.35, -0.2, 0, Math.PI * 2);
-        ctx.ellipse(r * 0.35, -r * 0.85, r * 0.12, r * 0.35, 0.2, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (tDef.tier === 1) {
-        // 🐥 Chubby Chick: Orange Beak
-        ctx.fillStyle = "#ea580c";
-        ctx.beginPath();
-        ctx.moveTo(0, r * 0.05);
-        ctx.lineTo(-r * 0.2, r * 0.25);
-        ctx.lineTo(r * 0.2, r * 0.25);
-        ctx.closePath();
-        ctx.fill();
-      } else if (tDef.tier === 3) {
-        // 🐶 Shiba Inu: White Muzzle
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.ellipse(0, r * 0.25, r * 0.55, r * 0.35, 0, 0, Math.PI * 2);
-        ctx.fill();
-        // Golden Shiba Ears
-        ctx.fillStyle = "#d97706";
-        ctx.beginPath();
-        ctx.moveTo(-r * 0.7, -r * 0.4);
-        ctx.lineTo(-r * 0.4, -r * 0.9);
-        ctx.lineTo(-r * 0.15, -r * 0.5);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(r * 0.7, -r * 0.4);
-        ctx.lineTo(r * 0.4, -r * 0.9);
-        ctx.lineTo(r * 0.15, -r * 0.5);
-        ctx.fill();
-      } else if (tDef.tier === 4) {
-        // 🐱 Calico Cat: Triangular Ears & Whiskers
-        ctx.fillStyle = "#ea580c";
-        ctx.beginPath();
-        ctx.moveTo(-r * 0.7, -r * 0.4);
-        ctx.lineTo(-r * 0.45, -r * 0.95);
-        ctx.lineTo(-r * 0.2, -r * 0.55);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(r * 0.7, -r * 0.4);
-        ctx.lineTo(r * 0.45, -r * 0.95);
-        ctx.lineTo(r * 0.2, -r * 0.55);
-        ctx.fill();
-        // Whiskers
-        ctx.strokeStyle = "#431407";
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(-r * 0.4, r * 0.15); ctx.lineTo(-r * 0.85, r * 0.1);
-        ctx.moveTo(-r * 0.4, r * 0.3); ctx.lineTo(-r * 0.85, r * 0.35);
-        ctx.moveTo(r * 0.4, r * 0.15); ctx.lineTo(r * 0.85, r * 0.1);
-        ctx.moveTo(r * 0.4, r * 0.3); ctx.lineTo(r * 0.85, r * 0.35);
-        ctx.stroke();
-      } else if (tDef.tier === 5) {
-        // 🐼 Baby Panda: Black Ears & Eye Patches
-        ctx.fillStyle = "#27272a";
-        ctx.beginPath();
-        ctx.arc(-r * 0.65, -r * 0.65, r * 0.25, 0, Math.PI * 2);
-        ctx.arc(r * 0.65, -r * 0.65, r * 0.25, 0, Math.PI * 2);
-        ctx.fill();
-        // Eye patches
-        ctx.beginPath();
-        ctx.ellipse(-r * 0.35, -r * 0.05, r * 0.22, r * 0.28, -0.2, 0, Math.PI * 2);
-        ctx.ellipse(r * 0.35, -r * 0.05, r * 0.22, r * 0.28, 0.2, 0, Math.PI * 2);
-        ctx.fill();
-      } else if (tDef.tier === 7) {
-        // 🐹 Chill Capybara: Orange Fruit On Head!
-        ctx.fillStyle = "#f97316";
-        ctx.beginPath();
-        ctx.arc(0, -r * 0.9, r * 0.22, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.strokeStyle = "#15803d";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(0, -r * 1.1); ctx.lineTo(r * 0.1, -r * 1.25);
-        ctx.stroke();
-      } else if (tDef.tier === 9) {
-        // 👑 CHONK KING: Golden Crown!
-        ctx.fillStyle = "#fbbf24";
-        ctx.strokeStyle = "#b45309";
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(-r * 0.5, -r * 0.85);
-        ctx.lineTo(-r * 0.6, -r * 1.25);
-        ctx.lineTo(-r * 0.2, -r * 1.05);
-        ctx.lineTo(0, -r * 1.35);
-        ctx.lineTo(r * 0.2, -r * 1.05);
-        ctx.lineTo(r * 0.6, -r * 1.25);
-        ctx.lineTo(r * 0.5, -r * 0.85);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
       }
 
-      // KAWAII EYES & BLUSHING CHEEKS
-      // 1. Eyes
-      ctx.fillStyle = (tDef.tier === 5) ? "#ffffff" : "#451a03";
-      ctx.beginPath();
-      ctx.arc(-r * 0.32, -r * 0.08, r * 0.1, 0, Math.PI * 2);
-      ctx.arc(r * 0.32, -r * 0.08, r * 0.1, 0, Math.PI * 2);
-      ctx.fill();
+      // Helper: Sparkling Anime Eyes with Dual Specular Highlights & Live Blinking
+      function drawSparkleEyes(lx, rx, ey, eyeR, irisColor = "#3d1308") {
+        [-1, 1].forEach((dir) => {
+          const ex = dir === -1 ? lx : rx;
+          if (isBlinking) {
+            // Cute closed happy sleeping/smiling eye curve
+            ctx.strokeStyle = irisColor;
+            ctx.lineWidth = Math.max(2.2, eyeR * 0.42);
+            ctx.lineCap = "round";
+            ctx.beginPath();
+            ctx.arc(ex, ey - eyeR * 0.15, eyeR * 0.85, 0.2 * Math.PI, 0.8 * Math.PI);
+            ctx.stroke();
+          } else {
+            // Big sparkling anime iris
+            ctx.fillStyle = irisColor;
+            ctx.beginPath();
+            ctx.arc(ex, ey, eyeR, 0, Math.PI * 2);
+            ctx.fill();
 
-      // Eye Sparkles
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.arc(-r * 0.35, -r * 0.11, r * 0.04, 0, Math.PI * 2);
-      ctx.arc(r * 0.29, -r * 0.11, r * 0.04, 0, Math.PI * 2);
-      ctx.fill();
+            // Primary bright specular highlight (Upper Left)
+            ctx.fillStyle = "#ffffff";
+            ctx.beginPath();
+            ctx.arc(ex - eyeR * 0.32, ey - eyeR * 0.35, eyeR * 0.42, 0, Math.PI * 2);
+            ctx.fill();
 
-      // 2. Rosy Cheeks
-      ctx.fillStyle = "rgba(244, 63, 94, 0.45)";
-      ctx.beginPath();
-      ctx.arc(-r * 0.48, r * 0.18, r * 0.15, 0, Math.PI * 2);
-      ctx.arc(r * 0.48, r * 0.18, r * 0.15, 0, Math.PI * 2);
-      ctx.fill();
+            // Secondary subtle micro sparkle (Lower Right)
+            ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
+            ctx.beginPath();
+            ctx.arc(ex + eyeR * 0.34, ey + eyeR * 0.32, eyeR * 0.22, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+      }
 
-      // 3. Happy Cute Smile
-      ctx.strokeStyle = "#451a03";
-      ctx.lineWidth = Math.max(1.8, r * 0.06);
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.arc(-r * 0.1, r * 0.2, r * 0.12, 0, Math.PI);
-      ctx.arc(r * 0.1, r * 0.2, r * 0.12, 0, Math.PI);
-      ctx.stroke();
+      // =======================================================================
+      // 10 BESPOKE ANIMAL FACES & DISTINCT LIVING FEATURES
+      // =======================================================================
+      if (tDef.tier === 0) {
+        // =====================================================================
+        // TIER 0: 🐰 TINY BUNNY — Floppy Ears, Heart Nose, W-Mouth & Whiskers
+        // =====================================================================
+        const earWobble = Math.sin((now + seed) * 0.004) * 0.06;
+        // Outer Ears
+        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = "#f472b6";
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.35, -r * 0.88, r * 0.22, r * 0.52, -0.22 + earWobble, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.35, -r * 0.88, r * 0.22, r * 0.52, 0.22 - earWobble, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        // Inner Pink Ears
+        ctx.fillStyle = "#f472b6";
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.35, -r * 0.88, r * 0.12, r * 0.36, -0.22 + earWobble, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.35, -r * 0.88, r * 0.12, r * 0.36, 0.22 - earWobble, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Expressive Bunny Brows
+        ctx.strokeStyle = "#db2777";
+        ctx.lineWidth = Math.max(1.5, r * 0.06);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(-r * 0.32, -r * 0.26, r * 0.12, 1.15 * Math.PI, 1.8 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r * 0.32, -r * 0.26, r * 0.12, 1.2 * Math.PI, 1.85 * Math.PI);
+        ctx.stroke();
+
+        // Anime Eyes & Soft Airbrushed Blush
+        drawSparkleEyes(-r * 0.32, r * 0.32, -r * 0.06, r * 0.14, "#4a044e");
+        drawSoftBlush(-r * 0.48, r * 0.18, r * 0.25, "244, 114, 182");
+        drawSoftBlush(r * 0.48, r * 0.18, r * 0.25, "244, 114, 182");
+
+        // Tiny Pink Heart Nose
+        ctx.fillStyle = "#ec4899";
+        ctx.beginPath();
+        ctx.moveTo(0, r * 0.06);
+        ctx.bezierCurveTo(-r * 0.07, r * 0.02, -r * 0.07, r * 0.1, 0, r * 0.15);
+        ctx.bezierCurveTo(r * 0.07, r * 0.1, r * 0.07, r * 0.02, 0, r * 0.06);
+        ctx.fill();
+
+        // W Bunny Mouth
+        ctx.strokeStyle = "#831843";
+        ctx.lineWidth = Math.max(1.8, r * 0.06);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(-r * 0.08, r * 0.21, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r * 0.08, r * 0.21, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+
+        // Whiskers
+        ctx.strokeStyle = "#f472b6";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.35, r * 0.14); ctx.lineTo(-r * 0.72, r * 0.1);
+        ctx.moveTo(-r * 0.35, r * 0.22); ctx.lineTo(-r * 0.7, r * 0.26);
+        ctx.moveTo(r * 0.35, r * 0.14); ctx.lineTo(r * 0.72, r * 0.1);
+        ctx.moveTo(r * 0.35, r * 0.22); ctx.lineTo(r * 0.7, r * 0.26);
+        ctx.stroke();
+
+      } else if (tDef.tier === 1) {
+        // =====================================================================
+        // TIER 1: 🐥 CHUBBY CHICK — Fluffy Crest, Open Beak with Tongue & Dot Brows
+        // =====================================================================
+        // Fluffy Crown Feather Tuft on Head
+        const crestWobble = Math.sin((now + seed) * 0.005) * 0.08;
+        ctx.fillStyle = "#facc15";
+        ctx.strokeStyle = "#ca8a04";
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.ellipse(0 + crestWobble * r, -r * 1.05, r * 0.14, r * 0.22, crestWobble, 0, Math.PI * 2);
+        ctx.ellipse(-r * 0.12 + crestWobble * r, -r * 0.98, r * 0.11, r * 0.18, -0.3 + crestWobble, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.12 + crestWobble * r, -r * 0.98, r * 0.11, r * 0.18, 0.3 + crestWobble, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Tiny Side Wing Buds
+        ctx.fillStyle = "#facc15";
+        ctx.strokeStyle = "#ca8a04";
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.92, r * 0.15, r * 0.14, r * 0.24, 0.3, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.92, r * 0.15, r * 0.14, r * 0.24, -0.3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Inquisitive Dot Eyebrows (• •)
+        ctx.fillStyle = "#b45309";
+        ctx.beginPath();
+        ctx.arc(-r * 0.32, -r * 0.32, r * 0.05, 0, Math.PI * 2);
+        ctx.arc(r * 0.32, -r * 0.32, r * 0.05, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Big Anime Eyes & Warm Peach Airbrush Blush
+        drawSparkleEyes(-r * 0.32, r * 0.32, -r * 0.08, r * 0.13, "#451a03");
+        drawSoftBlush(-r * 0.5, r * 0.18, r * 0.26, "249, 115, 22");
+        drawSoftBlush(r * 0.5, r * 0.18, r * 0.26, "249, 115, 22");
+
+        // Open Orange Beak with Inner Pink Tongue!
+        ctx.fillStyle = "#ea580c";
+        ctx.beginPath();
+        ctx.moveTo(0, -r * 0.02);
+        ctx.lineTo(-r * 0.22, r * 0.14);
+        ctx.lineTo(r * 0.22, r * 0.14);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.16, r * 0.13);
+        ctx.lineTo(0, r * 0.25);
+        ctx.lineTo(r * 0.16, r * 0.13);
+        ctx.closePath();
+        ctx.fill();
+        // Tiny interior pink tongue
+        ctx.fillStyle = "#f43f5e";
+        ctx.beginPath();
+        ctx.arc(0, r * 0.15, r * 0.065, 0, Math.PI);
+        ctx.fill();
+
+      } else if (tDef.tier === 2) {
+        // =====================================================================
+        // TIER 2: 🐹 COZY HAMSTER — Puffed Cheek Pouches, Buckteeth & Sunflower Seed
+        // =====================================================================
+        // Round Twitching Ears with Pink Center
+        const earTwitch = Math.sin((now + seed) * 0.006) * 0.05;
+        ctx.fillStyle = "#fed7aa";
+        ctx.strokeStyle = "#ea580c";
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.arc(-r * 0.65, -r * 0.68 + earTwitch * r, r * 0.25, 0, Math.PI * 2);
+        ctx.arc(r * 0.65, -r * 0.68 - earTwitch * r, r * 0.25, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "#fda4af";
+        ctx.beginPath();
+        ctx.arc(-r * 0.65, -r * 0.68 + earTwitch * r, r * 0.14, 0, Math.PI * 2);
+        ctx.arc(r * 0.65, -r * 0.68 - earTwitch * r, r * 0.14, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Puffed Cheek Pouches
+        ctx.fillStyle = "#ffedd5";
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.42, r * 0.22, r * 0.32, r * 0.25, -0.15, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.42, r * 0.22, r * 0.32, r * 0.25, 0.15, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Soft Airbrushed Peach Blush on Pouches
+        drawSoftBlush(-r * 0.5, r * 0.2, r * 0.28, "251, 146, 60");
+        drawSoftBlush(r * 0.5, r * 0.2, r * 0.28, "251, 146, 60");
+
+        // Expressive Hamster Brows
+        ctx.strokeStyle = "#9a3412";
+        ctx.lineWidth = Math.max(1.6, r * 0.055);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(-r * 0.32, -r * 0.25, r * 0.13, 1.15 * Math.PI, 1.85 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r * 0.32, -r * 0.25, r * 0.13, 1.15 * Math.PI, 1.85 * Math.PI);
+        ctx.stroke();
+
+        // Anime Eyes
+        drawSparkleEyes(-r * 0.32, r * 0.32, -r * 0.06, r * 0.13, "#431407");
+
+        // Tiny Nose & Two Buckteeth!
+        ctx.fillStyle = "#fb7185";
+        ctx.beginPath();
+        ctx.arc(0, r * 0.11, r * 0.05, 0, Math.PI * 2);
+        ctx.fill();
+        // Buckteeth
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(-r * 0.075, r * 0.2, r * 0.065, r * 0.09);
+        ctx.fillRect(r * 0.01, r * 0.2, r * 0.065, r * 0.09);
+        ctx.strokeStyle = "#fed7aa";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(-r * 0.075, r * 0.2, r * 0.065, r * 0.09);
+        ctx.strokeRect(r * 0.01, r * 0.2, r * 0.065, r * 0.09);
+        // Mouth outline
+        ctx.strokeStyle = "#7c2d12";
+        ctx.lineWidth = Math.max(1.8, r * 0.055);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(-r * 0.08, r * 0.2, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r * 0.08, r * 0.2, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+
+        // Holding a Striped Sunflower Seed in Tiny Paws
+        ctx.fillStyle = "#292524";
+        ctx.beginPath();
+        ctx.ellipse(0, r * 0.58, r * 0.13, r * 0.2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#f5f5f4";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(0, r * 0.42); ctx.lineTo(0, r * 0.74);
+        ctx.stroke();
+        // Paws
+        ctx.fillStyle = "#ffedd5";
+        ctx.beginPath();
+        ctx.arc(-r * 0.15, r * 0.56, r * 0.08, 0, Math.PI * 2);
+        ctx.arc(r * 0.15, r * 0.56, r * 0.08, 0, Math.PI * 2);
+        ctx.fill();
+
+      } else if (tDef.tier === 3) {
+        // =====================================================================
+        // TIER 3: 🐶 SHIBA INU — Urajiro White Mask, Maro Brow Dots & Blep Tongue
+        // =====================================================================
+        // Pointed Shiba Ears
+        ctx.fillStyle = "#d97706";
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.72, -r * 0.38);
+        ctx.lineTo(-r * 0.42, -r * 0.92);
+        ctx.lineTo(-r * 0.16, -r * 0.5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "#fef3c7";
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.62, -r * 0.42);
+        ctx.lineTo(-r * 0.42, -r * 0.82);
+        ctx.lineTo(-r * 0.24, -r * 0.5);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#d97706";
+        ctx.beginPath();
+        ctx.moveTo(r * 0.72, -r * 0.38);
+        ctx.lineTo(r * 0.42, -r * 0.92);
+        ctx.lineTo(r * 0.16, -r * 0.5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "#fef3c7";
+        ctx.beginPath();
+        ctx.moveTo(r * 0.62, -r * 0.42);
+        ctx.lineTo(r * 0.42, -r * 0.82);
+        ctx.lineTo(r * 0.24, -r * 0.5);
+        ctx.closePath();
+        ctx.fill();
+
+        // Urajiro White Heart Muzzle Mask
+        ctx.fillStyle = "#fffbeb";
+        ctx.beginPath();
+        ctx.ellipse(0, r * 0.28, r * 0.58, r * 0.42, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // The Famous Shiba "Maro" White Eyebrow Dots (o o)
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.32, -r * 0.35, r * 0.1, r * 0.075, -0.1, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.32, -r * 0.35, r * 0.1, r * 0.075, 0.1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Sparkle Anime Eyes & Honey Blush
+        drawSparkleEyes(-r * 0.32, r * 0.32, -r * 0.06, r * 0.12, "#381a08");
+        drawSoftBlush(-r * 0.48, r * 0.22, r * 0.26, "245, 158, 11");
+        drawSoftBlush(r * 0.48, r * 0.22, r * 0.26, "245, 158, 11");
+
+        // Glossy Black Triangle Nose
+        ctx.fillStyle = "#1c1917";
+        ctx.beginPath();
+        ctx.ellipse(0, r * 0.14, r * 0.08, r * 0.055, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Happy Open Dog Mouth with a Pink Blep Tongue
+        ctx.fillStyle = "#881337";
+        ctx.beginPath();
+        ctx.arc(0, r * 0.27, r * 0.16, 0, Math.PI);
+        ctx.fill();
+        // Blep Tongue
+        ctx.fillStyle = "#f43f5e";
+        ctx.beginPath();
+        ctx.ellipse(r * 0.02, r * 0.37, r * 0.09, r * 0.13, 0.08, 0, Math.PI * 2);
+        ctx.fill();
+        // Shiba Smile line
+        ctx.strokeStyle = "#451a03";
+        ctx.lineWidth = Math.max(1.8, r * 0.055);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(-r * 0.08, r * 0.21, r * 0.09, 0.2 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r * 0.08, r * 0.21, r * 0.09, 0.1 * Math.PI, 0.8 * Math.PI);
+        ctx.stroke();
+
+      } else if (tDef.tier === 4) {
+        // =====================================================================
+        // TIER 4: 🐱 CALICO CAT — Calico Eye Patch, Slit Pupils, Whiskers & 3-Mouth
+        // =====================================================================
+        // Calico Patch over Left Ear & Left Eye
+        ctx.fillStyle = "#ea580c";
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.4, -r * 0.35, r * 0.44, r * 0.5, -0.3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Pointed Cat Ears
+        ctx.fillStyle = "#c2410c";
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.72, -r * 0.38);
+        ctx.lineTo(-r * 0.48, -r * 0.95);
+        ctx.lineTo(-r * 0.2, -r * 0.55);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = "#fdba74";
+        ctx.beginPath();
+        ctx.moveTo(r * 0.72, -r * 0.38);
+        ctx.lineTo(r * 0.48, -r * 0.95);
+        ctx.lineTo(r * 0.2, -r * 0.55);
+        ctx.closePath();
+        ctx.fill();
+        // Inner ear pink
+        ctx.fillStyle = "#fda4af";
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.6, -r * 0.44);
+        ctx.lineTo(-r * 0.46, -r * 0.82);
+        ctx.lineTo(-r * 0.28, -r * 0.55);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(r * 0.6, -r * 0.44);
+        ctx.lineTo(r * 0.46, -r * 0.82);
+        ctx.lineTo(r * 0.28, -r * 0.55);
+        ctx.closePath();
+        ctx.fill();
+
+        // Sleek Cat Eyebrows
+        ctx.strokeStyle = "#7c2d12";
+        ctx.lineWidth = Math.max(1.8, r * 0.05);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(-r * 0.32, -r * 0.28, r * 0.15, 1.15 * Math.PI, 1.8 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r * 0.32, -r * 0.28, r * 0.15, 1.2 * Math.PI, 1.85 * Math.PI);
+        ctx.stroke();
+
+        // Emerald / Golden Cat Eyes with Slit Pupils
+        drawSparkleEyes(-r * 0.32, r * 0.32, -r * 0.06, r * 0.13, "#047857");
+        drawSoftBlush(-r * 0.48, r * 0.22, r * 0.25, "244, 63, 94");
+        drawSoftBlush(r * 0.48, r * 0.22, r * 0.25, "244, 63, 94");
+
+        // Tiny Pink Triangle Nose
+        ctx.fillStyle = "#f43f5e";
+        ctx.beginPath();
+        ctx.moveTo(0, r * 0.08);
+        ctx.lineTo(-r * 0.05, r * 0.14);
+        ctx.lineTo(r * 0.05, r * 0.14);
+        ctx.closePath();
+        ctx.fill();
+
+        // Classic 3 Cat Mouth
+        ctx.strokeStyle = "#431407";
+        ctx.lineWidth = Math.max(1.8, r * 0.055);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(-r * 0.08, r * 0.22, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r * 0.08, r * 0.22, r * 0.08, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+
+        // 3 Delicate Cat Whiskers per cheek
+        ctx.strokeStyle = "#431407";
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.38, r * 0.14); ctx.lineTo(-r * 0.85, r * 0.08);
+        ctx.moveTo(-r * 0.38, r * 0.22); ctx.lineTo(-r * 0.88, r * 0.22);
+        ctx.moveTo(-r * 0.38, r * 0.3); ctx.lineTo(-r * 0.82, r * 0.36);
+        ctx.moveTo(r * 0.38, r * 0.14); ctx.lineTo(r * 0.85, r * 0.08);
+        ctx.moveTo(r * 0.38, r * 0.22); ctx.lineTo(r * 0.88, r * 0.22);
+        ctx.moveTo(r * 0.38, r * 0.3); ctx.lineTo(r * 0.82, r * 0.36);
+        ctx.stroke();
+
+      } else if (tDef.tier === 5) {
+        // =====================================================================
+        // TIER 5: 🐼 BABY PANDA — Fuzzy Black Ears, Teardrop Patches & Bamboo Stalk
+        // =====================================================================
+        // Round Fuzzy Charcoal Ears
+        ctx.fillStyle = "#18181b";
+        ctx.beginPath();
+        ctx.arc(-r * 0.65, -r * 0.65, r * 0.26, 0, Math.PI * 2);
+        ctx.arc(r * 0.65, -r * 0.65, r * 0.26, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Black Teardrop Eye Patches
+        ctx.fillStyle = "#18181b";
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.34, -r * 0.04, r * 0.22, r * 0.28, -0.22, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.34, -r * 0.04, r * 0.22, r * 0.28, 0.22, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Gentle White Brow Highlights on Patches
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.75)";
+        ctx.lineWidth = Math.max(1.8, r * 0.05);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(-r * 0.34, -r * 0.22, r * 0.12, 1.15 * Math.PI, 1.7 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r * 0.34, -r * 0.22, r * 0.12, 1.3 * Math.PI, 1.85 * Math.PI);
+        ctx.stroke();
+
+        // High-Contrast Starry Anime Eyes (White pupils shining out from black patches!)
+        drawSparkleEyes(-r * 0.34, r * 0.34, -r * 0.04, r * 0.11, "#ffffff");
+        drawSoftBlush(-r * 0.54, r * 0.22, r * 0.26, "244, 63, 94");
+        drawSoftBlush(r * 0.54, r * 0.22, r * 0.26, "244, 63, 94");
+
+        // Tiny Black Button Nose
+        ctx.fillStyle = "#18181b";
+        ctx.beginPath();
+        ctx.ellipse(0, r * 0.13, r * 0.07, r * 0.05, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Smile
+        ctx.strokeStyle = "#18181b";
+        ctx.lineWidth = Math.max(1.8, r * 0.055);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(0, r * 0.18, r * 0.11, 0.15 * Math.PI, 0.85 * Math.PI);
+        ctx.stroke();
+
+        // Chewing on a Fresh Green Bamboo Stalk with Leaf!
+        ctx.save();
+        ctx.translate(r * 0.08, r * 0.24);
+        ctx.rotate(0.35);
+        ctx.fillStyle = "#16a34a";
+        ctx.fillRect(0, -r * 0.035, r * 0.45, r * 0.07);
+        // Leaf
+        ctx.beginPath();
+        ctx.ellipse(r * 0.45, -r * 0.035, r * 0.16, r * 0.07, -0.35, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+      } else if (tDef.tier === 6) {
+        // =====================================================================
+        // TIER 6: 🦭 CHUBBY SEAL — Glassy Meme Puppy-Dog Eyes, Flippers & Whisker Pads
+        // =====================================================================
+        // Chubby Little Side Flippers
+        ctx.fillStyle = "#7dd3fc";
+        ctx.strokeStyle = "#0284c7";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.88, r * 0.3, r * 0.16, r * 0.32, 0.35, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.88, r * 0.3, r * 0.16, r * 0.32, -0.35, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Baby Gray-Blue Curved Eyebrows
+        ctx.strokeStyle = "#0284c7";
+        ctx.lineWidth = Math.max(1.8, r * 0.05);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(-r * 0.34, -r * 0.32, r * 0.15, 1.15 * Math.PI, 1.85 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r * 0.34, -r * 0.32, r * 0.15, 1.15 * Math.PI, 1.85 * Math.PI);
+        ctx.stroke();
+
+        // Ultra-Glassy Gigantic Meme Puppy-Dog Seal Eyes!
+        drawSparkleEyes(-r * 0.34, r * 0.34, -r * 0.07, r * 0.16, "#0f172a");
+        drawSoftBlush(-r * 0.54, r * 0.22, r * 0.28, "244, 114, 182");
+        drawSoftBlush(r * 0.54, r * 0.22, r * 0.28, "244, 114, 182");
+
+        // Puffy White Whisker Pads
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(-r * 0.16, r * 0.22, r * 0.18, 0, Math.PI * 2);
+        ctx.arc(r * 0.16, r * 0.22, r * 0.18, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Whisker Freckle Dots
+        ctx.fillStyle = "#64748b";
+        [-1, 1].forEach((d) => {
+          ctx.beginPath();
+          ctx.arc(d * r * 0.14, r * 0.18, r * 0.025, 0, Math.PI * 2);
+          ctx.arc(d * r * 0.22, r * 0.22, r * 0.025, 0, Math.PI * 2);
+          ctx.arc(d * r * 0.15, r * 0.26, r * 0.025, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        // Shiny Heart-Shaped Black Nose
+        ctx.fillStyle = "#0f172a";
+        ctx.beginPath();
+        ctx.moveTo(0, r * 0.1);
+        ctx.bezierCurveTo(-r * 0.06, r * 0.06, -r * 0.06, r * 0.14, 0, r * 0.18);
+        ctx.bezierCurveTo(r * 0.06, r * 0.14, r * 0.06, r * 0.06, 0, r * 0.1);
+        ctx.fill();
+
+        // Cute Seal Smile
+        ctx.strokeStyle = "#0f172a";
+        ctx.lineWidth = Math.max(1.8, r * 0.055);
+        ctx.beginPath();
+        ctx.arc(-r * 0.08, r * 0.24, r * 0.08, 0.15 * Math.PI, 0.85 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r * 0.08, r * 0.24, r * 0.08, 0.15 * Math.PI, 0.85 * Math.PI);
+        ctx.stroke();
+
+      } else if (tDef.tier === 7) {
+        // =====================================================================
+        // TIER 7: 🐹 CHILL CAPYBARA — Zen Sleepy Eyelids, Flat Snout & Bobbing Yuzu
+        // =====================================================================
+        // Broad Rounded Boxy Capybara Snout
+        ctx.fillStyle = "#b45309";
+        ctx.beginPath();
+        ctx.roundRect(-r * 0.26, r * 0.04, r * 0.52, r * 0.44, r * 0.12);
+        ctx.fill();
+        // Nostril Slits
+        ctx.fillStyle = "#451a03";
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.1, r * 0.18, r * 0.035, r * 0.065, -0.2, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.1, r * 0.18, r * 0.035, r * 0.065, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Flat Calm Zen Straight Eyebrows
+        ctx.strokeStyle = "#78350f";
+        ctx.lineWidth = Math.max(2, r * 0.06);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.5, -r * 0.18); ctx.lineTo(-r * 0.28, -r * 0.18);
+        ctx.moveTo(r * 0.28, -r * 0.18); ctx.lineTo(r * 0.5, -r * 0.18);
+        ctx.stroke();
+
+        // Iconic Zen Sleepy Horizontal Eyelids ( - ‿ - )
+        ctx.strokeStyle = "#451a03";
+        ctx.lineWidth = Math.max(2.6, r * 0.075);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.52, -r * 0.02); ctx.lineTo(-r * 0.28, -r * 0.02);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(r * 0.28, -r * 0.02); ctx.lineTo(r * 0.52, -r * 0.02);
+        ctx.stroke();
+
+        // Soft Airbrushed Sunset Peach Blush
+        drawSoftBlush(-r * 0.54, r * 0.24, r * 0.26, "249, 115, 22");
+        drawSoftBlush(r * 0.54, r * 0.24, r * 0.26, "249, 115, 22");
+
+        // Gentle Contented Zen Smile
+        ctx.strokeStyle = "#451a03";
+        ctx.lineWidth = Math.max(2, r * 0.06);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(0, r * 0.32, r * 0.16, 0.15 * Math.PI, 0.85 * Math.PI);
+        ctx.stroke();
+
+        // The Legendary Yuzu / Mandarin Orange Bobbing on Head with Breath!
+        const yuzuY = -r * 0.96 + Math.sin((now + seed) * 0.004) * (r * 0.03);
+        ctx.fillStyle = "#ea580c";
+        ctx.beginPath();
+        ctx.arc(0, yuzuY, r * 0.22, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#c2410c";
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        // Yuzu Green Leaf
+        ctx.fillStyle = "#16a34a";
+        ctx.beginPath();
+        ctx.ellipse(r * 0.1, yuzuY - r * 0.24, r * 0.12, r * 0.06, 0.4, 0, Math.PI * 2);
+        ctx.fill();
+
+      } else if (tDef.tier === 8) {
+        // =====================================================================
+        // TIER 8: 🐻 HONEY BEAR — Teddy Ears, Warm Muzzle, Caring Brows & Honey Drip
+        // =====================================================================
+        // Fluffy Round Teddy Ears
+        ctx.fillStyle = "#b45309";
+        ctx.beginPath();
+        ctx.arc(-r * 0.65, -r * 0.68, r * 0.26, 0, Math.PI * 2);
+        ctx.arc(r * 0.65, -r * 0.68, r * 0.26, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fef3c7";
+        ctx.beginPath();
+        ctx.arc(-r * 0.65, -r * 0.68, r * 0.14, 0, Math.PI * 2);
+        ctx.arc(r * 0.65, -r * 0.68, r * 0.14, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Creamy Golden-Honey Oval Snout Mask
+        ctx.fillStyle = "#fef3c7";
+        ctx.beginPath();
+        ctx.ellipse(0, r * 0.24, r * 0.46, r * 0.34, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Gentle Caring Curved Eyebrows (Warm Teddy Expression)
+        ctx.strokeStyle = "#451a03";
+        ctx.lineWidth = Math.max(2.2, r * 0.06);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(-r * 0.34, -r * 0.34, r * 0.15, 1.15 * Math.PI, 1.85 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r * 0.34, -r * 0.34, r * 0.15, 1.15 * Math.PI, 1.85 * Math.PI);
+        ctx.stroke();
+
+        // Golden-Amber Anime Eyes & Warm Honey Blush
+        drawSparkleEyes(-r * 0.34, r * 0.34, -r * 0.06, r * 0.13, "#271206");
+        drawSoftBlush(-r * 0.54, r * 0.22, r * 0.28, "245, 158, 11");
+        drawSoftBlush(r * 0.54, r * 0.22, r * 0.28, "245, 158, 11");
+
+        // Big Shiny Bear Nose
+        ctx.fillStyle = "#1c1917";
+        ctx.beginPath();
+        ctx.ellipse(0, r * 0.14, r * 0.14, r * 0.09, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Nose highlight
+        ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.03, r * 0.12, r * 0.04, r * 0.02, -0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Gentle Teddy Smile
+        ctx.strokeStyle = "#451a03";
+        ctx.lineWidth = Math.max(2.2, r * 0.06);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(0, r * 0.23); ctx.lineTo(0, r * 0.32);
+        ctx.arc(0, r * 0.32, r * 0.14, 0.1 * Math.PI, 0.9 * Math.PI);
+        ctx.stroke();
+
+        // Cute Golden Honey Drip Badge on Cheek
+        ctx.fillStyle = "#facc15";
+        ctx.beginPath();
+        ctx.arc(r * 0.46, r * 0.34, r * 0.08, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(r * 0.44, r * 0.32, r * 0.025, 0, Math.PI * 2);
+        ctx.fill();
+
+      } else if (tDef.tier === 9) {
+        // =====================================================================
+        // TIER 9: 👑 CHONK KING — Jeweled Crown, Royal Smirk, Orbiting Sparkles
+        // =====================================================================
+        // Soft Pulsing Golden Royal Halo Aura
+        const auraAlpha = 0.25 + Math.sin((now + seed) * 0.005) * 0.12;
+        ctx.strokeStyle = `rgba(250, 204, 21, ${auraAlpha})`;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(0, 0, r * 1.12, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // 3 Orbiting Golden Sparkle Stars
+        for (let s = 0; s < 3; s++) {
+          const sAngle = (now * 0.002) + (s * (Math.PI * 2 / 3));
+          const sx = Math.cos(sAngle) * (r * 1.16);
+          const sy = Math.sin(sAngle) * (r * 1.16);
+          ctx.fillStyle = "#fbbf24";
+          ctx.beginPath();
+          ctx.arc(sx, sy, r * 0.045, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Exquisite 5-Point Golden Royal Crown with Embedded Gems
+        ctx.fillStyle = "#fbbf24";
+        ctx.strokeStyle = "#92400e";
+        ctx.lineWidth = Math.max(2.6, r * 0.06);
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.65, -r * 0.85);
+        ctx.lineTo(-r * 0.75, -r * 1.35);
+        ctx.lineTo(-r * 0.35, -r * 1.05);
+        ctx.lineTo(0, -r * 1.48);
+        ctx.lineTo(r * 0.35, -r * 1.05);
+        ctx.lineTo(r * 0.75, -r * 1.35);
+        ctx.lineTo(r * 0.65, -r * 0.85);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Crown Gemstones
+        ctx.fillStyle = "#ef4444"; // Left Ruby
+        ctx.beginPath(); ctx.arc(-r * 0.75, -r * 1.35, r * 0.07, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#3b82f6"; // Center Royal Sapphire
+        ctx.beginPath(); ctx.arc(0, -r * 1.48, r * 0.09, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#ef4444"; // Right Ruby
+        ctx.beginPath(); ctx.arc(r * 0.75, -r * 1.35, r * 0.07, 0, Math.PI * 2); ctx.fill();
+
+        // Mischievous Arched Royal Eyebrows
+        ctx.strokeStyle = "#78350f";
+        ctx.lineWidth = Math.max(2.2, r * 0.06);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(-r * 0.34, -r * 0.32, r * 0.16, 1.25 * Math.PI, 1.9 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(r * 0.34, -r * 0.28, r * 0.16, 1.15 * Math.PI, 1.8 * Math.PI);
+        ctx.stroke();
+
+        // Confident Glistening Royal Eyes
+        drawSparkleEyes(-r * 0.34, r * 0.34, -r * 0.06, r * 0.14, "#451a03");
+        drawSoftBlush(-r * 0.54, r * 0.22, r * 0.3, "245, 158, 11");
+        drawSoftBlush(r * 0.54, r * 0.22, r * 0.3, "245, 158, 11");
+
+        // Royal Button Nose
+        ctx.fillStyle = "#78350f";
+        ctx.beginPath();
+        ctx.arc(0, r * 0.12, r * 0.05, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Confident Smug Royal Smirk!
+        ctx.strokeStyle = "#451a03";
+        ctx.lineWidth = Math.max(2.4, r * 0.065);
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.arc(r * 0.06, r * 0.24, r * 0.18, 0.15 * Math.PI, 0.75 * Math.PI);
+        ctx.stroke();
+      }
 
       ctx.restore();
     }
