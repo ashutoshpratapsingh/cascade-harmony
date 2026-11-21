@@ -277,7 +277,7 @@
     </div>
 
     <!-- SUIKA GLASS JAR CONTAINER -->
-    <div id="jarWrapper" class="relative jar-container w-[330px] sm:w-[370px] h-[480px] sm:h-[530px] flex items-center justify-center overflow-hidden">
+    <div id="jarWrapper" class="relative jar-container w-[330px] sm:w-[370px] h-[415px] sm:h-[490px] max-h-[55dvh] flex items-center justify-center overflow-hidden">
       <!-- CHONK FEVER RUSH CELEBRATION BANNER -->
       <div id="feverRushBanner" class="hidden absolute top-4 z-40 bg-gradient-to-r from-yellow-400 via-rose-500 to-purple-500 text-white px-4 py-1.5 rounded-full font-fun text-xs sm:text-sm font-black shadow-2xl border-2 border-white animate-bounce text-center">
         🔥 CHONK FEVER RUSH! 2X SCORE & LOW-G! 🔥
@@ -309,26 +309,26 @@
   <!-- ========================================================================= -->
   <!-- BOTTOM ACTION BAR: POWER-UPS (SHAKE, HAMMER, RAINBOW)                     -->
   <!-- ========================================================================= -->
-  <footer class="w-full max-w-md mx-auto flex items-center justify-between gap-2 z-20 px-4 pb-3 pt-1">
-    <!-- SHAKE JAR BUTTON (TURBULENCE TO UNSTICK PETS) -->
-    <button id="shakeBtn" class="touch-btn flex-1 py-2 rounded-2xl bg-gradient-to-r from-amber-300 to-yellow-300 border-2 border-amber-400/80 shadow-md flex items-center justify-center gap-1.5 text-amber-950 font-black text-xs active:scale-95 transition">
-      <span class="text-base">📳</span>
-      <span>SHAKE JAR</span>
-      <span id="shakeCooldownBadge" class="bg-amber-900 text-amber-100 text-[9px] font-black px-1.5 py-0.2 rounded-full">READY</span>
+  <footer class="w-full max-w-md mx-auto flex items-center justify-between gap-1.5 sm:gap-2 z-20 px-2 sm:px-4 pb-2.5 pt-1 flex-shrink-0">
+    <!-- SHAKE JAR BUTTON (GENTLE SETTLE NUDGE) -->
+    <button id="shakeBtn" class="touch-btn flex-1 min-w-0 py-2 px-1 sm:px-2 rounded-2xl bg-gradient-to-r from-amber-300 to-yellow-300 border-2 border-amber-400 shadow-md flex items-center justify-center gap-1 text-amber-950 font-black text-[11px] sm:text-xs active:scale-95 transition whitespace-nowrap">
+      <span class="text-sm sm:text-base flex-shrink-0">📳</span>
+      <span class="truncate">SHAKE</span>
+      <span id="shakeCooldownBadge" class="bg-amber-900 text-amber-100 text-[8.5px] font-black px-1.5 py-0.2 rounded-full flex-shrink-0">READY</span>
     </button>
 
     <!-- SQUEAKY HAMMER (POP OBSTACLE PET) -->
-    <button id="hammerBtn" class="touch-btn px-4 py-2 rounded-2xl bg-gradient-to-r from-rose-200 to-pink-200 border-2 border-rose-300 shadow-md flex items-center justify-center gap-1.5 text-rose-950 font-black text-xs active:scale-95 transition">
-      <span class="text-base">🔨</span>
-      <span>HAMMER</span>
-      <span id="hammerCountBadge" class="bg-rose-600 text-white text-[9px] font-black px-1.5 rounded-full">2</span>
+    <button id="hammerBtn" class="touch-btn flex-1 min-w-0 py-2 px-1 sm:px-2 rounded-2xl bg-gradient-to-r from-rose-200 to-pink-300 border-2 border-rose-400 shadow-md flex items-center justify-center gap-1 text-rose-950 font-black text-[11px] sm:text-xs active:scale-95 transition whitespace-nowrap">
+      <span class="text-sm sm:text-base flex-shrink-0">🔨</span>
+      <span class="truncate">HAMMER</span>
+      <span id="hammerCountBadge" class="bg-rose-600 text-white text-[8.5px] font-black px-1.5 py-0.2 rounded-full flex-shrink-0">2</span>
     </button>
 
-    <!-- RAINBOW JELLY (UNIVERSAL MERGE) -->
-    <button id="rainbowBtn" class="touch-btn px-4 py-2 rounded-2xl bg-gradient-to-r from-purple-200 via-pink-200 to-sky-200 border-2 border-purple-300 shadow-md flex items-center justify-center gap-1.5 text-purple-950 font-black text-xs active:scale-95 transition">
-      <span class="text-base">🌈</span>
-      <span>RAINBOW</span>
-      <span id="rainbowCountBadge" class="bg-purple-600 text-white text-[9px] font-black px-1.5 rounded-full">1</span>
+    <!-- RAINBOW JELLY (UNIVERSAL MERGE - VIBRANT & 100% VISIBLE ON PHONES) -->
+    <button id="rainbowBtn" class="touch-btn flex-1 min-w-0 py-2 px-1 sm:px-2 rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-sky-400 border-2 border-purple-400 shadow-md flex items-center justify-center gap-1 text-white font-black text-[11px] sm:text-xs active:scale-95 transition whitespace-nowrap">
+      <span class="text-sm sm:text-base flex-shrink-0">🌈</span>
+      <span class="truncate">RAINBOW</span>
+      <span id="rainbowCountBadge" class="bg-purple-950 text-purple-100 text-[8.5px] font-black px-1.5 py-0.2 rounded-full flex-shrink-0 shadow-xs">1</span>
     </button>
   </footer>
 
@@ -1395,6 +1395,8 @@
 
       if (isRainbow) {
         STATE.isRainbowReady = false;
+        const rbBtn = document.getElementById("rainbowBtn");
+        if (rbBtn) rbBtn.classList.remove("ring-2", "ring-yellow-300", "scale-105");
       }
 
       // Quest Mode Drops Decrement & Out-Of-Drops Check
@@ -2745,6 +2747,9 @@
       STATE.hammerActive = false;
       STATE.isRainbowReady = false;
 
+      const rbBtn = document.getElementById("rainbowBtn");
+      if (rbBtn) rbBtn.classList.remove("ring-2", "ring-yellow-300", "scale-105");
+
       document.getElementById("scoreVal").innerText = "0";
       document.getElementById("hammerCountBadge").innerText = "2";
       document.getElementById("rainbowCountBadge").innerText = "1";
@@ -2853,6 +2858,8 @@
       STATE.rainbowRemaining--;
       document.getElementById("rainbowCountBadge").innerText = STATE.rainbowRemaining;
       STATE.isRainbowReady = true;
+      const rbBtn = document.getElementById("rainbowBtn");
+      if (rbBtn) rbBtn.classList.add("ring-2", "ring-yellow-300", "scale-105");
       sound.playDrop();
     });
 
