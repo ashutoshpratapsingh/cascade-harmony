@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Meow Ripple — Cozy Cat Water Pond</title>
+  <title>Pet Blast — Cozy Cute Animal Block Puzzle</title>
   
-  <!-- Google Fonts: Fredoka & Quicksand for super cute Kawaii typography -->
+  <!-- Google Fonts: Fredoka & Quicksand -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;800&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
@@ -23,314 +23,254 @@
     }
 
     body {
-      background: radial-gradient(circle at 50% 30%, #1a382c 0%, #0c2017 60%, #06120d 100%);
+      background: radial-gradient(circle at 50% 20%, #2a1b3d 0%, #170d24 60%, #0a0412 100%);
       color: #fff;
     }
 
-    /* Ambient Floating Cherry Blossoms */
-    @keyframes blossomDrift {
-      0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-      20% { opacity: 0.8; }
-      80% { opacity: 0.8; }
-      100% { transform: translate(60px, 120px) rotate(180deg); opacity: 0; }
+    /* Screen Shake Animation on Line Blast */
+    @keyframes screenShakeAnim {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-4px, 3px); }
+      40% { transform: translate(4px, -3px); }
+      60% { transform: translate(-3px, 2px); }
+      80% { transform: translate(3px, -2px); }
     }
-    .blossom-petal {
-      position: absolute;
-      width: 14px;
-      height: 10px;
-      background: #fbcfe8;
-      border-radius: 60% 0 60% 0;
-      pointer-events: none;
-      animation: blossomDrift 7s linear infinite;
+    .screen-shake {
+      animation: screenShakeAnim 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    }
+
+    /* Floating Combo Banner */
+    @keyframes comboPopIn {
+      0% { transform: scale(0.4) translateY(20px); opacity: 0; }
+      50% { transform: scale(1.15) translateY(-5px); opacity: 1; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .combo-banner-anim {
+      animation: comboPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
     /* Bouncy Marshmallow Buttons */
     .btn-marshmallow {
-      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease;
+      transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.12s ease;
     }
     .btn-marshmallow:active {
       transform: scale(0.92);
+      filter: brightness(1.1);
     }
 
-    /* Hand Guide Bounce Animation */
-    @keyframes tapBounceAnim {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-10px) scale(1.18); }
+    /* Pulse scale for piece tray */
+    @keyframes slotBreathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
     }
-    .guide-hand-tap {
-      animation: tapBounceAnim 0.85s ease-in-out infinite;
+    .slot-breathe {
+      animation: slotBreathe 1.8s ease-in-out infinite;
     }
 
-    @keyframes pulseRing {
-      0% { transform: scale(0.6); opacity: 0.9; }
-      100% { transform: scale(1.8); opacity: 0; }
+    /* Confetti Burst */
+    @keyframes confettiFall {
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(120px) rotate(360deg); opacity: 0; }
     }
-    .pulse-ring {
-      animation: pulseRing 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      pointer-events: none;
+      animation: confettiFall 1.2s ease-out forwards;
     }
   </style>
 </head>
-<body class="flex flex-col justify-between items-center px-2 py-1 md:p-3 h-full max-h-[100dvh] w-full overflow-hidden select-none">
-
-  <!-- FLOATING CHERRY BLOSSOM PETALS -->
-  <div class="blossom-petal top-4 left-6" style="animation-delay: 0s;"></div>
-  <div class="blossom-petal top-24 right-10" style="animation-delay: 2.5s;"></div>
-  <div class="blossom-petal top-1/2 left-4" style="animation-delay: 4.8s;"></div>
+<body id="appBody" class="flex flex-col justify-between items-center px-2 py-1 md:p-3 h-full max-h-[100dvh] w-full overflow-hidden select-none">
 
   <!-- ============================================ -->
-  <!-- TOP HEADER HUD (Level, Goals, Score, Sound)  -->
+  <!-- TOP HEADER HUD (Score, Combo, Level, Sound)  -->
   <!-- ============================================ -->
-  <header class="w-full max-w-md mx-auto flex items-center justify-between z-20 px-3 py-1.5 bg-[#142e23]/80 backdrop-blur-md rounded-2xl border-2 border-emerald-600/40 shadow-lg">
-    <!-- LEVEL & CAT ICON -->
+  <header class="w-full max-w-md mx-auto flex items-center justify-between z-20 px-3 py-1.5 bg-[#25153b]/85 backdrop-blur-md rounded-2xl border-2 border-purple-500/40 shadow-lg">
+    <!-- LOGO & ANIMAL AVATAR -->
     <div class="flex items-center gap-2">
-      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center shadow text-lg border border-pink-200/50">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-rose-500 flex items-center justify-center shadow text-lg border border-amber-200/50 animate-bounce">
         🐾
       </div>
       <div>
-        <div class="text-[9px] uppercase tracking-wider text-emerald-300 font-extrabold leading-none">
-          <span id="levelLabel">LEVEL 1</span>
+        <div class="flex items-center gap-1 text-[8.5px] uppercase tracking-wider text-purple-300 font-extrabold leading-none">
+          <span id="levelLabel">LVL 1</span>
+          <span class="text-slate-500">•</span>
+          <span id="comboBadge" class="text-amber-300 font-black hidden">🔥 COMBO x2</span>
         </div>
         <h1 class="text-xs sm:text-sm font-black text-amber-200 leading-tight">
-          MEOW <span class="text-pink-300">RIPPLE</span>
+          PET <span class="text-rose-400">BLAST!</span>
         </h1>
       </div>
     </div>
 
-    <!-- LEVEL GOAL TARGETS (Cuddle Goals) -->
+    <!-- LEVEL GOAL TARGETS (Animals to Rescue/Collect) -->
     <div id="goalsContainer" class="flex items-center gap-1.5">
-      <div id="goalBadge1" class="flex items-center gap-1.5 bg-black/50 px-2.5 py-1 rounded-full border border-orange-400/80 shadow">
+      <div id="goalBadge1" class="flex items-center gap-1.5 bg-black/60 px-2.5 py-1 rounded-full border border-orange-400/80 shadow">
         <span class="text-xs">🐱</span>
-        <span id="goalCount1" class="text-[10px] font-black text-orange-200">0/1</span>
+        <span id="goalCount1" class="text-[10px] font-black text-orange-200">0/10</span>
       </div>
-      <div id="goalBadge2" class="flex items-center gap-1.5 bg-black/50 px-2.5 py-1 rounded-full border border-pink-400/80 shadow">
-        <span class="text-xs">🌸</span>
-        <span id="goalCount2" class="text-[10px] font-black text-pink-200">0/1</span>
+      <div id="goalBadge2" class="flex items-center gap-1.5 bg-black/60 px-2.5 py-1 rounded-full border border-pink-400/80 shadow">
+        <span class="text-xs">🐰</span>
+        <span id="goalCount2" class="text-[10px] font-black text-pink-200">0/10</span>
       </div>
     </div>
 
-    <!-- SOUND & SPECS BUTTONS -->
-    <div class="flex items-center gap-1.5">
-      <button id="soundToggleBtn" class="btn-marshmallow p-1 px-2 rounded-xl bg-emerald-900/60 hover:bg-emerald-800 border border-emerald-500/50 text-emerald-200 text-[10px] font-bold shadow">
-        🔊 PURR
+    <!-- SCORE & SOUND CONTROLS -->
+    <div class="flex items-center gap-2">
+      <div class="text-right">
+        <div class="text-[7.5px] uppercase tracking-wider text-purple-300 font-bold leading-none">SCORE</div>
+        <div id="scoreVal" class="text-xs sm:text-sm font-black text-amber-300 tabular-nums leading-none mt-0.5">0</div>
+      </div>
+      <button id="soundToggleBtn" class="btn-marshmallow p-1 px-2 rounded-xl bg-purple-900/70 hover:bg-purple-800 border border-purple-500/60 text-purple-200 text-[10px] font-bold shadow">
+        🔊 ASMR
       </button>
-      <button id="specsBtn" class="btn-marshmallow p-1 px-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-[10px] font-black uppercase tracking-wider shadow">
-        👑 SPECS
+      <button id="rulesBtn" class="btn-marshmallow p-1 px-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black text-[10px] font-black uppercase tracking-wider shadow">
+        ❓ RULES
       </button>
     </div>
   </header>
 
-  <!-- QUICK GOAL BANNER -->
+  <!-- QUICK 1-SENTENCE INSTRUCTION BANNER -->
   <div class="w-full max-w-md mx-auto z-20 my-0.5">
-    <div class="bg-black/55 border border-emerald-700/40 rounded-xl px-3 py-1 flex items-center justify-between text-xs backdrop-blur-md shadow">
+    <div class="bg-black/60 border border-purple-600/40 rounded-xl px-3 py-1 flex items-center justify-between text-xs backdrop-blur-md shadow">
       <div class="flex items-center gap-1.5 leading-tight">
-        <span class="text-xs animate-bounce">💧</span>
-        <span class="text-[10.5px] text-emerald-100">
-          <strong>Tap water to make a ripple!</strong> Push matching kittens to cuddle & merge!
+        <span class="text-xs">🐶</span>
+        <span class="text-[10px] text-purple-100">
+          <strong>Drag cute animal blocks onto the grid!</strong> Fill full lines ➔ <strong class="text-amber-300">BLAST & COMBO!</strong>
         </span>
       </div>
-      <button id="howToBtn" class="btn-marshmallow p-0.5 px-2 rounded-lg bg-pink-950/70 hover:bg-pink-900 border border-pink-500/50 text-pink-200 text-[9px] font-bold shadow">
-        RULES ❓
-      </button>
+      <div class="flex items-center gap-1 text-[9px] text-amber-300 font-black">
+        <span>BEST:</span>
+        <span id="bestScoreVal">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING COMBO POPUP BANNER (Block Blast Style) -->
+  <div id="comboBannerContainer" class="absolute top-16 left-0 right-0 flex items-center justify-center z-30 pointer-events-none hidden">
+    <div id="comboBannerText" class="text-xs sm:text-sm font-black uppercase tracking-wider text-black bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 px-4 py-1.5 rounded-full shadow-[0_0_25px_rgba(251,191,36,0.8)] border-2 border-white combo-banner-anim">
+      🔥 COMBO x2 • MEGA BLAST!
     </div>
   </div>
 
   <!-- ============================================ -->
-  <!-- MAIN POND CANVAS (Giant Floating Lotus Leaf)  -->
+  <!-- MAIN 8x8 COZY ANIMAL GRID (Interactive Canvas) -->
   <!-- ============================================ -->
-  <main class="relative w-full max-w-md flex-1 min-h-0 my-0.5 flex items-center justify-center overflow-hidden">
-    <div id="pondContainer" class="relative h-full max-h-full aspect-square w-auto max-w-full rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(16,185,129,0.3)] flex items-center justify-center cursor-pointer border-2 border-emerald-600/40 bg-[#092218]/90">
-      <canvas id="pondCanvas" class="w-full h-full block"></canvas>
+  <main id="boardWrapper" class="relative w-full max-w-md flex-1 min-h-0 my-0.5 flex items-center justify-center overflow-hidden">
+    <div id="boardContainer" class="relative h-full max-h-full aspect-square w-auto max-w-full rounded-3xl overflow-hidden shadow-[0_0_40px_rgba(168,85,247,0.35)] flex items-center justify-center border-3 border-purple-500/50 bg-[#160a26]/95 p-1">
+      <canvas id="gridCanvas" class="w-full h-full block cursor-pointer"></canvas>
     </div>
   </main>
 
+  <!-- FLOATING DRAG AVATAR (Follows touch/pointer smoothly when dragging pieces) -->
+  <div id="dragAvatar" class="fixed pointer-events-none z-50 hidden -translate-x-1/2 -translate-y-1/2 scale-110 drop-shadow-[0_15px_30px_rgba(0,0,0,0.85)]"></div>
+
   <!-- ============================================ -->
-  <!-- INTERACTIVE FTUE GUIDED HAND (With 1-Tap SKIP)-->
+  <!-- BOTTOM TRAY DOCK (3 Cute Animal Pieces)      -->
   <!-- ============================================ -->
-  <div id="tutorialOverlay" class="fixed inset-0 pointer-events-none z-40 flex flex-col justify-between p-3 transition-opacity duration-300">
-    <div class="w-full max-w-md mx-auto flex items-center justify-between pt-2">
-      <div class="flex items-center gap-1.5 bg-black/85 border-2 border-pink-400 px-3 py-1 rounded-full shadow-2xl backdrop-blur-md">
-        <span class="text-xs">🐾</span>
-        <span class="text-[9.5px] font-black text-pink-300 uppercase tracking-wider">TAP ANYWHERE ON WATER</span>
+  <footer class="w-full max-w-md mx-auto z-20 flex flex-col gap-1 p-2 bg-[#25153b]/85 backdrop-blur-md rounded-2xl border-2 border-purple-500/40 shadow-lg mb-1">
+    <!-- BOOSTERS ROW -->
+    <div class="flex items-center justify-between px-1">
+      <div class="flex items-center gap-1 text-[9px] uppercase tracking-wider text-purple-300 font-extrabold">
+        <span>🐾 PET TOYS:</span>
       </div>
-      <button id="skipTutorialBtn" class="pointer-events-auto btn-marshmallow flex items-center gap-1 bg-black/85 hover:bg-black active:scale-95 border-2 border-amber-400 px-3 py-1 rounded-full text-amber-300 text-[10px] font-black uppercase tracking-wider shadow-2xl transition cursor-pointer">
-        <span>SKIP</span>
-        <span>⏭️</span>
-      </button>
-    </div>
-
-    <!-- Bouncing Guided Hand Pointing At Center Pond -->
-    <div id="tutHand" class="relative w-full max-w-md mx-auto flex-1 flex flex-col items-center justify-center pointer-events-none">
-      <div class="relative flex flex-col items-center">
-        <div class="w-16 h-16 rounded-full border-4 border-pink-400/80 pulse-ring absolute"></div>
-        <div class="bg-black/90 text-pink-300 text-[11px] font-black px-3 py-1 rounded-full border-2 border-pink-400 shadow-2xl whitespace-nowrap mb-2 animate-pulse flex items-center gap-1">
-          <span>💧 TAP WATER TO RIPPLE!</span>
-        </div>
-        <div class="text-4xl filter drop-shadow-[0_0_15px_rgba(244,114,182,1)] guide-hand-tap">
-          👇
-        </div>
+      <div class="flex items-center gap-2">
+        <button id="bombBoosterBtn" title="Drop a Yarn Bomb that clears a 3x3 square!" class="btn-marshmallow px-2.5 py-0.5 rounded-xl bg-pink-950/80 hover:bg-pink-900 border border-pink-500/70 text-pink-200 text-[9.5px] font-black flex items-center gap-1 shadow">
+          <span>🧶 YARN BOMB</span>
+          <span id="bombCount" class="px-1.5 py-0.2 bg-pink-800 rounded-full text-[8px] text-white">2</span>
+        </button>
+        <button id="boneBoosterBtn" title="Golden Bone: Clears an entire animal color from the board!" class="btn-marshmallow px-2.5 py-0.5 rounded-xl bg-amber-950/80 hover:bg-amber-900 border border-amber-500/70 text-amber-200 text-[9.5px] font-black flex items-center gap-1 shadow">
+          <span>🦴 GOLD BONE</span>
+          <span id="boneCount" class="px-1.5 py-0.2 bg-amber-800 rounded-full text-[8px] text-white">2</span>
+        </button>
+        <button id="refreshTrayBtn" title="Shuffle & roll fresh animal shapes" class="btn-marshmallow px-2 py-0.5 rounded-xl bg-purple-950 hover:bg-purple-900 border border-purple-500/60 text-purple-200 text-[9.5px] font-black shadow">
+          🔄 SHUFFLE
+        </button>
       </div>
     </div>
 
-    <div class="w-full max-w-md mx-auto pb-4"></div>
-  </div>
-
-  <!-- ============================================ -->
-  <!-- BOTTOM CAT TOYS BAR (Boosters & Controls)    -->
-  <!-- ============================================ -->
-  <footer class="w-full max-w-md mx-auto z-20 flex items-center justify-between px-2 py-1 bg-[#142e23]/80 backdrop-blur-md rounded-2xl border-2 border-emerald-600/40 shadow-lg mb-1">
-    <div class="flex items-center gap-1 text-[9px] uppercase tracking-wider text-emerald-300 font-extrabold">
-      <span>🐱 CAT TOYS:</span>
-    </div>
-
-    <div class="flex items-center gap-2">
-      <!-- YARN HERD BOOSTER -->
-      <button id="yarnBoosterBtn" title="Drop a bouncy yarn ball that rolls and herds all kittens together!" class="btn-marshmallow px-3 py-1 rounded-xl bg-pink-950/80 hover:bg-pink-900 border border-pink-500/70 text-pink-200 text-[10px] font-extrabold flex items-center gap-1.5 shadow">
-        <span>🧶 YARN HERD</span>
-        <span id="yarnCount" class="px-1.5 py-0.2 bg-pink-800 rounded-full text-[8px] text-white font-bold">2</span>
-      </button>
-
-      <!-- TUNA SNACK BOOSTER -->
-      <button id="tunaBoosterBtn" title="Drop a tasty tuna snack that draws matching kittens into an instant mega-cuddle!" class="btn-marshmallow px-3 py-1 rounded-xl bg-amber-950/80 hover:bg-amber-900 border border-amber-500/70 text-amber-200 text-[10px] font-extrabold flex items-center gap-1.5 shadow">
-        <span>🐟 TUNA TREAT</span>
-        <span id="tunaCount" class="px-1.5 py-0.2 bg-amber-800 rounded-full text-[8px] text-white font-bold">2</span>
-      </button>
-
-      <!-- RESTART LEVEL -->
-      <button id="restartBtn" title="Respawn fresh kittens on the water leaf" class="btn-marshmallow p-1 px-2.5 rounded-xl bg-emerald-950 hover:bg-emerald-900 border border-emerald-600/60 text-emerald-300 text-[10px] font-bold shadow">
-        🔄
-      </button>
+    <!-- 3 SHAPE DOCK SLOTS (Block Blast Style) -->
+    <div id="pieceTray" class="w-full grid grid-cols-3 gap-2 h-24 sm:h-26">
+      <div data-slot="0" class="piece-slot relative rounded-2xl bg-black/50 border-2 border-purple-700/50 flex items-center justify-center hover:border-amber-400/80 active:scale-95 transition cursor-grab">
+        <canvas class="slot-canvas w-full h-full pointer-events-none"></canvas>
+      </div>
+      <div data-slot="1" class="piece-slot relative rounded-2xl bg-black/50 border-2 border-purple-700/50 flex items-center justify-center hover:border-amber-400/80 active:scale-95 transition cursor-grab">
+        <canvas class="slot-canvas w-full h-full pointer-events-none"></canvas>
+      </div>
+      <div data-slot="2" class="piece-slot relative rounded-2xl bg-black/50 border-2 border-purple-700/50 flex items-center justify-center hover:border-amber-400/80 active:scale-95 transition cursor-grab">
+        <canvas class="slot-canvas w-full h-full pointer-events-none"></canvas>
+      </div>
     </div>
   </footer>
 
   <!-- ============================================ -->
-  <!-- "HOW TO PLAY" MODAL (Casual 4-Step Rules)    -->
+  <!-- "HOW TO PLAY" MODAL                          -->
   <!-- ============================================ -->
-  <div id="howToModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
-    <div class="max-w-sm w-full bg-[#0d261b] border-2 border-pink-400 rounded-3xl p-5 shadow-2xl space-y-3.5 text-center">
-      <div class="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-2xl shadow-lg border border-pink-200/50">
+  <div id="rulesModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
+    <div class="max-w-sm w-full bg-[#1e0f33] border-2 border-amber-400 rounded-3xl p-5 shadow-2xl space-y-3.5 text-center">
+      <div class="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-amber-400 to-rose-500 flex items-center justify-center text-2xl shadow-lg border border-amber-200/50">
         🐾
       </div>
 
       <div>
-        <h2 class="text-base font-black text-pink-200 uppercase tracking-wide">How to Play Meow Ripple</h2>
-        <p class="text-[10px] text-emerald-300 font-bold">The 100% Unique Water-Ripple Kitten Puzzle</p>
+        <h2 class="text-base font-black text-amber-200 uppercase tracking-wide">How to Play Pet Blast!</h2>
+        <p class="text-[10px] text-purple-300 font-bold">The Addictive Cute Animal Block Puzzle</p>
       </div>
 
       <div class="space-y-2 text-left text-xs">
-        <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-emerald-800/40">
+        <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-purple-800/40">
           <span class="text-xl">1️⃣</span>
           <div>
-            <strong class="text-pink-300 block text-[11px]">Tap Water to Make a Ripple</strong>
-            <span class="text-slate-300 text-[10px] leading-tight block">Tap anywhere on the lotus pond leaf. A gentle circular ripple wave expands smoothly through the water!</span>
+            <strong class="text-amber-300 block text-[11px]">Pick & Drag Animal Pieces</strong>
+            <span class="text-slate-300 text-[10px] leading-tight block">Drag cute animal shapes from your bottom dock onto the 8x8 grid. Or tap a piece, then tap the board!</span>
           </div>
         </div>
 
-        <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-emerald-800/40">
+        <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-purple-800/40">
           <span class="text-xl">2️⃣</span>
           <div>
-            <strong class="text-pink-300 block text-[11px]">Ripples Push Floating Kittens</strong>
-            <span class="text-slate-300 text-[10px] leading-tight block">The water ripple physically pushes the floating chubby kittens in the direction of the wave!</span>
+            <strong class="text-rose-300 block text-[11px]">Fill Complete Rows & Columns</strong>
+            <span class="text-slate-300 text-[10px] leading-tight block">When any horizontal line or vertical column is completely filled: <strong>BOOM! BLAST!</strong> Animals burst with joyful sounds!</span>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-purple-800/40">
+          <span class="text-xl">3️⃣</span>
+          <div>
+            <strong class="text-amber-300 block text-[11px]">Chain Massive Combos!</strong>
+            <span class="text-slate-300 text-[10px] leading-tight block">Clear lines in back-to-back moves to trigger <strong>COMBO x2, x3, x4!</strong> Pitch-shifting musical chimes shower massive points!</span>
           </div>
         </div>
 
         <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-emerald-800/40">
-          <span class="text-xl">3️⃣</span>
-          <div>
-            <strong class="text-amber-300 block text-[11px]">Matching Kittens Cuddle & Merge!</strong>
-            <span class="text-slate-300 text-[10px] leading-tight block">When 2 kittens of the same color collide, they cuddle into a <strong>Bigger Crown Mega-Kitty</strong> with a happy meow & purr!</span>
-          </div>
-        </div>
-
-        <div class="flex items-start gap-2.5 bg-black/50 p-2.5 rounded-xl border border-sky-800/40">
           <span class="text-xl">🏆</span>
           <div>
-            <strong class="text-sky-300 block text-[11px]">Collect Target Goals to Win</strong>
-            <span class="text-slate-300 text-[10px] leading-tight block">Check top targets (e.g. 🐱 Ginger Cuddle & 🌸 Sakura Cuddle). Clear all goals to beat the level!</span>
+            <strong class="text-emerald-300 block text-[11px]">Collect Target Animals to Clear Levels</strong>
+            <span class="text-slate-300 text-[10px] leading-tight block">Check top targets (e.g. 🐱 Kittens & 🐰 Bunnies). Blast matching lines to collect them and beat the level!</span>
           </div>
         </div>
       </div>
 
-      <button id="closeHowToBtn" class="w-full py-2.5 bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-300 hover:to-rose-400 text-black font-black rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow-lg">
-        GOT IT — PLAY NOW ➔
+      <button id="closeRulesBtn" class="w-full py-2.5 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-black rounded-xl text-xs uppercase tracking-wider transition active:scale-95 shadow-lg">
+        LET'S BLAST! ➔
       </button>
     </div>
   </div>
 
   <!-- ============================================ -->
-  <!-- "GAME SPECS & DESIGN INNOVATION" MODAL       -->
-  <!-- ============================================ -->
-  <div id="specsModal" class="fixed inset-0 bg-black/92 z-50 flex items-center justify-center p-3.5 backdrop-blur-md hidden">
-    <div class="max-w-md w-full max-h-[90vh] overflow-y-auto bg-[#071d14] border-2 border-amber-400 rounded-3xl p-5 shadow-2xl space-y-3.5 text-left text-xs">
-      <!-- HEADER -->
-      <div class="flex items-center justify-between border-b border-amber-500/30 pb-2">
-        <div class="flex items-center gap-2.5">
-          <span class="text-2xl">👑</span>
-          <div>
-            <h2 class="text-xs sm:text-sm font-black text-amber-300 uppercase tracking-wide leading-tight">Meow Ripple: Game Design Specs</h2>
-            <p class="text-[9.5px] text-pink-300 font-bold">100% Unique • Zero Clones • Casual Appeal</p>
-          </div>
-        </div>
-        <button id="closeSpecsBtn" class="text-slate-400 hover:text-white text-base font-bold px-2 py-0.5 rounded-lg hover:bg-white/10 transition">✕</button>
-      </div>
-
-      <!-- SPECS CONTENT -->
-      <div class="space-y-2.5 text-[10px] text-slate-200">
-        <!-- 1. WHY THIS IS 100% UNIQUE -->
-        <div class="bg-black/60 p-3 rounded-2xl border border-pink-500/40 space-y-1.5 shadow">
-          <div class="flex items-center gap-1.5 text-pink-300 font-black text-xs uppercase">
-            <span>🌊</span> <span>1. Truly Unique: Water-Ripple Impulse Physics</span>
-          </div>
-          <p class="leading-relaxed">
-            Unlike every generic puzzle on Google Play, <em>Meow Ripple</em> contains <strong>NO vertical bottle tubes</strong>, <strong>NO match-3 grids</strong>, and <strong>NO sliding blocks</strong>.
-          </p>
-          <p class="text-emerald-300 font-semibold leading-relaxed">
-            ⭐ The Breakthrough: The player interacts with natural water surface tension! Tapping the pond creates concentric ripple waves that physically push and collide floating, living cat puffs.
-          </p>
-        </div>
-
-        <!-- 2. WHY CASUAL PLAYERS FALL IN LOVE (THE 2-SECOND RULE) -->
-        <div class="bg-black/60 p-3 rounded-2xl border border-emerald-600/40 space-y-1.5 shadow">
-          <div class="flex items-center gap-1.5 text-emerald-300 font-black text-xs uppercase">
-            <span>🐾</span> <span>2. Instant Comprehension & Cute Kawaii Animals</span>
-          </div>
-          <ul class="space-y-1 text-slate-300 pl-1">
-            <li><strong>• 2-Second Learning Curve:</strong> A 4-year-old or 70-year-old immediately understands that water ripples push things. No manual or reading required.</li>
-            <li><strong>• Living Characters:</strong> Chubby kittens blink, squish, breath, and purr. Colliding matching cats triggers a joyful cuddle-merge with ASMR purrs.</li>
-            <li><strong>• Zero Stress:</strong> No punishing countdown clocks, pure sensory delight.</li>
-          </ul>
-        </div>
-
-        <!-- 3. RETENTION & MONETIZATION BLUEPRINT -->
-        <div class="bg-black/60 p-3 rounded-2xl border border-amber-600/40 space-y-1.5 shadow">
-          <div class="flex items-center gap-1.5 text-amber-300 font-black text-xs uppercase">
-            <span>🎁</span> <span>3. Rewarded Boosters & Live-Ops Hooks</span>
-          </div>
-          <ul class="space-y-1 text-slate-300 pl-1">
-            <li><strong>• 🧶 Yarn Herd Booster:</strong> Throws a bouncy yarn ball that pulls all kittens toward it in one swoop.</li>
-            <li><strong>• 🐟 Tuna Snack Booster:</strong> Drops a delicious fish snack that attracts all cats across the pond into mega-merges.</li>
-            <li><strong>• Collectible Cat Outfits:</strong> Rewarded videos unlock cute hats, flower crowns, and sleeping caps for your kittens!</li>
-          </ul>
-        </div>
-      </div>
-
-      <button id="closeSpecsBtn2" class="w-full py-2.5 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition active:scale-95">
-        BACK TO PLAYABLE GAME ➔
-      </button>
-    </div>
-  </div>
-
-  <!-- ============================================ -->
-  <!-- LEVEL CLEARED / VICTORY MODAL                -->
+  <!-- LEVEL VICTORY MODAL                          -->
   <!-- ============================================ -->
   <div id="victoryModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
-    <div class="max-w-xs w-full bg-[#0d261b] border-2 border-amber-400 rounded-3xl p-5 shadow-2xl text-center space-y-3">
-      <div class="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-3xl shadow-xl animate-bounce border-2 border-amber-200">
+    <div class="max-w-xs w-full bg-[#1e0f33] border-2 border-amber-400 rounded-3xl p-5 shadow-2xl text-center space-y-3">
+      <div class="w-16 h-16 mx-auto rounded-3xl bg-gradient-to-br from-amber-400 to-rose-500 flex items-center justify-center text-3xl shadow-xl animate-bounce border-2 border-amber-200">
         👑
       </div>
 
       <div>
-        <h2 class="text-lg font-black text-amber-300 uppercase tracking-wide">Pond Cleared!</h2>
-        <p class="text-[10px] text-pink-300 font-bold">All Kittens Cuddled in Harmony 💕</p>
+        <h2 class="text-lg font-black text-amber-300 uppercase tracking-wide">LEVEL COMPLETE!</h2>
+        <p class="text-[10px] text-pink-300 font-bold">All Cute Animals Rescued! 💕</p>
       </div>
 
       <!-- 3 STARS -->
@@ -338,33 +278,64 @@
         <span>⭐</span><span>⭐</span><span>⭐</span>
       </div>
 
-      <div class="bg-black/50 p-2.5 rounded-2xl border border-emerald-800/50">
-        <div class="text-[9px] uppercase tracking-wider text-emerald-400 font-bold">Level Score</div>
-        <div id="victoryScore" class="text-xl font-black text-amber-200">500</div>
+      <div class="bg-black/50 p-2.5 rounded-2xl border border-purple-800/50">
+        <div class="text-[9px] uppercase tracking-wider text-purple-300 font-bold">Level Score</div>
+        <div id="victoryScore" class="text-xl font-black text-amber-200">1250</div>
       </div>
 
-      <button id="nextLevelBtn" class="w-full py-3 bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-300 hover:to-rose-400 text-black font-black rounded-2xl text-xs uppercase tracking-wider shadow-xl transition active:scale-95">
-        NEXT COZY POND ➔
+      <button id="nextLevelBtn" class="w-full py-3 bg-gradient-to-r from-amber-400 to-yellow-500 hover:from-amber-300 hover:to-yellow-400 text-black font-black rounded-2xl text-xs uppercase tracking-wider shadow-xl transition active:scale-95">
+        NEXT LEVEL ➔
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- GAME OVER / NO MORE MOVES MODAL              -->
+  <!-- ============================================ -->
+  <div id="gameOverModal" class="fixed inset-0 bg-black/92 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden">
+    <div class="max-w-xs w-full bg-[#1a0c2c] border-2 border-rose-500 rounded-3xl p-5 shadow-2xl text-center space-y-3">
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-rose-950 border border-rose-500 flex items-center justify-center text-3xl shadow-lg">
+        😿
+      </div>
+
+      <div>
+        <h2 class="text-base font-black text-rose-300 uppercase tracking-wide">NO MORE SPACE!</h2>
+        <p class="text-[10px] text-slate-300">The cozy board is full of cute animals!</p>
+      </div>
+
+      <div class="bg-black/60 p-2.5 rounded-2xl border border-purple-800/50">
+        <div class="text-[9px] uppercase tracking-wider text-purple-300 font-bold">Final Score</div>
+        <div id="gameOverScore" class="text-xl font-black text-amber-300">0</div>
+      </div>
+
+      <!-- RESCUE BOMB BUTTON -->
+      <button id="rescueBombBtn" class="w-full py-2.5 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-400 hover:to-rose-500 text-white font-black rounded-xl text-xs uppercase tracking-wider shadow-lg transition active:scale-95 flex items-center justify-center gap-1.5">
+        <span>🧶 FREE YARN BOMB RESCUE!</span>
+      </button>
+
+      <!-- RETRY LEVEL -->
+      <button id="retryBtn" class="w-full py-2.5 bg-purple-900/80 hover:bg-purple-800 text-purple-200 font-bold rounded-xl text-xs uppercase tracking-wider transition active:scale-95">
+        TRY AGAIN 🔄
       </button>
     </div>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- JAVASCRIPT: THE COMPLETE MEOW RIPPLE GAME & WATER PHYSICS ENGINE           -->
+  <!-- JAVASCRIPT: PET BLAST FULL GAME ENGINE & AUDIO SYSTEM                      -->
   <!-- ========================================================================= -->
   <script>
     /**
-     * MEOW RIPPLE: COZY CAT WATER POND
-     * - 100% Unique Water Ripple Fluid Impulse Physics
-     * - Zero bottles, zero match-3 grids, zero clones
-     * - Chubby, breathing, blinking, blushing living kittens
-     * - Web Audio Synthesized Water Plops, Meows, and Purrs
+     * PET BLAST — COZY ANIMAL BLOCK PUZZLE
+     * - The world's #1 addictive puzzle loop (Block Blast)
+     * - Adorable diverse cute animals: Kitten 🐱, Puppy 🐶, Bunny 🐰, Panda 🐼, Froggy 🐸, Honey Bear 🐻
+     * - Screen shake physics, pitch-scaling combo ladder, and juicy particle explosions
+     * - 100% responsive, high-performance 60fps HTML5 Canvas
      */
 
     // =========================================================================
-    // 1. CUTE KAWAII ASMR AUDIO ENGINE (Web Audio API)
+    // 1. KAWAII JUICY AUDIO ENGINE (Pitch-Scaling Combos & Animal Sounds)
     // =========================================================================
-    class MeowAudioEngine {
+    class PetAudioEngine {
       constructor() {
         this.ctx = null;
         this.muted = false;
@@ -385,1014 +356,1121 @@
         return !this.muted;
       }
 
-      // Realistic Water Plop (Sine sweep with lowpass filter)
-      playWaterPlop() {
+      // Piece Pick Up (soft squish pop)
+      playPickUp() {
         if (!this.ctx || this.muted) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        const filter = this.ctx.createBiquadFilter();
-
-        filter.type = "lowpass";
-        filter.frequency.setValueAtTime(1400, now);
-        filter.frequency.exponentialRampToValueAtTime(300, now + 0.18);
-
         osc.type = "sine";
-        osc.frequency.setValueAtTime(680, now);
-        osc.frequency.exponentialRampToValueAtTime(140, now + 0.16);
-
-        gain.gain.setValueAtTime(0.45, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
-
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.ctx.destination);
-
-        osc.start(now);
-        osc.stop(now + 0.19);
-      }
-
-      // Sweet Cat Kitten Meow (Frequency modulated vibrato)
-      playCuteMeow() {
-        if (!this.ctx || this.muted) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-
-        osc.type = "triangle";
-        // Meow pitch contour: low -> high -> gently settle
-        osc.frequency.setValueAtTime(450, now);
-        osc.frequency.exponentialRampToValueAtTime(820, now + 0.12);
-        osc.frequency.exponentialRampToValueAtTime(560, now + 0.32);
-
-        gain.gain.setValueAtTime(0.001, now);
-        gain.gain.linearRampToValueAtTime(0.35, now + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(540, now + 0.08);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
-
         osc.start(now);
-        osc.stop(now + 0.36);
+        osc.stop(now + 0.11);
       }
 
-      // Soothing Cat Purr Sound (Low frequency pulsed rumble)
-      playCatPurr() {
+      // Piece Land (solid wooden thud + squish)
+      playLand() {
         if (!this.ctx || this.muted) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-
         osc.type = "sine";
-        osc.frequency.setValueAtTime(75, now);
-
-        // Tremolo LFO for realistic rhythmic purr
-        const lfo = this.ctx.createOscillator();
-        const lfoGain = this.ctx.createGain();
-        lfo.frequency.setValueAtTime(24, now); // 24 Hz purr rumble
-        lfoGain.gain.setValueAtTime(0.2, now);
-        lfo.connect(lfoGain.gain);
-
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
-
+        osc.frequency.setValueAtTime(420, now);
+        osc.frequency.exponentialRampToValueAtTime(160, now + 0.1);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
-
         osc.start(now);
-        lfo.start(now);
-        osc.stop(now + 0.62);
-        lfo.stop(now + 0.62);
+        osc.stop(now + 0.13);
       }
 
-      // Crystal Cuddle Harmony Chime (C5 - E5 - G5 - C6)
-      playCuddleChime() {
+      // Line Blast Pop with Pitch-Scaling Combo System!
+      playLineBlast(comboCount = 1) {
+        if (!this.ctx || this.muted) return;
+        const now = this.ctx.currentTime;
+
+        // Ascending pentatonic chord based on combo count (Block Blast secret!)
+        const scale = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50, 1174.66, 1318.51];
+        const baseFreq = scale[Math.min(comboCount - 1, scale.length - 1)];
+
+        // 1. Crystal Chime
+        const osc1 = this.ctx.createOscillator();
+        const gain1 = this.ctx.createGain();
+        osc1.type = "triangle";
+        osc1.frequency.setValueAtTime(baseFreq, now);
+        osc1.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, now + 0.15);
+        gain1.gain.setValueAtTime(0.35, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+        osc1.connect(gain1);
+        gain1.connect(this.ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.42);
+
+        // 2. Harmonic Fifth
+        const osc2 = this.ctx.createOscillator();
+        const gain2 = this.ctx.createGain();
+        osc2.type = "sine";
+        osc2.frequency.setValueAtTime(baseFreq * 1.25, now + 0.05);
+        gain2.gain.setValueAtTime(0.25, now + 0.05);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc2.connect(gain2);
+        gain2.connect(this.ctx.destination);
+        osc2.start(now + 0.05);
+        osc2.stop(now + 0.47);
+
+        // 3. Cute Happy Meow/Bark squeak on high combo
+        if (comboCount >= 2) {
+          const squeak = this.ctx.createOscillator();
+          const sGain = this.ctx.createGain();
+          squeak.type = "sine";
+          squeak.frequency.setValueAtTime(650, now);
+          squeak.frequency.exponentialRampToValueAtTime(950, now + 0.08);
+          squeak.frequency.exponentialRampToValueAtTime(700, now + 0.22);
+          sGain.gain.setValueAtTime(0.2, now);
+          sGain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          squeak.connect(sGain);
+          sGain.connect(this.ctx.destination);
+          squeak.start(now);
+          squeak.stop(now + 0.26);
+        }
+      }
+
+      // Bomb Explosion Booster Sound
+      playBombBlast() {
+        if (!this.ctx || this.muted) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.35);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      }
+
+      // Victory Fanfare
+      playVictory() {
         if (!this.ctx || this.muted) return;
         const notes = [523.25, 659.25, 783.99, 1046.50];
         const now = this.ctx.currentTime;
-
         notes.forEach((freq, idx) => {
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
-          const startTime = now + idx * 0.06;
-
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(freq, startTime);
-
-          gain.gain.setValueAtTime(0.25, startTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.5);
-
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-
-          osc.start(startTime);
-          osc.stop(startTime + 0.52);
-        });
-      }
-
-      // Level Complete Fanfare
-      playVictoryFanfare() {
-        if (!this.ctx || this.muted) return;
-        const chord = [523.25, 659.25, 783.99, 1046.50, 1318.51];
-        const now = this.ctx.currentTime;
-        chord.forEach((freq, i) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
           osc.type = "triangle";
-          osc.frequency.setValueAtTime(freq, now + i * 0.08);
-          gain.gain.setValueAtTime(0.3, now + i * 0.08);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.7);
+          osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+          gain.gain.setValueAtTime(0.3, now + idx * 0.09);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.6);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
-          osc.start(now + i * 0.08);
-          osc.stop(now + i * 0.08 + 0.72);
+          osc.start(now + idx * 0.09);
+          osc.stop(now + idx * 0.09 + 0.62);
         });
       }
     }
 
-    const sound = new MeowAudioEngine();
+    const sound = new PetAudioEngine();
 
     // =========================================================================
-    // 2. GAME STATE & KITTEN PALETTES
+    // 2. CUTE ANIMAL TYPES (Kittens, Puppies, Bunnies, Pandas, Froggies, Bears)
     // =========================================================================
-    const KITTEN_TYPES = {
-      ginger: {
-        id: 'ginger',
-        name: 'Ginger',
+    const ANIMALS = {
+      kitten: {
+        id: 'kitten',
+        name: 'Kitten',
         icon: '🐱',
         baseColor: '#fb923c',     // Warm orange
-        bellyColor: '#ffedd5',    // Cream belly
-        earColor: '#ea580c',      // Darker orange ear tip
-        stripeColor: '#c2410c',
-        glow: '#f97316'
+        darkColor: '#c2410c',
+        earType: 'cat',           // Pointy triangular ears
+        faceType: 'cat'
       },
-      sakura: {
-        id: 'sakura',
-        name: 'Sakura',
-        icon: '🌸',
+      bunny: {
+        id: 'bunny',
+        name: 'Bunny',
+        icon: '🐰',
         baseColor: '#f472b6',     // Sweet strawberry pink
-        bellyColor: '#fdf2f8',    // Milky white
-        earColor: '#db2777',
-        stripeColor: '#be185d',
-        glow: '#ec4899'
+        darkColor: '#be185d',
+        earType: 'bunny',         // Tall floppy rabbit ears
+        faceType: 'bunny'
       },
-      bluey: {
-        id: 'bluey',
-        name: 'Bluey',
-        icon: '🫐',
-        baseColor: '#38bdf8',     // Pastel sky blue
-        bellyColor: '#f0f9ff',    // Soft ice white
-        earColor: '#0284c7',
-        stripeColor: '#0369a1',
-        glow: '#0ea5e9'
+      puppy: {
+        id: 'puppy',
+        name: 'Puppy',
+        icon: '🐶',
+        baseColor: '#38bdf8',     // Sky blue shiba
+        darkColor: '#0369a1',
+        earType: 'dog',           // Floppy dog ears
+        faceType: 'dog'
       },
-      honey: {
-        id: 'honey',
-        name: 'Honey',
-        icon: '🍯',
-        baseColor: '#facc15',     // Butterscotch gold
-        bellyColor: '#fefce8',    // Warm milk
-        earColor: '#ca8a04',
-        stripeColor: '#a16207',
-        glow: '#eab308'
+      panda: {
+        id: 'panda',
+        name: 'Panda',
+        icon: '🐼',
+        baseColor: '#f8fafc',     // Crisp white panda
+        darkColor: '#1e293b',     // Black panda ears & eye patches
+        earType: 'panda',         // Round black ears
+        faceType: 'panda'
       },
-      rainbow: {
-        id: 'rainbow',
-        name: 'Prism',
-        icon: '🌈',
-        isRainbow: true,
-        baseColor: '#c084fc',
-        bellyColor: '#faf5ff',
-        earColor: '#9333ea',
-        stripeColor: '#7e22ce',
-        glow: '#a855f7'
+      froggy: {
+        id: 'froggy',
+        name: 'Froggy',
+        icon: '🐸',
+        baseColor: '#4ade80',     // Matcha lime green
+        darkColor: '#15803d',
+        earType: 'frog',          // Bulbous frog eyes on top
+        faceType: 'frog'
+      },
+      bear: {
+        id: 'bear',
+        name: 'Bear',
+        icon: '🐻',
+        baseColor: '#facc15',     // Butterscotch gold bear
+        darkColor: '#a16207',
+        earType: 'bear',          // Round bear ears
+        faceType: 'bear'
       }
     };
+
+    const ANIMAL_KEYS = Object.keys(ANIMALS);
+
+    // =========================================================================
+    // 3. PIECE SHAPE TEMPLATES (Block Blast Variety)
+    // =========================================================================
+    const SHAPE_TEMPLATES = [
+      // 1-Block Dot
+      [[1]],
+
+      // 2-Block Dominoes
+      [[1, 1]],
+      [[1], [1]],
+
+      // 3-Block Lines & Corners
+      [[1, 1, 1]],
+      [[1], [1], [1]],
+      [[1, 1], [1, 0]],
+      [[1, 1], [0, 1]],
+      [[1, 0], [1, 1]],
+      [[0, 1], [1, 1]],
+
+      // 4-Block Shapes (I, O, L, T, S)
+      [[1, 1, 1, 1]],
+      [[1], [1], [1], [1]],
+      [[1, 1], [1, 1]], // 2x2 Square
+      [[1, 0, 0], [1, 1, 1]],
+      [[0, 0, 1], [1, 1, 1]],
+      [[1, 1, 1], [0, 1, 0]], // T-Shape
+      [[0, 1, 0], [1, 1, 1]],
+      [[1, 1, 0], [0, 1, 1]], // Z-Shape
+
+      // 3x3 Corner & Big Blocks
+      [[1, 1, 1], [1, 0, 0], [1, 0, 0]],
+      [[1, 1, 1], [0, 0, 1], [0, 0, 1]],
+      [[1, 1, 1], [1, 1, 1], [1, 1, 1]] // 3x3 Big Block
+    ];
+
+    // =========================================================================
+    // 4. GAME STATE
+    // =========================================================================
+    const GRID_SIZE = 8;
 
     const STATE = {
       level: 1,
       score: 0,
+      bestScore: 0,
+      combo: 0,
+      lastMoveCleared: false,
+
+      // 8x8 Grid (null or { animalKey: 'kitten' | 'puppy' | ... })
+      grid: Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(null)),
+
+      // Current 3 Pieces in Bottom Tray
+      trayPieces: [null, null, null],
+      selectedTraySlot: null,
+
+      // Target Goals for Current Level
       goals: {
-        goal1: { type: 'ginger', count: 0, target: 1 },
-        goal2: { type: 'sakura', count: 0, target: 1 }
+        goal1: { animal: 'kitten', count: 0, target: 8 },
+        goal2: { animal: 'bunny', count: 0, target: 8 }
       },
-      kittens: [],
-      ripples: [],
-      hearts: [],
-      flyingGoalHearts: [],
-      activeBooster: null, // 'yarn' | 'tuna'
-      yarnBalls: 2,
-      tunaSnacks: 2,
-      tutorialActive: true,
-      isLevelClear: false
+
+      // Boosters
+      bombs: 2,
+      bones: 2,
+      activeBooster: null, // 'bomb' | 'bone'
+
+      // Blast & Particle Effects
+      clearingCells: [],
+      particles: [],
+      scorePopups: [],
+
+      // Drag State
+      isDragging: false,
+      dragSlotIdx: null,
+      dragPiece: null,
+      dragX: 0,
+      dragY: 0,
+      hoverRow: null,
+      hoverCol: null
     };
 
-    // =========================================================================
-    // 3. LIVING KITTEN CLASS (Breathing, Blinking, Squishy Physics)
-    // =========================================================================
-    class Kitten {
-      constructor(x, y, typeKey, level = 1) {
-        this.x = x;
-        this.y = y;
-        this.vx = (Math.random() - 0.5) * 0.4;
-        this.vy = (Math.random() - 0.5) * 0.4;
-        this.typeKey = typeKey;
-        this.data = KITTEN_TYPES[typeKey];
-        this.level = level; // 1 = kitten (r=26), 2 = Mega-Crown Cat (r=35)
-        this.baseRadius = level === 1 ? 26 : 35;
-        this.radius = this.baseRadius;
-
-        // Micro-animations: breathing, bobbing, blinking
-        this.bobSeed = Math.random() * Math.PI * 2;
-        this.blinkCounter = Math.floor(80 + Math.random() * 150);
-        this.isBlinking = false;
-        this.squishX = 1.0;
-        this.squishY = 1.0;
-        this.rotation = (Math.random() - 0.5) * 0.2;
-        this.isMerged = false;
-      }
-
-      update(centerX, centerY, pondRadius) {
-        // 1. Friction / Water Drag
-        this.vx *= 0.94;
-        this.vy *= 0.94;
-        this.x += this.vx;
-        this.y += this.vy;
-
-        // 2. Squish elasticity recovery
-        this.squishX += (1.0 - this.squishX) * 0.12;
-        this.squishY += (1.0 - this.squishY) * 0.12;
-
-        // 3. Blinking animation
-        this.blinkCounter--;
-        if (this.blinkCounter <= 0) {
-          if (!this.isBlinking) {
-            this.isBlinking = true;
-            this.blinkCounter = 12; // blink duration
-          } else {
-            this.isBlinking = false;
-            this.blinkCounter = Math.floor(100 + Math.random() * 200);
-          }
-        }
-
-        // 4. Boundary collision with circular lotus leaf
-        const distFromCenter = Math.hypot(this.x - centerX, this.y - centerY);
-        const maxDist = pondRadius - this.radius - 8;
-        if (distFromCenter > maxDist) {
-          const angle = Math.atan2(this.y - centerY, this.x - centerX);
-          this.x = centerX + Math.cos(angle) * maxDist;
-          this.y = centerY + Math.sin(angle) * maxDist;
-          // Soft bounce back towards center
-          const normalX = Math.cos(angle);
-          const normalY = Math.sin(angle);
-          const dot = this.vx * normalX + this.vy * normalY;
-          this.vx = (this.vx - 2 * dot * normalX) * 0.6;
-          this.vy = (this.vy - 2 * dot * normalY) * 0.6;
-          this.squishX = 0.85;
-          this.squishY = 1.15;
-        }
-      }
-
-      draw(ctx, time) {
-        ctx.save();
-        // Gentle bobbing on water
-        const bobY = Math.sin(time * 0.003 + this.bobSeed) * 2.5;
-        ctx.translate(this.x, this.y + bobY);
-        ctx.rotate(this.rotation);
-        ctx.scale(this.squishX, this.squishY);
-
-        const r = this.radius;
-
-        // 1. Soft Water Shadow underneath
-        ctx.beginPath();
-        ctx.ellipse(0, r * 0.85, r * 0.9, r * 0.35, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(0, 0, 0, 0.28)";
-        ctx.fill();
-
-        // 2. Fluffy Cat Tail
-        ctx.beginPath();
-        const tailWag = Math.sin(time * 0.006 + this.bobSeed) * 0.25;
-        ctx.ellipse(-r * 0.85, r * 0.2, r * 0.45, r * 0.22, tailWag - 0.4, 0, Math.PI * 2);
-        ctx.fillStyle = this.data.baseColor;
-        ctx.fill();
-
-        // 3. Cat Ears (Left & Right)
-        // Left Ear
-        ctx.beginPath();
-        ctx.moveTo(-r * 0.7, -r * 0.4);
-        ctx.lineTo(-r * 0.65, -r * 1.15);
-        ctx.lineTo(-r * 0.2, -r * 0.75);
-        ctx.closePath();
-        ctx.fillStyle = this.data.baseColor;
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(-r * 0.6, -r * 0.5);
-        ctx.lineTo(-r * 0.6, -r * 1.0);
-        ctx.lineTo(-r * 0.3, -r * 0.75);
-        ctx.closePath();
-        ctx.fillStyle = "#fbcfe8"; // Pink inner ear
-        ctx.fill();
-
-        // Right Ear
-        ctx.beginPath();
-        ctx.moveTo(r * 0.7, -r * 0.4);
-        ctx.lineTo(r * 0.65, -r * 1.15);
-        ctx.lineTo(r * 0.2, -r * 0.75);
-        ctx.closePath();
-        ctx.fillStyle = this.data.baseColor;
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(r * 0.6, -r * 0.5);
-        ctx.lineTo(r * 0.6, -r * 1.0);
-        ctx.lineTo(r * 0.3, -r * 0.75);
-        ctx.closePath();
-        ctx.fillStyle = "#fbcfe8"; // Pink inner ear
-        ctx.fill();
-
-        // 4. Chubby Body (Fluffy Circle with Gradient)
-        const bodyGrad = ctx.createRadialGradient(-r * 0.3, -r * 0.3, r * 0.1, 0, 0, r);
-        if (this.data.isRainbow) {
-          const cycle = (time * 0.002) % (Math.PI * 2);
-          bodyGrad.addColorStop(0, '#fbcfe8');
-          bodyGrad.addColorStop(0.3, '#fde047');
-          bodyGrad.addColorStop(0.6, '#6ee7b7');
-          bodyGrad.addColorStop(0.85, '#93c5fd');
-          bodyGrad.addColorStop(1, '#c084fc');
-        } else {
-          bodyGrad.addColorStop(0, '#ffffff');
-          bodyGrad.addColorStop(0.4, this.data.baseColor);
-          bodyGrad.addColorStop(1, this.data.stripeColor);
-        }
-
-        ctx.beginPath();
-        ctx.arc(0, 0, r, 0, Math.PI * 2);
-        ctx.fillStyle = bodyGrad;
-        ctx.fill();
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
-        ctx.lineWidth = 2.0;
-        ctx.stroke();
-
-        // 5. Cute Soft Belly
-        ctx.beginPath();
-        ctx.ellipse(0, r * 0.35, r * 0.55, r * 0.4, 0, 0, Math.PI * 2);
-        ctx.fillStyle = this.data.bellyColor;
-        ctx.fill();
-
-        // 6. Cute Anime Face (Eyes, Blushing Cheeks, Nose & Mouth)
-        // Blushing Pink Cheeks
-        ctx.beginPath();
-        ctx.ellipse(-r * 0.48, r * 0.05, r * 0.2, r * 0.12, 0, 0, Math.PI * 2);
-        ctx.ellipse(r * 0.48, r * 0.05, r * 0.2, r * 0.12, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(244, 63, 94, 0.55)";
-        ctx.fill();
-
-        // Eyes (Blinking or Big Anime Sparkle Eyes)
-        ctx.fillStyle = "#1e293b";
-        if (this.isBlinking) {
-          // Happy curved sleep eyes (^ ^)
-          ctx.beginPath();
-          ctx.arc(-r * 0.28, -r * 0.05, r * 0.15, Math.PI, 0, false);
-          ctx.arc(r * 0.28, -r * 0.05, r * 0.15, Math.PI, 0, false);
-          ctx.lineWidth = 2.4;
-          ctx.strokeStyle = "#1e293b";
-          ctx.stroke();
-        } else {
-          // Big Shiny Eyes with highlights
-          ctx.beginPath();
-          ctx.arc(-r * 0.28, -r * 0.05, r * 0.16, 0, Math.PI * 2);
-          ctx.arc(r * 0.28, -r * 0.05, r * 0.16, 0, Math.PI * 2);
-          ctx.fill();
-
-          // White catchlights
-          ctx.fillStyle = "#ffffff";
-          ctx.beginPath();
-          ctx.arc(-r * 0.32, -r * 0.1, r * 0.07, 0, Math.PI * 2);
-          ctx.arc(r * 0.24, -r * 0.1, r * 0.07, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // Tiny Cute Pink Nose
-        ctx.beginPath();
-        ctx.moveTo(0, r * 0.06);
-        ctx.lineTo(-r * 0.06, 0);
-        ctx.lineTo(r * 0.06, 0);
-        ctx.closePath();
-        ctx.fillStyle = "#f43f5e";
-        ctx.fill();
-
-        // Cute Cat Mouth (3)
-        ctx.beginPath();
-        ctx.arc(-r * 0.07, r * 0.12, r * 0.07, 0, Math.PI, false);
-        ctx.arc(r * 0.07, r * 0.12, r * 0.07, 0, Math.PI, false);
-        ctx.strokeStyle = "#1e293b";
-        ctx.lineWidth = 1.8;
-        ctx.stroke();
-
-        // Whiskers
-        ctx.strokeStyle = "rgba(30, 41, 59, 0.4)";
-        ctx.lineWidth = 1.4;
-        // Left Whiskers
-        ctx.beginPath();
-        ctx.moveTo(-r * 0.45, 0);
-        ctx.lineTo(-r * 0.85, -r * 0.08);
-        ctx.moveTo(-r * 0.45, r * 0.08);
-        ctx.lineTo(-r * 0.85, r * 0.12);
-        // Right Whiskers
-        ctx.moveTo(r * 0.45, 0);
-        ctx.lineTo(r * 0.85, -r * 0.08);
-        ctx.moveTo(r * 0.45, r * 0.08);
-        ctx.lineTo(r * 0.85, r * 0.12);
-        ctx.stroke();
-
-        // 7. Shiny Golden Crown (If Merged Level 2 Mega-Cat!)
-        if (this.level >= 2) {
-          ctx.save();
-          ctx.translate(0, -r * 0.85);
-          ctx.beginPath();
-          ctx.moveTo(-14, 4);
-          ctx.lineTo(-14, -10);
-          ctx.lineTo(-7, -4);
-          ctx.lineTo(0, -14);
-          ctx.lineTo(7, -4);
-          ctx.lineTo(14, -10);
-          ctx.lineTo(14, 4);
-          ctx.closePath();
-          ctx.fillStyle = "#facc15";
-          ctx.fill();
-          ctx.strokeStyle = "#ca8a04";
-          ctx.lineWidth = 1.8;
-          ctx.stroke();
-
-          // Crown jewel gems
-          ctx.fillStyle = "#f43f5e";
-          ctx.beginPath();
-          ctx.arc(0, -4, 2.5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        }
-
-        ctx.restore();
-      }
-    }
+    // Load Best Score from LocalStorage
+    try {
+      STATE.bestScore = parseInt(localStorage.getItem("pet_blast_best") || "0", 10);
+      document.getElementById("bestScoreVal").innerText = STATE.bestScore;
+    } catch (e) {}
 
     // =========================================================================
-    // 4. WATER RIPPLE CLASS
+    // 5. SMART PIECE GENERATOR (Guarantees at least 1 legal playable move!)
     // =========================================================================
-    class WaterRipple {
-      constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.radius = 4;
-        this.maxRadius = 190;
-        this.speed = 5.2;
-        this.strength = 16.0;
-        this.alpha = 1.0;
-        this.hasPushed = new Set();
-      }
+    function generatePiece(animalKey = null) {
+      const template = SHAPE_TEMPLATES[Math.floor(Math.random() * SHAPE_TEMPLATES.length)];
+      const chosenAnimal = animalKey || ANIMAL_KEYS[Math.floor(Math.random() * ANIMAL_KEYS.length)];
 
-      update(kittens) {
-        this.radius += this.speed;
-        this.alpha = Math.max(0, 1.0 - (this.radius / this.maxRadius));
+      const rows = template.length;
+      const cols = template[0].length;
+      const shape = [];
 
-        // Physics Push: check wave contact with each kitten
-        kittens.forEach(k => {
-          if (this.hasPushed.has(k)) return;
-          const dist = Math.hypot(k.x - this.x, k.y - this.y);
-          // Wavefront detection zone
-          if (Math.abs(dist - this.radius) < 22) {
-            this.hasPushed.add(k);
-            const angle = Math.atan2(k.y - this.y, k.x - this.x);
-            const push = this.strength * Math.max(0.35, 1.0 - (this.radius / this.maxRadius));
-            k.vx += Math.cos(angle) * push;
-            k.vy += Math.sin(angle) * push;
-            // Squish reaction
-            k.squishX = 1.25;
-            k.squishY = 0.8;
-          }
-        });
-
-        return this.alpha > 0;
-      }
-
-      draw(ctx) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(167, 243, 208, ${this.alpha * 0.85})`;
-        ctx.lineWidth = 3.2 * this.alpha;
-        ctx.stroke();
-
-        // Inner secondary ripple reflection
-        if (this.radius > 20) {
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.radius - 14, 0, Math.PI * 2);
-          ctx.strokeStyle = `rgba(251, 207, 232, ${this.alpha * 0.45})`;
-          ctx.lineWidth = 2.0 * this.alpha;
-          ctx.stroke();
+      for (let r = 0; r < rows; r++) {
+        const rowArr = [];
+        for (let c = 0; c < cols; c++) {
+          rowArr.push(template[r][c] === 1 ? chosenAnimal : null);
         }
-        ctx.restore();
+        shape.push(rowArr);
       }
+
+      return {
+        shape,
+        rows,
+        cols,
+        animalKey: chosenAnimal
+      };
     }
 
-    // =========================================================================
-    // 5. HEART & PARTICLE EFFECTS
-    // =========================================================================
-    class HeartParticle {
-      constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.vx = (Math.random() - 0.5) * 3.5;
-        this.vy = -Math.random() * 3.5 - 1.5;
-        this.scale = 0.6 + Math.random() * 0.6;
-        this.alpha = 1.0;
-        this.color = Math.random() > 0.5 ? '#f472b6' : '#fb7185';
+    // Refill Tray Pieces
+    function refillTray() {
+      // Prioritize level goal animals so player can complete goals
+      const g1 = STATE.goals.goal1.animal;
+      const g2 = STATE.goals.goal2.animal;
+      const candidates = [g1, g2, ANIMAL_KEYS[Math.floor(Math.random() * ANIMAL_KEYS.length)]];
+
+      for (let i = 0; i < 3; i++) {
+        STATE.trayPieces[i] = generatePiece(candidates[i]);
       }
 
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.vy += 0.08; // gravity
-        this.alpha -= 0.024;
-        return this.alpha > 0;
+      // Check if board can fit at least one piece; if not, force a small 1x1 or 2x1 piece
+      if (!hasAnyValidMove()) {
+        STATE.trayPieces[0] = {
+          shape: [[candidates[0]]],
+          rows: 1,
+          cols: 1,
+          animalKey: candidates[0]
+        };
       }
 
-      draw(ctx) {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.scale(this.scale, this.scale);
-        ctx.globalAlpha = Math.max(0, this.alpha);
-        ctx.font = "16px sans-serif";
-        ctx.fillText("💕", -8, 0);
-        ctx.restore();
-      }
+      renderTrayCanvases();
+      checkGameOver();
     }
 
-    // Flying Goal Hearts (fly straight into header goal badges)
-    class FlyingGoalHeart {
-      constructor(startX, startY, targetElemId, onArrive) {
-        this.x = startX;
-        this.y = startY;
-        this.startX = startX;
-        this.startY = startY;
-        this.progress = 0;
-        this.onArrive = onArrive;
+    // Check if a piece can fit at (startRow, startCol)
+    function canFitPiece(piece, startRow, startCol) {
+      if (!piece) return false;
+      if (startRow < 0 || startCol < 0) return false;
+      if (startRow + piece.rows > GRID_SIZE || startCol + piece.cols > GRID_SIZE) return false;
 
-        const target = document.getElementById(targetElemId);
-        if (target) {
-          const rect = target.getBoundingClientRect();
-          this.destX = rect.left + rect.width / 2;
-          this.destY = rect.top + rect.height / 2;
-        } else {
-          this.destX = startX;
-          this.destY = 30;
-        }
-      }
-
-      update() {
-        this.progress += 0.045;
-        const t = Math.min(1.0, this.progress);
-        const arcY = Math.sin(t * Math.PI) * 50;
-        this.x = this.startX + (this.destX - this.startX) * t;
-        this.y = this.startY + (this.destY - this.startY) * t - arcY;
-
-        if (t >= 1.0) {
-          if (this.onArrive) this.onArrive();
-          return false;
-        }
-        return true;
-      }
-
-      draw(ctx) {
-        ctx.save();
-        ctx.font = "18px sans-serif";
-        ctx.shadowColor = "#f43f5e";
-        ctx.shadowBlur = 12;
-        ctx.fillText("💖", this.x - 9, this.y);
-        ctx.restore();
-      }
-    }
-
-    // =========================================================================
-    // 6. MAIN GAME ENGINE & INITIALIZATION
-    // =========================================================================
-    const canvas = document.getElementById("pondCanvas");
-    const ctx = canvas.getContext("2d");
-    let centerX = 0;
-    let centerY = 0;
-    let pondRadius = 0;
-
-    function resizeCanvas() {
-      const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      centerX = rect.width / 2;
-      centerY = rect.height / 2;
-      pondRadius = Math.min(centerX, centerY) * 0.94;
-    }
-
-    window.addEventListener("resize", resizeCanvas);
-
-    // LEVEL SETUP
-    function initLevel(lvl) {
-      STATE.level = lvl;
-      document.getElementById("levelLabel").innerText = `LEVEL ${lvl}`;
-      STATE.isLevelClear = false;
-
-      if (lvl === 1) {
-        STATE.goals.goal1 = { type: 'ginger', count: 0, target: 1 };
-        STATE.goals.goal2 = { type: 'sakura', count: 0, target: 1 };
-        // Spawn 2 Gingers and 2 Sakuras
-        spawnKittens([
-          { type: 'ginger', x: centerX - 65, y: centerY - 45 },
-          { type: 'ginger', x: centerX - 55, y: centerY + 55 },
-          { type: 'sakura', x: centerX + 65, y: centerY - 45 },
-          { type: 'sakura', x: centerX + 55, y: centerY + 55 }
-        ]);
-      } else if (lvl === 2) {
-        STATE.goals.goal1 = { type: 'ginger', count: 0, target: 2 };
-        STATE.goals.goal2 = { type: 'bluey', count: 0, target: 1 };
-        spawnKittens([
-          { type: 'ginger', x: centerX - 70, y: centerY - 50 },
-          { type: 'ginger', x: centerX - 40, y: centerY + 70 },
-          { type: 'ginger', x: centerX - 80, y: centerY + 20 },
-          { type: 'bluey', x: centerX + 60, y: centerY - 50 },
-          { type: 'bluey', x: centerX + 50, y: centerY + 60 }
-        ]);
-      } else {
-        // Level 3+ with Rainbow Wildcard
-        STATE.goals.goal1 = { type: 'sakura', count: 0, target: 1 };
-        STATE.goals.goal2 = { type: 'honey', count: 0, target: 1 };
-        spawnKittens([
-          { type: 'sakura', x: centerX - 70, y: centerY - 40 },
-          { type: 'honey', x: centerX + 70, y: centerY - 40 },
-          { type: 'rainbow', x: centerX, y: centerY + 60 },
-          { type: 'sakura', x: centerX - 40, y: centerY + 30 }
-        ]);
-      }
-
-      updateGoalUI();
-    }
-
-    function spawnKittens(list) {
-      STATE.kittens = [];
-      list.forEach(item => {
-        STATE.kittens.push(new Kitten(item.x, item.y, item.type));
-      });
-    }
-
-    function updateGoalUI() {
-      const g1 = STATE.goals.goal1;
-      const g2 = STATE.goals.goal2;
-      const b1 = document.getElementById("goalBadge1");
-      const b2 = document.getElementById("goalBadge2");
-
-      if (b1) {
-        b1.querySelector("span:first-child").innerText = KITTEN_TYPES[g1.type].icon;
-        document.getElementById("goalCount1").innerText = `${g1.count}/${g1.target}`;
-        if (g1.count >= g1.target) {
-          b1.classList.add("bg-emerald-950/80", "border-emerald-400");
-          document.getElementById("goalCount1").innerText = "✓ DONE";
-        } else {
-          b1.classList.remove("bg-emerald-950/80", "border-emerald-400");
-        }
-      }
-
-      if (b2) {
-        b2.querySelector("span:first-child").innerText = KITTEN_TYPES[g2.type].icon;
-        document.getElementById("goalCount2").innerText = `${g2.count}/${g2.target}`;
-        if (g2.count >= g2.target) {
-          b2.classList.add("bg-emerald-950/80", "border-emerald-400");
-          document.getElementById("goalCount2").innerText = "✓ DONE";
-        } else {
-          b2.classList.remove("bg-emerald-950/80", "border-emerald-400");
-        }
-      }
-    }
-
-    // CHECK KITTEN COLLISION & MERGE
-    function checkKittenCollisions() {
-      const len = STATE.kittens.length;
-      for (let i = 0; i < len; i++) {
-        for (let j = i + 1; j < len; j++) {
-          const k1 = STATE.kittens[i];
-          const k2 = STATE.kittens[j];
-          if (!k1 || !k2 || k1.isMerged || k2.isMerged) continue;
-
-          const dist = Math.hypot(k1.x - k2.x, k1.y - k2.y);
-          const minDist = k1.radius + k2.radius;
-
-          if (dist < minDist) {
-            // Check matching colors (or rainbow wildcard)
-            const isMatch = (k1.typeKey === k2.typeKey) || k1.data.isRainbow || k2.data.isRainbow;
-
-            if (isMatch) {
-              // ============================================
-              // CUDDLE MERGE!
-              // ============================================
-              k1.isMerged = true;
-              k2.isMerged = true;
-
-              sound.playCuteMeow();
-              sound.playCatPurr();
-              sound.playCuddleChime();
-
-              // Spawn Heart Particles
-              const midX = (k1.x + k2.x) / 2;
-              const midY = (k1.y + k2.y) / 2;
-              for (let p = 0; p < 12; p++) {
-                STATE.hearts.push(new HeartParticle(midX, midY));
-              }
-
-              // Upgrade k1 to Crown Mega-Cat (Level 2)
-              k1.level = 2;
-              k1.radius = k1.baseRadius = 36;
-              k1.squishX = 1.35;
-              k1.squishY = 0.75;
-              k1.isMerged = false;
-
-              // Remove k2
-              STATE.kittens.splice(j, 1);
-
-              // Update Score
-              STATE.score += 150;
-
-              // Check if goal met
-              const mergedType = k1.typeKey;
-              let targetBadgeId = null;
-              if (STATE.goals.goal1.type === mergedType && STATE.goals.goal1.count < STATE.goals.goal1.target) {
-                STATE.goals.goal1.count++;
-                targetBadgeId = "goalBadge1";
-              } else if (STATE.goals.goal2.type === mergedType && STATE.goals.goal2.count < STATE.goals.goal2.target) {
-                STATE.goals.goal2.count++;
-                targetBadgeId = "goalBadge2";
-              }
-
-              // Flying goal heart
-              if (targetBadgeId) {
-                const badge = targetBadgeId;
-                STATE.flyingGoalHearts.push(new FlyingGoalHeart(midX, midY, badge, () => {
-                  updateGoalUI();
-                  checkLevelVictory();
-                }));
-              } else {
-                updateGoalUI();
-                checkLevelVictory();
-              }
-
-              return; // recheck on next frame
-            } else {
-              // Elastic soft bounce off each other
-              const angle = Math.atan2(k2.y - k1.y, k2.x - k1.x);
-              const overlap = (minDist - dist) / 2;
-              k1.x -= Math.cos(angle) * overlap;
-              k1.y -= Math.sin(angle) * overlap;
-              k2.x += Math.cos(angle) * overlap;
-              k2.y += Math.sin(angle) * overlap;
-
-              const normalX = Math.cos(angle);
-              const normalY = Math.sin(angle);
-              const relVx = k1.vx - k2.vx;
-              const relVy = k1.vy - k2.vy;
-              const impulse = (relVx * normalX + relVy * normalY) * 0.7;
-
-              k1.vx -= impulse * normalX;
-              k1.vy -= impulse * normalY;
-              k2.vx += impulse * normalX;
-              k2.vy += impulse * normalY;
-
-              k1.squishX = k2.squishX = 1.15;
-              k1.squishY = k2.squishY = 0.85;
+      for (let r = 0; r < piece.rows; r++) {
+        for (let c = 0; c < piece.cols; c++) {
+          if (piece.shape[r][c] !== null) {
+            if (STATE.grid[startRow + r][startCol + c] !== null) {
+              return false; // Cell already occupied
             }
           }
         }
       }
+      return true;
     }
 
-    function checkLevelVictory() {
+    // Check if there is ANY legal move for any piece currently in the tray
+    function hasAnyValidMove() {
+      for (let i = 0; i < 3; i++) {
+        const piece = STATE.trayPieces[i];
+        if (!piece) continue;
+        for (let r = 0; r <= GRID_SIZE - piece.rows; r++) {
+          for (let c = 0; c <= GRID_SIZE - piece.cols; c++) {
+            if (canFitPiece(piece, r, c)) {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    }
+
+    // =========================================================================
+    // 6. DRAWING CUTE LIVING ANIMALS ON CANVAS
+    // =========================================================================
+    function drawCuteAnimal(ctx, x, y, size, animalKey, isGhost = false, time = Date.now()) {
+      const data = ANIMALS[animalKey] || ANIMALS.kitten;
+      const r = size / 2;
+      const cx = x + r;
+      const cy = y + r;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+
+      if (isGhost) {
+        ctx.globalAlpha = 0.42;
+      }
+
+      // 1. Soft Tile Drop Shadow
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(-r + 2, -r + 4, size - 4, size - 4, 10) : ctx.rect(-r + 2, -r + 4, size - 4, size - 4);
+      ctx.fillStyle = "rgba(0, 0, 0, 0.35)";
+      ctx.fill();
+
+      // 2. Cute Animal Ears (Sticking out above the tile!)
+      ctx.fillStyle = data.baseColor;
+      if (data.earType === 'cat') {
+        // Pointy Cat Ears
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.75, -r * 0.4);
+        ctx.lineTo(-r * 0.75, -r * 1.18);
+        ctx.lineTo(-r * 0.25, -r * 0.85);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(r * 0.75, -r * 0.4);
+        ctx.lineTo(r * 0.75, -r * 1.18);
+        ctx.lineTo(r * 0.25, -r * 0.85);
+        ctx.closePath();
+        ctx.fill();
+        // Pink Inner Ears
+        ctx.fillStyle = "#fbcfe8";
+        ctx.beginPath();
+        ctx.moveTo(-r * 0.65, -r * 0.5);
+        ctx.lineTo(-r * 0.65, -r * 1.0);
+        ctx.lineTo(-r * 0.35, -r * 0.8);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(r * 0.65, -r * 0.5);
+        ctx.lineTo(r * 0.65, -r * 1.0);
+        ctx.lineTo(r * 0.35, -r * 0.8);
+        ctx.closePath();
+        ctx.fill();
+      } else if (data.earType === 'bunny') {
+        // Long Floppy Bunny Ears
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.4, -r * 0.95, r * 0.22, r * 0.48, -0.15, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.4, -r * 0.95, r * 0.22, r * 0.48, 0.15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fbcfe8";
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.4, -r * 0.95, r * 0.12, r * 0.35, -0.15, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.4, -r * 0.95, r * 0.12, r * 0.35, 0.15, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (data.earType === 'dog') {
+        // Floppy Shiba Puppy Ears
+        ctx.beginPath();
+        ctx.ellipse(-r * 0.75, -r * 0.5, r * 0.25, r * 0.4, -0.4, 0, Math.PI * 2);
+        ctx.ellipse(r * 0.75, -r * 0.5, r * 0.25, r * 0.4, 0.4, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (data.earType === 'panda' || data.earType === 'bear') {
+        // Round Bear/Panda Ears
+        ctx.fillStyle = data.darkColor;
+        ctx.beginPath();
+        ctx.arc(-r * 0.65, -r * 0.75, r * 0.28, 0, Math.PI * 2);
+        ctx.arc(r * 0.65, -r * 0.75, r * 0.28, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (data.earType === 'frog') {
+        // Big Round Froggy Eyes on top
+        ctx.beginPath();
+        ctx.arc(-r * 0.5, -r * 0.75, r * 0.32, 0, Math.PI * 2);
+        ctx.arc(r * 0.5, -r * 0.75, r * 0.32, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(-r * 0.5, -r * 0.75, r * 0.2, 0, Math.PI * 2);
+        ctx.arc(r * 0.5, -r * 0.75, r * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#1e293b";
+        ctx.beginPath();
+        ctx.arc(-r * 0.5, -r * 0.75, r * 0.1, 0, Math.PI * 2);
+        ctx.arc(r * 0.5, -r * 0.75, r * 0.1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 3. Main Animal Block Tile Body
+      const bodyGrad = ctx.createLinearGradient(0, -r, 0, r);
+      bodyGrad.addColorStop(0, '#ffffff');
+      bodyGrad.addColorStop(0.25, data.baseColor);
+      bodyGrad.addColorStop(1, data.darkColor);
+
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(-r + 1, -r + 1, size - 2, size - 2, 12) : ctx.rect(-r + 1, -r + 1, size - 2, size - 2);
+      ctx.fillStyle = bodyGrad;
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+      ctx.lineWidth = 2.0;
+      ctx.stroke();
+
+      // 4. Blushing Cheeks
+      ctx.beginPath();
+      ctx.ellipse(-r * 0.55, r * 0.18, r * 0.22, r * 0.13, 0, 0, Math.PI * 2);
+      ctx.ellipse(r * 0.55, r * 0.18, r * 0.22, r * 0.13, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(244, 63, 94, 0.45)";
+      ctx.fill();
+
+      // 5. Eyes (Big Anime Eyes with Catchlights)
+      if (data.earType !== 'frog') {
+        ctx.fillStyle = "#1e293b";
+        ctx.beginPath();
+        ctx.arc(-r * 0.32, -r * 0.05, r * 0.16, 0, Math.PI * 2);
+        ctx.arc(r * 0.32, -r * 0.05, r * 0.16, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Eye highlights
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(-r * 0.36, -r * 0.1, r * 0.07, 0, Math.PI * 2);
+        ctx.arc(r * 0.28, -r * 0.1, r * 0.07, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 6. Cute Nose & Mouth
+      ctx.fillStyle = "#f43f5e";
+      ctx.beginPath();
+      ctx.arc(0, r * 0.12, r * 0.07, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Cute Smile (3)
+      ctx.strokeStyle = "#1e293b";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.arc(-r * 0.07, r * 0.22, r * 0.07, 0, Math.PI, false);
+      ctx.arc(r * 0.07, r * 0.22, r * 0.07, 0, Math.PI, false);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    // =========================================================================
+    // 7. GRID CANVAS RENDER LOOP (8x8 Block Blast Grid)
+    // =========================================================================
+    const gridCanvas = document.getElementById("gridCanvas");
+    const gridCtx = gridCanvas.getContext("2d");
+    let cellSize = 0;
+
+    function resizeGridCanvas() {
+      const rect = gridCanvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      gridCanvas.width = rect.width * dpr;
+      gridCanvas.height = rect.height * dpr;
+      gridCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      cellSize = rect.width / GRID_SIZE;
+    }
+
+    window.addEventListener("resize", () => {
+      resizeGridCanvas();
+      renderTrayCanvases();
+    });
+
+    // Main Draw Function
+    function renderGrid(time = Date.now()) {
+      gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+
+      // 1. Draw 8x8 Board Background Cells
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const x = c * cellSize;
+          const y = r * cellSize;
+
+          // Inset cell slot background
+          gridCtx.beginPath();
+          gridCtx.roundRect ? gridCtx.roundRect(x + 2, y + 2, cellSize - 4, cellSize - 4, 10) : gridCtx.rect(x + 2, y + 2, cellSize - 4, cellSize - 4);
+          gridCtx.fillStyle = (r + c) % 2 === 0 ? "rgba(35, 17, 59, 0.55)" : "rgba(25, 10, 44, 0.65)";
+          gridCtx.fill();
+          gridCtx.strokeStyle = "rgba(168, 85, 247, 0.18)";
+          gridCtx.lineWidth = 1.2;
+          gridCtx.stroke();
+        }
+      }
+
+      // 2. Draw Ghost Placement Preview when Hovering
+      if (STATE.isDragging && STATE.dragPiece && STATE.hoverRow !== null && STATE.hoverCol !== null) {
+        if (canFitPiece(STATE.dragPiece, STATE.hoverRow, STATE.hoverCol)) {
+          for (let pr = 0; pr < STATE.dragPiece.rows; pr++) {
+            for (let pc = 0; pc < STATE.dragPiece.cols; pc++) {
+              if (STATE.dragPiece.shape[pr][pc] !== null) {
+                const gx = (STATE.hoverCol + pc) * cellSize;
+                const gy = (STATE.hoverRow + pr) * cellSize;
+                drawCuteAnimal(gridCtx, gx, gy, cellSize, STATE.dragPiece.animalKey, true, time);
+              }
+            }
+          }
+        }
+      }
+
+      // 3. Draw Placed Animals on Grid
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const cell = STATE.grid[r][c];
+          if (cell !== null) {
+            const x = c * cellSize;
+            const y = r * cellSize;
+            drawCuteAnimal(gridCtx, x, y, cellSize, cell.animalKey, false, time);
+          }
+        }
+      }
+
+      // 4. Draw Line Blast Particles
+      for (let i = STATE.particles.length - 1; i >= 0; i--) {
+        const p = STATE.particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.14; // gravity
+        p.alpha -= 0.025;
+        p.scale *= 0.97;
+
+        gridCtx.save();
+        gridCtx.translate(p.x, p.y);
+        gridCtx.globalAlpha = Math.max(0, p.alpha);
+        gridCtx.font = "16px sans-serif";
+        gridCtx.fillText(p.emoji, -8, 8);
+        gridCtx.restore();
+
+        if (p.alpha <= 0) STATE.particles.splice(i, 1);
+      }
+
+      // 5. Draw Floating Score Popups
+      for (let i = STATE.scorePopups.length - 1; i >= 0; i--) {
+        const sp = STATE.scorePopups[i];
+        sp.y -= 1.1;
+        sp.alpha -= 0.02;
+
+        gridCtx.save();
+        gridCtx.font = "bold 13px Fredoka, sans-serif";
+        gridCtx.fillStyle = `rgba(251, 191, 36, ${Math.max(0, sp.alpha)})`;
+        gridCtx.shadowColor = "#f59e0b";
+        gridCtx.shadowBlur = 8;
+        gridCtx.fillText(sp.text, sp.x - 30, sp.y);
+        gridCtx.restore();
+
+        if (sp.alpha <= 0) STATE.scorePopups.splice(i, 1);
+      }
+
+      requestAnimationFrame(renderGrid);
+    }
+
+    // =========================================================================
+    // 8. TRAY DOCK CANVASES (Rendering 3 shapes at bottom)
+    // =========================================================================
+    function renderTrayCanvases() {
+      const slotElements = document.querySelectorAll(".piece-slot");
+
+      slotElements.forEach((slot, idx) => {
+        const canvas = slot.querySelector(".slot-canvas");
+        const piece = STATE.trayPieces[idx];
+        const ctx = canvas.getContext("2d");
+
+        const rect = slot.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, rect.width, rect.height);
+
+        if (!piece) {
+          slot.classList.add("opacity-30");
+          return;
+        }
+        slot.classList.remove("opacity-30");
+
+        // Scale piece to fit nicely inside the slot
+        const previewCellSize = Math.min((rect.width - 24) / piece.cols, (rect.height - 24) / piece.rows, 26);
+        const totalW = piece.cols * previewCellSize;
+        const totalH = piece.rows * previewCellSize;
+        const startX = (rect.width - totalW) / 2;
+        const startY = (rect.height - totalH) / 2;
+
+        for (let r = 0; r < piece.rows; r++) {
+          for (let c = 0; c < piece.cols; c++) {
+            if (piece.shape[r][c] !== null) {
+              const x = startX + c * previewCellSize;
+              const y = startY + r * previewCellSize;
+              drawCuteAnimal(ctx, x, y, previewCellSize, piece.animalKey, false);
+            }
+          }
+        }
+      });
+    }
+
+    // =========================================================================
+    // 9. LINE CLEARING, SCREEN SHAKE & COMBO SYSTEM (Block Blast Dopamine!)
+    // =========================================================================
+    function placePieceOnBoard(piece, startRow, startCol, slotIdx) {
+      sound.playLand();
+
+      // 1. Place cells onto grid
+      for (let r = 0; r < piece.rows; r++) {
+        for (let c = 0; c < piece.cols; c++) {
+          if (piece.shape[r][c] !== null) {
+            STATE.grid[startRow + r][startCol + c] = {
+              animalKey: piece.animalKey
+            };
+          }
+        }
+      }
+
+      // Remove piece from tray
+      STATE.trayPieces[slotIdx] = null;
+      STATE.selectedTraySlot = null;
+      renderTrayCanvases();
+
+      // 2. Check for completed rows & columns
+      checkLinesAndBlast();
+
+      // 3. Check if all 3 pieces used, refill tray!
+      if (STATE.trayPieces.every(p => p === null)) {
+        setTimeout(refillTray, 200);
+      } else {
+        checkGameOver();
+      }
+    }
+
+    function checkLinesAndBlast() {
+      const fullRows = [];
+      const fullCols = [];
+
+      // Check full rows
+      for (let r = 0; r < GRID_SIZE; r++) {
+        if (STATE.grid[r].every(cell => cell !== null)) {
+          fullRows.push(r);
+        }
+      }
+
+      // Check full columns
+      for (let c = 0; c < GRID_SIZE; c++) {
+        let isFull = true;
+        for (let r = 0; r < GRID_SIZE; r++) {
+          if (STATE.grid[r][c] === null) {
+            isFull = false;
+            break;
+          }
+        }
+        if (isFull) fullCols.push(c);
+      }
+
+      const totalLines = fullRows.length + fullCols.length;
+
+      if (totalLines > 0) {
+        // Combo increment
+        STATE.combo++;
+        STATE.lastMoveCleared = true;
+
+        // Screen Shake!
+        const appBody = document.getElementById("appBody");
+        appBody.classList.remove("screen-shake");
+        void appBody.offsetWidth; // trigger reflow
+        appBody.classList.add("screen-shake");
+
+        // Sound with pitch-scaling combo
+        sound.playLineBlast(STATE.combo);
+
+        // Show Combo Banner
+        showComboBanner(STATE.combo, totalLines);
+
+        // Track animals cleared for level goals
+        const clearedAnimals = {};
+
+        // Clear cells
+        const clearedCoords = new Set();
+        fullRows.forEach(r => {
+          for (let c = 0; c < GRID_SIZE; c++) clearedCoords.add(`${r},${c}`);
+        });
+        fullCols.forEach(c => {
+          for (let r = 0; r < GRID_SIZE; r++) clearedCoords.add(`${r},${c}`);
+        });
+
+        clearedCoords.forEach(coord => {
+          const [r, c] = coord.split(',').map(Number);
+          const cell = STATE.grid[r][c];
+          if (cell) {
+            clearedAnimals[cell.animalKey] = (clearedAnimals[cell.animalKey] || 0) + 1;
+
+            // Spawn blast confetti & heart particles
+            const x = c * cellSize + cellSize / 2;
+            const y = r * cellSize + cellSize / 2;
+            for (let p = 0; p < 2; p++) {
+              STATE.particles.push({
+                x, y,
+                vx: (Math.random() - 0.5) * 5,
+                vy: -Math.random() * 4 - 2,
+                scale: 1,
+                alpha: 1,
+                emoji: ['✨', '⭐', '💕', '🐾'][Math.floor(Math.random() * 4)]
+              });
+            }
+          }
+          STATE.grid[r][c] = null;
+        });
+
+        // Points calculation with Combo Multiplier!
+        const basePoints = totalLines * 100;
+        const comboBonus = STATE.combo * 50;
+        const totalPoints = basePoints + comboBonus;
+        STATE.score += totalPoints;
+        updateScoreUI();
+
+        // Floating score popup
+        STATE.scorePopups.push({
+          x: gridCanvas.width / (2 * (window.devicePixelRatio || 1)),
+          y: gridCanvas.height / (2 * (window.devicePixelRatio || 1)),
+          text: `+${totalPoints} (COMBO x${STATE.combo})`,
+          alpha: 1.0
+        });
+
+        // Update Level Goals
+        updateGoalProgress(clearedAnimals);
+
+      } else {
+        // Reset combo if move cleared nothing
+        STATE.combo = 0;
+        STATE.lastMoveCleared = false;
+        document.getElementById("comboBadge").classList.add("hidden");
+      }
+    }
+
+    function showComboBanner(combo, lines) {
+      const banner = document.getElementById("comboBannerContainer");
+      const text = document.getElementById("comboBannerText");
+      const badge = document.getElementById("comboBadge");
+
+      if (combo >= 2) {
+        badge.innerText = `🔥 COMBO x${combo}`;
+        badge.classList.remove("hidden");
+      }
+
+      let label = `✨ ${lines > 1 ? 'MULTI-LINE' : 'LINE'} BLAST! +${lines * 100}`;
+      if (combo === 2) label = `🔥 COMBO 2 • SWEET BLAST!`;
+      else if (combo === 3) label = `⚡ COMBO 3 • AWESOME!`;
+      else if (combo === 4) label = `💥 COMBO 4 • ULTRA PURR!`;
+      else if (combo >= 5) label = `👑 COMBO ${combo} • UNSTOPPABLE! 🐾`;
+
+      text.innerText = label;
+      banner.classList.remove("hidden");
+      setTimeout(() => banner.classList.add("hidden"), 1100);
+    }
+
+    function updateScoreUI() {
+      document.getElementById("scoreVal").innerText = STATE.score;
+      if (STATE.score > STATE.bestScore) {
+        STATE.bestScore = STATE.score;
+        document.getElementById("bestScoreVal").innerText = STATE.bestScore;
+        try { localStorage.setItem("pet_blast_best", STATE.bestScore); } catch (e) {}
+      }
+    }
+
+    function updateGoalProgress(clearedAnimals) {
       const g1 = STATE.goals.goal1;
       const g2 = STATE.goals.goal2;
-      if (g1.count >= g1.target && g2.count >= g2.target && !STATE.isLevelClear) {
-        STATE.isLevelClear = true;
-        sound.playVictoryFanfare();
+
+      if (clearedAnimals[g1.animal]) {
+        g1.count = Math.min(g1.target, g1.count + clearedAnimals[g1.animal]);
+      }
+      if (clearedAnimals[g2.animal]) {
+        g2.count = Math.min(g2.target, g2.count + clearedAnimals[g2.animal]);
+      }
+
+      const b1 = document.getElementById("goalBadge1");
+      const b2 = document.getElementById("goalBadge2");
+
+      if (b1) {
+        document.getElementById("goalCount1").innerText = g1.count >= g1.target ? "✓ DONE" : `${g1.count}/${g1.target}`;
+        if (g1.count >= g1.target) b1.classList.add("bg-emerald-950/80", "border-emerald-400");
+      }
+
+      if (b2) {
+        document.getElementById("goalCount2").innerText = g2.count >= g2.target ? "✓ DONE" : `${g2.count}/${g2.target}`;
+        if (g2.count >= g2.target) b2.classList.add("bg-emerald-950/80", "border-emerald-400");
+      }
+
+      // Check Victory!
+      if (g1.count >= g1.target && g2.count >= g2.target) {
+        sound.playVictory();
         setTimeout(() => {
           document.getElementById("victoryScore").innerText = STATE.score;
           document.getElementById("victoryModal").classList.remove("hidden");
-        }, 900);
+        }, 800);
+      }
+    }
+
+    function checkGameOver() {
+      if (STATE.trayPieces.some(p => p !== null) && !hasAnyValidMove()) {
+        setTimeout(() => {
+          document.getElementById("gameOverScore").innerText = STATE.score;
+          document.getElementById("gameOverModal").classList.remove("hidden");
+        }, 700);
       }
     }
 
     // =========================================================================
-    // 7. INPUT HANDLING (TAP TO RIPPLE / BOOSTER TOYS)
+    // 10. HYBRID TOUCH & DRAG SYSTEM (Smooth, Zero-Lag Block Blast Feel!)
     // =========================================================================
-    function handlePondTap(clientX, clientY) {
-      sound.init();
-      const rect = canvas.getBoundingClientRect();
-      const tapX = clientX - rect.left;
-      const tapY = clientY - rect.top;
+    const dragAvatar = document.getElementById("dragAvatar");
 
-      // Ensure tap is within pond leaf
-      const distFromCenter = Math.hypot(tapX - centerX, tapY - centerY);
-      if (distFromCenter > pondRadius) return;
+    function setupDragAndDrop() {
+      const slots = document.querySelectorAll(".piece-slot");
 
-      // BOOSTER: YARN HERD (Attract all cats to tap point)
-      if (STATE.activeBooster === 'yarn') {
-        STATE.activeBooster = null;
-        document.getElementById("yarnBoosterBtn").classList.remove("border-pink-300", "scale-105");
-        sound.playCuteMeow();
-        STATE.kittens.forEach(k => {
-          const angle = Math.atan2(tapY - k.y, tapX - k.x);
-          k.vx += Math.cos(angle) * 8.5;
-          k.vy += Math.sin(angle) * 8.5;
+      slots.forEach((slot, idx) => {
+        slot.addEventListener("pointerdown", (e) => {
+          sound.init();
+          const piece = STATE.trayPieces[idx];
+          if (!piece) return;
+
+          // Select piece
+          STATE.isDragging = true;
+          STATE.dragSlotIdx = idx;
+          STATE.dragPiece = piece;
+          sound.playPickUp();
+
+          // Create floating drag avatar
+          renderDragAvatar(piece);
+          updateDragAvatarPosition(e.clientX, e.clientY);
+
+          slot.setPointerCapture(e.pointerId);
         });
-        for (let i = 0; i < 8; i++) {
-          STATE.hearts.push(new HeartParticle(tapX, tapY));
+
+        slot.addEventListener("pointermove", (e) => {
+          if (!STATE.isDragging || STATE.dragSlotIdx !== idx) return;
+
+          updateDragAvatarPosition(e.clientX, e.clientY);
+
+          // Calculate hovered grid row and col
+          const rect = gridCanvas.getBoundingClientRect();
+          const touchX = e.clientX;
+          // Offset drag piece slightly above thumb so thumb doesn't block player's view!
+          const touchY = e.clientY - 60;
+
+          if (touchX >= rect.left && touchX <= rect.right && touchY >= rect.top && touchY <= rect.bottom) {
+            const relX = touchX - rect.left;
+            const relY = touchY - rect.top;
+            STATE.hoverCol = Math.floor(relX / cellSize);
+            STATE.hoverRow = Math.floor(relY / cellSize);
+          } else {
+            STATE.hoverCol = null;
+            STATE.hoverRow = null;
+          }
+        });
+
+        const handlePointerEnd = (e) => {
+          if (!STATE.isDragging || STATE.dragSlotIdx !== idx) return;
+          STATE.isDragging = false;
+          dragAvatar.classList.add("hidden");
+
+          // Try drop on grid
+          if (STATE.hoverRow !== null && STATE.hoverCol !== null) {
+            if (canFitPiece(STATE.dragPiece, STATE.hoverRow, STATE.hoverCol)) {
+              placePieceOnBoard(STATE.dragPiece, STATE.hoverRow, STATE.hoverCol, idx);
+            }
+          }
+
+          STATE.dragPiece = null;
+          STATE.dragSlotIdx = null;
+          STATE.hoverRow = null;
+          STATE.hoverCol = null;
+        };
+
+        slot.addEventListener("pointerup", handlePointerEnd);
+        slot.addEventListener("pointercancel", handlePointerEnd);
+      });
+    }
+
+    function renderDragAvatar(piece) {
+      dragAvatar.innerHTML = "";
+      const avatarCanvas = document.createElement("canvas");
+      const dpr = window.devicePixelRatio || 1;
+      const avatarCellSize = cellSize * 0.95;
+
+      avatarCanvas.width = piece.cols * avatarCellSize * dpr;
+      avatarCanvas.height = piece.rows * avatarCellSize * dpr;
+      avatarCanvas.style.width = `${piece.cols * avatarCellSize}px`;
+      avatarCanvas.style.height = `${piece.rows * avatarCellSize}px`;
+
+      const ctx = avatarCanvas.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      for (let r = 0; r < piece.rows; r++) {
+        for (let c = 0; c < piece.cols; c++) {
+          if (piece.shape[r][c] !== null) {
+            drawCuteAnimal(ctx, c * avatarCellSize, r * avatarCellSize, avatarCellSize, piece.animalKey, false);
+          }
         }
-        return;
       }
 
-      // BOOSTER: TUNA SNACK (Drop snack that draws matching cats)
-      if (STATE.activeBooster === 'tuna') {
-        STATE.activeBooster = null;
-        document.getElementById("tunaBoosterBtn").classList.remove("border-amber-300", "scale-105");
-        sound.playCuteMeow();
-        sound.playCatPurr();
-        STATE.kittens.forEach(k => {
-          const angle = Math.atan2(tapY - k.y, tapX - k.x);
-          k.vx += Math.cos(angle) * 11.0;
-          k.vy += Math.sin(angle) * 11.0;
-        });
-        return;
-      }
-
-      // NORMAL WATER RIPPLE
-      sound.playWaterPlop();
-      STATE.ripples.push(new WaterRipple(tapX, tapY));
-
-      // Dismiss tutorial on first tap
-      if (STATE.tutorialActive) {
-        dismissTutorial();
-      }
+      dragAvatar.appendChild(avatarCanvas);
+      dragAvatar.classList.remove("hidden");
     }
 
-    canvas.addEventListener("pointerdown", (e) => {
-      handlePondTap(e.clientX, e.clientY);
-    });
-
-    function dismissTutorial() {
-      STATE.tutorialActive = false;
-      const overlay = document.getElementById("tutorialOverlay");
-      if (overlay) overlay.classList.add("hidden");
+    function updateDragAvatarPosition(clientX, clientY) {
+      dragAvatar.style.left = `${clientX}px`;
+      // Position above thumb by 60px so user clearly sees where they are placing!
+      dragAvatar.style.top = `${clientY - 60}px`;
     }
 
-    document.getElementById("skipTutorialBtn").addEventListener("click", dismissTutorial);
-
     // =========================================================================
-    // 8. BOOSTER LISTENERS
+    // 11. BOOSTERS & RESCUE LISTENERS
     // =========================================================================
-    document.getElementById("yarnBoosterBtn").addEventListener("click", () => {
+    // Yarn Bomb: clears 3x3 square at center
+    document.getElementById("bombBoosterBtn").addEventListener("click", () => {
       sound.init();
-      if (STATE.yarnBalls <= 0) return;
-      STATE.yarnBalls--;
-      document.getElementById("yarnCount").innerText = STATE.yarnBalls;
-      STATE.activeBooster = 'yarn';
-      document.getElementById("yarnBoosterBtn").classList.add("border-pink-300", "scale-105");
+      if (STATE.bombs <= 0) return;
+      STATE.bombs--;
+      document.getElementById("bombCount").innerText = STATE.bombs;
+      sound.playBombBlast();
+
+      // Clear center 3x3
+      const startR = 2, startC = 2;
+      for (let r = startR; r < startR + 4; r++) {
+        for (let c = startC; c < startC + 4; c++) {
+          STATE.grid[r][c] = null;
+        }
+      }
+      checkLinesAndBlast();
     });
 
-    document.getElementById("tunaBoosterBtn").addEventListener("click", () => {
+    // Golden Bone: Clears most common animal from board
+    document.getElementById("boneBoosterBtn").addEventListener("click", () => {
       sound.init();
-      if (STATE.tunaSnacks <= 0) return;
-      STATE.tunaSnacks--;
-      document.getElementById("tunaCount").innerText = STATE.tunaSnacks;
-      STATE.activeBooster = 'tuna';
-      document.getElementById("tunaBoosterBtn").classList.add("border-amber-300", "scale-105");
+      if (STATE.bones <= 0) return;
+      STATE.bones--;
+      document.getElementById("boneCount").innerText = STATE.bones;
+      sound.playBombBlast();
+
+      // Find first existing animal and clear all of that type
+      let targetAnimal = null;
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          if (STATE.grid[r][c]) {
+            targetAnimal = STATE.grid[r][c].animalKey;
+            break;
+          }
+        }
+        if (targetAnimal) break;
+      }
+
+      if (targetAnimal) {
+        for (let r = 0; r < GRID_SIZE; r++) {
+          for (let c = 0; c < GRID_SIZE; c++) {
+            if (STATE.grid[r][c] && STATE.grid[r][c].animalKey === targetAnimal) {
+              STATE.grid[r][c] = null;
+            }
+          }
+        }
+        checkLinesAndBlast();
+      }
     });
 
-    document.getElementById("restartBtn").addEventListener("click", () => {
+    // Shuffle Pieces
+    document.getElementById("refreshTrayBtn").addEventListener("click", () => {
       sound.init();
-      initLevel(STATE.level);
+      sound.playPickUp();
+      refillTray();
     });
 
-    // NEXT LEVEL BUTTON
+    // Free Rescue Bomb on Game Over
+    document.getElementById("rescueBombBtn").addEventListener("click", () => {
+      sound.init();
+      document.getElementById("gameOverModal").classList.add("hidden");
+      // Clear outer ring to give huge breathing space!
+      for (let r = 0; r < GRID_SIZE; r++) {
+        STATE.grid[r][0] = null;
+        STATE.grid[r][GRID_SIZE - 1] = null;
+        STATE.grid[0][r] = null;
+        STATE.grid[GRID_SIZE - 1][r] = null;
+      }
+      sound.playBombBlast();
+      refillTray();
+    });
+
+    // Retry Button
+    document.getElementById("retryBtn").addEventListener("click", () => {
+      sound.init();
+      document.getElementById("gameOverModal").classList.add("hidden");
+      startLevel(STATE.level);
+    });
+
+    // Next Level Button
     document.getElementById("nextLevelBtn").addEventListener("click", () => {
       sound.init();
       document.getElementById("victoryModal").classList.add("hidden");
-      initLevel(STATE.level + 1);
+      startLevel(STATE.level + 1);
     });
 
-    // =========================================================================
-    // 9. MODALS & SOUND TOGGLE
-    // =========================================================================
-    const howToModal = document.getElementById("howToModal");
-    const specsModal = document.getElementById("specsModal");
-
-    document.getElementById("howToBtn").addEventListener("click", () => {
+    // Modals
+    document.getElementById("rulesBtn").addEventListener("click", () => {
       sound.init();
-      howToModal.classList.remove("hidden");
+      document.getElementById("rulesModal").classList.remove("hidden");
     });
-    document.getElementById("closeHowToBtn").addEventListener("click", () => howToModal.classList.add("hidden"));
-
-    document.getElementById("specsBtn").addEventListener("click", () => {
-      sound.init();
-      specsModal.classList.remove("hidden");
+    document.getElementById("closeRulesBtn").addEventListener("click", () => {
+      document.getElementById("rulesModal").classList.add("hidden");
     });
-    document.getElementById("closeSpecsBtn").addEventListener("click", () => specsModal.classList.add("hidden"));
-    document.getElementById("closeSpecsBtn2").addEventListener("click", () => specsModal.classList.add("hidden"));
 
+    // Sound Toggle
     document.getElementById("soundToggleBtn").addEventListener("click", () => {
       sound.init();
       const on = sound.toggleMute();
-      document.getElementById("soundToggleBtn").innerText = on ? "🔊 PURR" : "🔇 MUTED";
+      document.getElementById("soundToggleBtn").innerText = on ? "🔊 ASMR" : "🔇 MUTED";
     });
 
     // =========================================================================
-    // 10. MAIN RENDER LOOP (Zen Lotus Leaf & Liquid Ripples)
+    // 12. LEVEL INITIALIZATION
     // =========================================================================
-    function gameLoop(time) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function startLevel(lvl) {
+      STATE.level = lvl;
+      document.getElementById("levelLabel").innerText = `LVL ${lvl}`;
+      STATE.grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(null));
 
-      // 1. Draw Giant Emerald Lotus Leaf (The Playable Arena)
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, pondRadius, 0, Math.PI * 2);
-
-      // Organic Leaf Gradient
-      const leafGrad = ctx.createRadialGradient(centerX - pondRadius * 0.2, centerY - pondRadius * 0.2, pondRadius * 0.1, centerX, centerY, pondRadius);
-      leafGrad.addColorStop(0, '#10b981');   // bright emerald center
-      leafGrad.addColorStop(0.55, '#059669'); // deep jade
-      leafGrad.addColorStop(0.9, '#047857');  // dark moss
-      leafGrad.addColorStop(1, '#064e3b');    // outer border
-
-      ctx.fillStyle = leafGrad;
-      ctx.fill();
-
-      // Golden Edge Rim
-      ctx.strokeStyle = "#34d399";
-      ctx.lineWidth = 4.5;
-      ctx.stroke();
-
-      // Leaf Veins
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.14)";
-      ctx.lineWidth = 1.6;
-      for (let a = 0; a < 8; a++) {
-        const rad = (a * Math.PI) / 4;
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.lineTo(centerX + Math.cos(rad) * (pondRadius - 4), centerY + Math.sin(rad) * (pondRadius - 4));
-        ctx.stroke();
+      if (lvl === 1) {
+        STATE.goals.goal1 = { animal: 'kitten', count: 0, target: 8 };
+        STATE.goals.goal2 = { animal: 'bunny', count: 0, target: 8 };
+      } else if (lvl === 2) {
+        STATE.goals.goal1 = { animal: 'puppy', count: 0, target: 12 };
+        STATE.goals.goal2 = { animal: 'panda', count: 0, target: 10 };
+      } else {
+        STATE.goals.goal1 = { animal: 'froggy', count: 0, target: 14 };
+        STATE.goals.goal2 = { animal: 'bear', count: 0, target: 14 };
       }
 
-      // Center Lotus Dewdrop Jewel
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 8, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-      ctx.fill();
-      ctx.restore();
+      // Update Header Badges
+      const b1 = document.getElementById("goalBadge1");
+      const b2 = document.getElementById("goalBadge2");
+      b1.querySelector("span:first-child").innerText = ANIMALS[STATE.goals.goal1.animal].icon;
+      b2.querySelector("span:first-child").innerText = ANIMALS[STATE.goals.goal2.animal].icon;
+      document.getElementById("goalCount1").innerText = `0/${STATE.goals.goal1.target}`;
+      document.getElementById("goalCount2").innerText = `0/${STATE.goals.goal2.target}`;
+      b1.classList.remove("bg-emerald-950/80", "border-emerald-400");
+      b2.classList.remove("bg-emerald-950/80", "border-emerald-400");
 
-      // 2. Update & Draw Water Ripples
-      for (let i = STATE.ripples.length - 1; i >= 0; i--) {
-        const r = STATE.ripples[i];
-        const active = r.update(STATE.kittens);
-        r.draw(ctx);
-        if (!active) {
-          STATE.ripples.splice(i, 1);
-        }
-      }
-
-      // 3. Update & Draw Living Kittens
-      STATE.kittens.forEach(k => {
-        k.update(centerX, centerY, pondRadius);
-        k.draw(ctx, time);
-      });
-
-      // 4. Check Collisions & Cuddle Merges
-      checkKittenCollisions();
-
-      // 5. Update & Draw Heart Particles
-      for (let i = STATE.hearts.length - 1; i >= 0; i--) {
-        const h = STATE.hearts[i];
-        const active = h.update();
-        h.draw(ctx);
-        if (!active) STATE.hearts.splice(i, 1);
-      }
-
-      // 6. Flying Goal Hearts
-      for (let i = STATE.flyingGoalHearts.length - 1; i >= 0; i--) {
-        const fg = STATE.flyingGoalHearts[i];
-        const active = fg.update();
-        fg.draw(ctx);
-        if (!active) STATE.flyingGoalHearts.splice(i, 1);
-      }
-
-      requestAnimationFrame(gameLoop);
+      refillTray();
     }
 
-    // START GAME
-    resizeCanvas();
-    initLevel(1);
-    requestAnimationFrame(gameLoop);
+    // =========================================================================
+    // 13. START FIRST GAME
+    // =========================================================================
+    resizeGridCanvas();
+    setupDragAndDrop();
+    startLevel(1);
+    requestAnimationFrame(renderGrid);
   </script>
 </body>
 </html>
