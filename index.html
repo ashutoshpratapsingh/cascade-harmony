@@ -274,110 +274,32 @@
      */
 
     // =========================================================================
-    // 1. ANIMAL VOICES & VOCAL ENGINE (Voice Speech + Acoustic Formants)
-    // ZERO MUSIC / ZERO CHIMES ON MERGE: 100% PURE ANIMAL IDENTITY!
+    // 1. ORIGINAL REAL ANIMAL SOUND RECORDINGS (100% Real Audio, ZERO AI Voice)
     // =========================================================================
+    const REAL_ANIMAL_AUDIO = [
+      new Audio("audio/bunny.wav"),    // Tier 0: Bunny Squeaks
+      new Audio("audio/chick.wav"),    // Tier 1: Baby Chick Chirp
+      new Audio("audio/hamster.wav"),  // Tier 2: Hamster Chatter
+      new Audio("audio/dog.wav"),      // Tier 3: Real Puppy Dog Bark
+      new Audio("audio/cat.wav"),      // Tier 4: Real Silas Cat Meow
+      new Audio("audio/panda.wav"),    // Tier 5: Baby Panda Sound
+      new Audio("audio/seal.wav"),     // Tier 6: Seal Honk / Snort
+      new Audio("audio/capybara.wav"), // Tier 7: Capybara Sound
+      new Audio("audio/bear.wav"),     // Tier 8: Real Bear Growl
+      new Audio("audio/king.wav")      // Tier 9: King Fanfare & Cheer
+    ];
+
     const ANIMAL_VOICE_DATA = [
-      {
-        tier: 0,
-        name: "Tiny Bunny",
-        icon: "🐰",
-        onomatopoeia: "💬 SQUEAK! 🐰",
-        speechText: "Squeak! Squeak!",
-        pitch: 1.85,
-        rate: 1.25,
-        color: "#ec4899"
-      },
-      {
-        tier: 1,
-        name: "Chubby Chick",
-        icon: "🐥",
-        onomatopoeia: "💬 PEEP PEEP! 🐥",
-        speechText: "Peep peep! Cheep cheep!",
-        pitch: 1.95,
-        rate: 1.3,
-        color: "#eab308"
-      },
-      {
-        tier: 2,
-        name: "Cozy Hamster",
-        icon: "🐹",
-        onomatopoeia: "💬 SQUEAKY! 🐹",
-        speechText: "Squeaky squeak!",
-        pitch: 1.7,
-        rate: 1.2,
-        color: "#f97316"
-      },
-      {
-        tier: 3,
-        name: "Shiba Inu",
-        icon: "🐶",
-        onomatopoeia: "💬 WOOF! BARK! 🐶",
-        speechText: "Woof! Bark bark!",
-        pitch: 1.25,
-        rate: 1.25,
-        color: "#d97706"
-      },
-      {
-        tier: 4,
-        name: "Calico Cat",
-        icon: "🐱",
-        onomatopoeia: "💬 MEOW! 🐱",
-        speechText: "Meow! Meooww!",
-        pitch: 1.55,
-        rate: 1.05,
-        color: "#ea580c"
-      },
-      {
-        tier: 5,
-        name: "Baby Panda",
-        icon: "🐼",
-        onomatopoeia: "💬 ACHOO! SQUEAK! 🐼",
-        speechText: "Achoo squeak!",
-        pitch: 1.35,
-        rate: 1.15,
-        color: "#27272a"
-      },
-      {
-        tier: 6,
-        name: "Chubby Seal",
-        icon: "🦭",
-        onomatopoeia: "💬 ORK ORK! ARF! 🦭",
-        speechText: "Ork ork! Arf arf!",
-        pitch: 1.15,
-        rate: 1.2,
-        color: "#0284c7"
-      },
-      {
-        tier: 7,
-        name: "Chill Capybara",
-        icon: "🐹",
-        onomatopoeia: "💬 CAPY TRILL! 🐹",
-        speechText: "Capy capy trill!",
-        pitch: 1.05,
-        rate: 1.0,
-        color: "#92400e"
-      },
-      {
-        tier: 8,
-        name: "Honey Bear",
-        icon: "🐻",
-        onomatopoeia: "💬 GRRR! GROWL! 🐻",
-        speechText: "Grrr! Growl!",
-        pitch: 0.6,
-        rate: 0.95,
-        color: "#78350f"
-      },
-      {
-        tier: 9,
-        name: "CHONK KING",
-        icon: "👑",
-        onomatopoeia: "💬 ROAR! KING! 👑",
-        speechText: "Roar! All hail the Chonk King!",
-        pitch: 0.75,
-        rate: 1.0,
-        color: "#ca8a04"
-      }
+      { tier: 0, name: "Tiny Bunny", icon: "🐰", onomatopoeia: "💬 SQUEAK! 🐰", color: "#ec4899" },
+      { tier: 1, name: "Chubby Chick", icon: "🐥", onomatopoeia: "💬 PEEP PEEP! 🐥", color: "#eab308" },
+      { tier: 2, name: "Cozy Hamster", icon: "🐹", onomatopoeia: "💬 SQUEAKY! 🐹", color: "#f97316" },
+      { tier: 3, name: "Shiba Inu", icon: "🐶", onomatopoeia: "💬 WOOF! BARK! 🐶", color: "#d97706" },
+      { tier: 4, name: "Calico Cat", icon: "🐱", onomatopoeia: "💬 MEOW! 🐱", color: "#ea580c" },
+      { tier: 5, name: "Baby Panda", icon: "🐼", onomatopoeia: "💬 SQUEAK! 🐼", color: "#27272a" },
+      { tier: 6, name: "Chubby Seal", icon: "🦭", onomatopoeia: "💬 ORK ORK! 🦭", color: "#0284c7" },
+      { tier: 7, name: "Chill Capybara", icon: "🐹", onomatopoeia: "💬 CAPY TRILL! 🐹", color: "#92400e" },
+      { tier: 8, name: "Honey Bear", icon: "🐻", onomatopoeia: "💬 GRRR! GROWL! 🐻", color: "#78350f" },
+      { tier: 9, name: "CHONK KING", icon: "👑", onomatopoeia: "💬 ROAR! KING! 👑", color: "#ca8a04" }
     ];
 
     class MochiSoundEngine {
@@ -418,31 +340,34 @@
         osc.stop(now + 0.13);
       }
 
-      // NO MUSIC OR CHIMES ON MERGE: Dedicated Pure Animal Voice Trigger!
+      // 100% ORIGINAL REAL ANIMAL SOUND PLAYBACK (ZERO AI VOICE, ZERO MUSIC CHIMES)
       playAnimalVoice(tier, x, y) {
         if (!this.enabled) return;
         this.init();
 
-        const data = ANIMAL_VOICE_DATA[tier];
-        if (!data) return;
-
-        // 1. Natural Speech Synthesis Voice: Speaks the animal voice out loud
-        if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        // 1. Play Original Authentic Animal Audio Recording
+        const audio = REAL_ANIMAL_AUDIO[tier];
+        if (audio) {
           try {
-            window.speechSynthesis.cancel();
-            const utter = new SpeechSynthesisUtterance(data.speechText);
-            utter.pitch = data.pitch;
-            utter.rate = data.rate;
-            utter.volume = 1.0;
-            window.speechSynthesis.speak(utter);
-          } catch(e) {}
+            audio.currentTime = 0;
+            audio.volume = 1.0;
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(() => {
+                // Procedural acoustic fallback if browser blocks file playback
+                this.playAcousticAnimalVoice(tier);
+              });
+            }
+          } catch(e) {
+            this.playAcousticAnimalVoice(tier);
+          }
+        } else {
+          this.playAcousticAnimalVoice(tier);
         }
 
-        // 2. Realistic Organic Acoustic Animal Vocalization (Formant filtered, NO musical notes)
-        this.playAcousticAnimalVoice(tier);
-
-        // 3. Floating Cartoon Speech Bubble above newly merged animal
-        if (typeof showAnimalVoiceBubble === "function" && x !== undefined && y !== undefined) {
+        // 2. Floating Cartoon Speech Bubble above newly merged animal
+        const data = ANIMAL_VOICE_DATA[tier];
+        if (data && typeof showAnimalVoiceBubble === "function" && x !== undefined && y !== undefined) {
           showAnimalVoiceBubble(data.onomatopoeia, data.color, x, y);
         }
       }
@@ -2246,13 +2171,12 @@
     window.addEventListener("resize", resizeCanvas);
     window.addEventListener("pointerdown", () => {
       sound.init();
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      // Pre-unlock all authentic animal sound recordings on first user touch
+      REAL_ANIMAL_AUDIO.forEach(aud => {
         try {
-          const warmUp = new SpeechSynthesisUtterance("");
-          warmUp.volume = 0;
-          window.speechSynthesis.speak(warmUp);
+          aud.load();
         } catch(e) {}
-      }
+      });
     }, { once: true });
 
     initPhysics();
