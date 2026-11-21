@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>GTA: HEIST SYNDICATE — Vault Breaker</title>
+  <title>Mochi Pets: Squeeze & Cuddle — Animals Are Liquid!</title>
 
-  <!-- Google Fonts: Orbitron, Rajdhani, Bebas Neue -->
+  <!-- Google Fonts: Fredoka, Quicksand, Bubblegum Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700;800;900&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Fredoka:wght@400;600;700;800&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -19,298 +19,212 @@
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       user-select: none;
-      font-family: 'Rajdhani', sans-serif;
-    }
-
-    .font-hud {
-      font-family: 'Orbitron', monospace, sans-serif;
-    }
-
-    .font-gta {
-      font-family: 'Bebas Neue', sans-serif;
-      letter-spacing: 0.05em;
+      font-family: 'Fredoka', 'Quicksand', sans-serif;
     }
 
     body {
-      background: radial-gradient(circle at 50% 10%, #131722 0%, #08090d 65%, #040507 100%);
-      color: #fff;
+      background: radial-gradient(circle at 50% 15%, #fffdf7 0%, #fef3c7 45%, #fae8b4 100%);
+      color: #451a03;
     }
 
-    /* Grid Cell */
-    .grid-cell {
-      background: rgba(22, 27, 38, 0.75);
-      border: 1.5px solid rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
-      transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    .font-fun {
+      font-family: 'Bubblegum Sans', 'Fredoka', cursive;
     }
 
-    .grid-cell.preview-valid {
-      background: rgba(16, 185, 129, 0.35) !important;
-      border-color: #34d399 !important;
-      box-shadow: 0 0 14px rgba(52, 211, 153, 0.6), inset 0 0 8px rgba(52, 211, 153, 0.4) !important;
-      transform: scale(0.96);
+    /* Mochi Squish Animations */
+    @keyframes mochiBreathe {
+      0%, 100% { transform: scale(1, 1); }
+      50% { transform: scale(1.04, 0.96); }
+    }
+    .mochi-idle {
+      animation: mochiBreathe 2.8s ease-in-out infinite;
     }
 
-    .grid-cell.preview-invalid {
-      background: rgba(239, 68, 68, 0.35) !important;
-      border-color: #f87171 !important;
-      box-shadow: 0 0 14px rgba(239, 68, 68, 0.6) !important;
+    @keyframes mochiPick {
+      0% { transform: scale(1, 1) translateY(0); }
+      40% { transform: scale(0.85, 1.25) translateY(-16px); }
+      100% { transform: scale(1.05, 0.95) translateY(-12px); }
+    }
+    .mochi-picked {
+      animation: mochiPick 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      filter: drop-shadow(0 12px 16px rgba(180, 83, 9, 0.3));
     }
 
-    /* Tile Visuals */
-    .tile-cash {
-      background: linear-gradient(135deg, #065f46 0%, #059669 45%, #10b981 100%);
-      border: 2px solid #6ee7b7;
-      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+    @keyframes mochiLand {
+      0% { transform: scale(0.8, 1.3); }
+      50% { transform: scale(1.25, 0.8); }
+      75% { transform: scale(0.95, 1.05); }
+      100% { transform: scale(1, 1); }
+    }
+    .mochi-landed {
+      animation: mochiLand 0.35s ease-out;
     }
 
-    .tile-gold {
-      background: linear-gradient(135deg, #854d0e 0%, #d97706 45%, #fbbf24 100%);
-      border: 2px solid #fef08a;
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.7);
+    @keyframes cuddleGlow {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.4)); }
+      50% { transform: scale(1.08); filter: drop-shadow(0 8px 20px rgba(236, 72, 153, 0.6)); }
+    }
+    .cuddle-complete {
+      animation: cuddleGlow 1.2s ease-in-out infinite;
     }
 
-    .tile-diamond {
-      background: linear-gradient(135deg, #0e7490 0%, #06b6d4 45%, #67e8f9 100%);
-      border: 2px solid #cffafe;
-      box-shadow: 0 4px 14px rgba(6, 182, 212, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+    /* Floating Hearts on Cuddle */
+    @keyframes floatHeart {
+      0% { opacity: 0; transform: translateY(0) scale(0.6) rotate(-10deg); }
+      30% { opacity: 1; transform: translateY(-16px) scale(1.1) rotate(10deg); }
+      100% { opacity: 0; transform: translateY(-45px) scale(0.9) rotate(-15deg); }
+    }
+    .heart-particle {
+      animation: floatHeart 1.1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
     }
 
-    .tile-c4 {
-      background: linear-gradient(135deg, #991b1b 0%, #dc2626 45%, #f87171 100%);
-      border: 2px solid #fecaca;
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    /* Woven Basket Styles */
+    .basket-shadow {
+      box-shadow: 0 10px 25px -5px rgba(120, 53, 15, 0.18), inset 0 2px 4px rgba(255, 255, 255, 0.6);
+    }
+    .basket-active {
+      box-shadow: 0 0 0 3px #f59e0b, 0 12px 28px -4px rgba(245, 158, 11, 0.4) !important;
+      transform: translateY(-4px);
     }
 
-    .tile-safe {
-      background: linear-gradient(135deg, #1e293b 0%, #334155 45%, #475569 100%);
-      border: 2px solid #94a3b8;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.4);
-    }
-
-    .tile-locked {
-      background: #18181b;
-      border: 2px dashed #ef4444;
-      box-shadow: inset 0 0 10px rgba(239, 68, 68, 0.4);
-    }
-
-    /* Screen Shake on Line Clear / Explosion */
-    @keyframes shakeAnim {
-      0%, 100% { transform: translate(0, 0); }
-      20% { transform: translate(-6px, 4px); }
-      40% { transform: translate(6px, -4px); }
-      60% { transform: translate(-4px, 2px); }
-      80% { transform: translate(4px, -2px); }
-    }
-    .screen-shake {
-      animation: shakeAnim 0.25s cubic-bezier(0.36, 0.07, 0.19, 0.97);
-    }
-
-    /* Police Siren Strobe Border */
-    @keyframes policeStrobe {
-      0%, 100% { box-shadow: inset 0 0 35px rgba(239, 68, 68, 0.5); }
-      50% { box-shadow: inset 0 0 35px rgba(59, 130, 246, 0.5); }
-    }
-    .heat-strobe {
-      animation: policeStrobe 0.5s ease-in-out infinite alternate;
-    }
-
-    /* Floating Cash Text */
-    @keyframes floatUpFade {
-      0% { opacity: 0; transform: translateY(12px) scale(0.85); }
-      20% { opacity: 1; transform: translateY(0) scale(1.1); }
-      100% { opacity: 0; transform: translateY(-40px) scale(1); }
-    }
-    .float-text {
-      animation: floatUpFade 1.0s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    /* Selected Dock Slot Pulse */
-    .slot-selected {
-      border-color: #10b981 !important;
-      background: rgba(16, 185, 129, 0.15) !important;
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.5), inset 0 0 10px rgba(16, 185, 129, 0.2) !important;
-      transform: translateY(-4px) scale(1.02);
+    /* Tactile Buttons */
+    .touch-btn:active {
+      transform: scale(0.92);
+      filter: brightness(0.95);
     }
   </style>
 </head>
 <body id="appBody" class="flex flex-col justify-between items-center h-full max-h-[100dvh] w-full overflow-hidden select-none">
 
   <!-- ========================================================================= -->
-  <!-- TOP GTA HEIST HUD                                                         -->
+  <!-- TOP HEADER (Level, Stars, Cute Logo & Audio Controls)                     -->
   <!-- ========================================================================= -->
-  <header class="w-full max-w-md mx-auto flex flex-col z-20 px-3.5 pt-2 pb-1.5 bg-[#0b0e14]/90 backdrop-blur-md border-b border-white/10 shadow-2xl">
-    <!-- TOP ROW: TITLE & 5-STAR HEAT -->
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-xl bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center text-emerald-400 font-hud font-black text-sm shadow-[0_0_12px_rgba(16,185,129,0.4)]">
-          $
-        </div>
-        <div>
-          <div class="flex items-center gap-1.5">
-            <span class="font-gta text-xl text-amber-400 tracking-wider leading-none">GTA HEIST SYNDICATE</span>
-            <span class="bg-amber-500 text-black font-hud text-[8px] font-black px-1.5 py-0.5 rounded">PACIFIC</span>
-          </div>
-          <div class="text-[9px] text-slate-400 font-bold tracking-wider leading-none mt-0.5">
-            VAULT: <span class="text-cyan-400 font-hud">CENTRAL DEPOT</span>
-          </div>
-        </div>
+  <header class="w-full max-w-md mx-auto flex items-center justify-between z-20 px-4 pt-3 pb-2">
+    <!-- LEFT: LEVEL BADGE -->
+    <div class="flex items-center gap-2">
+      <div class="bg-amber-100 border-2 border-amber-300 px-3 py-1 rounded-2xl flex items-center gap-1.5 shadow-sm">
+        <span class="text-base leading-none">🐾</span>
+        <span id="levelLabel" class="text-amber-900 font-extrabold text-sm sm:text-base leading-none">LEVEL 1</span>
       </div>
-
-      <!-- 5-STAR POLICE HEAT -->
-      <div class="flex flex-col items-end">
-        <div class="text-[8px] font-hud font-black uppercase tracking-widest text-slate-400 leading-none mb-0.5">POLICE HEAT</div>
-        <div id="starsRow" class="flex items-center gap-0.5 text-base sm:text-lg leading-none">
-          <span class="text-amber-400 drop-shadow-[0_0_6px_#f59e0b]">★</span>
-          <span class="text-zinc-600 opacity-40">★</span>
-          <span class="text-zinc-600 opacity-40">★</span>
-          <span class="text-zinc-600 opacity-40">★</span>
-          <span class="text-zinc-600 opacity-40">★</span>
-        </div>
+      <div id="cuddleCounter" class="bg-rose-100 border-2 border-rose-300 px-2.5 py-1 rounded-2xl flex items-center gap-1 text-rose-700 font-bold text-xs shadow-sm">
+        <span>💖</span>
+        <span id="cuddleText">0/2 CUDDLED</span>
       </div>
     </div>
 
-    <!-- BOTTOM ROW: CASH STASH, TARGET PROGRESS & SOUND -->
-    <div class="mt-2 flex items-center justify-between gap-3 bg-black/60 p-2 rounded-xl border border-white/5">
-      <!-- CASH STASH -->
-      <div>
-        <div class="text-[8px] font-hud uppercase tracking-widest text-slate-400 font-bold leading-none">HEIST LOOT</div>
-        <div id="cashVal" class="font-hud text-lg sm:text-xl font-black text-emerald-400 tabular-nums leading-tight drop-shadow-[0_0_12px_rgba(52,211,153,0.5)]">
-          $0
-        </div>
-      </div>
-
-      <!-- TARGET PROGRESS -->
-      <div class="flex-1 max-w-[160px] text-right">
-        <div class="flex justify-between items-center text-[8px] font-hud font-bold text-slate-400 mb-0.5">
-          <span>ESCAPE TARGET</span>
-          <span class="text-amber-300 font-black">$1,000,000</span>
-        </div>
-        <div class="w-full h-2.5 bg-zinc-900 rounded-full overflow-hidden border border-white/10 p-0.5">
-          <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-400 rounded-full transition-all duration-300" style="width: 0%;"></div>
-        </div>
-      </div>
-
-      <!-- SOUND BUTTON -->
-      <button id="soundToggleBtn" class="p-1 px-2 rounded-lg bg-zinc-800 border border-zinc-600 text-zinc-300 text-[10px] font-bold shadow active:scale-95 transition">
-        🔊 ON
+    <!-- RIGHT: SOUND & RESET BUTTONS -->
+    <div class="flex items-center gap-2">
+      <button id="undoBtn" class="touch-btn w-9 h-9 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-800 text-sm font-black flex items-center justify-center shadow-sm disabled:opacity-40" title="Undo Move">
+        ↩️
+      </button>
+      <button id="restartBtn" class="touch-btn w-9 h-9 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-800 text-sm font-black flex items-center justify-center shadow-sm" title="Restart Level">
+        🔄
+      </button>
+      <button id="soundToggleBtn" class="touch-btn w-9 h-9 rounded-2xl bg-amber-50 border-2 border-amber-200 text-amber-800 text-sm font-black flex items-center justify-center shadow-sm" title="Toggle Sound">
+        🔊
       </button>
     </div>
   </header>
 
   <!-- ========================================================================= -->
-  <!-- MAIN HEIST BOARD: 6x6 VAULT GRID & POPUPS                                 -->
+  <!-- TITLE & COZY INSTRUCTION BANNER                                          -->
   <!-- ========================================================================= -->
-  <main class="relative w-full flex-1 flex flex-col items-center justify-center p-2 min-h-0 overflow-hidden">
+  <div class="w-full max-w-md mx-auto px-4 text-center z-10">
+    <h1 class="font-fun text-2xl sm:text-3xl text-amber-950 font-black tracking-wide leading-none drop-shadow-sm flex items-center justify-center gap-2">
+      <span>Mochi Pets</span>
+      <span class="text-xs bg-amber-400/30 text-amber-900 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Squeeze & Cuddle</span>
+    </h1>
+    <p id="instructionText" class="text-xs text-amber-800/80 font-bold mt-1">
+      Tap a basket to pick up a cute pet, then tap where it fits! 🐾
+    </p>
+  </div>
 
-    <!-- FLOATING POPUP OVERLAY -->
-    <div id="floatingOverlay" class="absolute inset-0 pointer-events-none z-30 flex items-center justify-center overflow-hidden"></div>
+  <!-- ========================================================================= -->
+  <!-- MAIN COZY PLAY AREA: BASKETS WITH SQUISHY MOCHI PETS                      -->
+  <!-- ========================================================================= -->
+  <main class="relative w-full flex-1 flex flex-col items-center justify-center px-4 py-2 min-h-0 overflow-hidden">
+    <!-- FLOATING HEARTS & PARTICLES CONTAINER -->
+    <div id="particleOverlay" class="absolute inset-0 pointer-events-none z-30 overflow-hidden"></div>
 
-    <!-- SWAT WARNING BANNER (5-Stars Alert) -->
-    <div id="swatBanner" class="hidden absolute top-2 left-4 right-4 z-40 bg-rose-950/95 border-2 border-rose-500 rounded-2xl p-2 text-center shadow-[0_0_30px_rgba(239,68,68,0.8)] animate-pulse">
-      <div class="font-hud text-xs sm:text-sm font-black text-rose-300 uppercase tracking-widest">
-        🚨 SWAT RAID INCOMING IN <span id="swatMoves" class="text-white text-base">5</span> MOVES!
-      </div>
-      <div class="text-[9px] text-rose-200/80 font-bold">USE EMP JAMMER OR REACH $1M TO ESCAPE!</div>
-    </div>
-
-    <!-- 6x6 VAULT GRID CONTAINER -->
-    <div class="relative p-2.5 sm:p-3 rounded-3xl bg-[#0e121a]/90 border border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.9)] backdrop-blur-md">
-      <div id="vaultGrid" class="grid grid-cols-6 gap-1.5 sm:gap-2 w-[310px] h-[310px] sm:w-[350px] sm:h-[350px]">
-        <!-- 36 Vault Cells generated by JavaScript -->
-      </div>
-    </div>
-
-    <!-- STATUS BAR: MULTIPLIER & VAULT LINES CRACKED -->
-    <div class="mt-2.5 flex items-center gap-3 font-hud text-[10px] font-bold">
-      <div class="flex items-center gap-1.5 bg-black/60 px-3 py-1 rounded-full border border-white/10">
-        <span class="text-amber-400">⚡ SPREE:</span>
-        <span id="multiplierVal" class="text-amber-300 font-black">1.0X</span>
-      </div>
-      <div class="flex items-center gap-1.5 bg-black/60 px-3 py-1 rounded-full border border-white/10">
-        <span class="text-cyan-400">💥 SAFES CRACKED:</span>
-        <span id="crackedLinesVal" class="text-cyan-300 font-black">0</span>
-      </div>
+    <!-- BASKETS CONTAINER (FLEX / GRID AUTO-ADAPTIVE) -->
+    <div id="basketsContainer" class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 max-w-sm sm:max-w-md w-full z-10 transition-all duration-300">
+      <!-- Baskets generated dynamically by JavaScript -->
     </div>
   </main>
 
   <!-- ========================================================================= -->
-  <!-- BOTTOM AREA: HEIST GEAR PIECES DOCK & ESCAPE TRIGGER                      -->
+  <!-- BOTTOM COZY CONTROLS & EXTRA BASKET PERK                                  -->
   <!-- ========================================================================= -->
-  <footer class="w-full max-w-md mx-auto flex flex-col z-20 px-3.5 pb-3 pt-1.5 bg-[#0b0e14]/90 backdrop-blur-md border-t border-white/10 shadow-2xl">
-    <!-- HINT BAR -->
-    <div class="flex items-center justify-between text-[9px] font-hud font-bold text-slate-400 px-1 mb-1.5">
-      <span>HEIST GEAR (TAP TO SELECT & PLACE)</span>
-      <span class="text-emerald-400 font-black">TAP CELL TO SNAP</span>
+  <footer class="w-full max-w-md mx-auto flex items-center justify-between z-20 px-4 pb-4 pt-1">
+    <!-- PET ROSTER DISPLAY -->
+    <div class="flex items-center gap-1.5 bg-amber-100/70 border border-amber-200 px-3 py-1.5 rounded-2xl text-xs font-bold text-amber-900">
+      <span>Friends:</span>
+      <span id="petIconsRow" class="flex items-center gap-1 text-sm">🐱 🐶 🐹 🐼</span>
     </div>
 
-    <!-- 3 PIECES DOCK SLOTS -->
-    <div id="piecesDock" class="flex items-center justify-between gap-2.5 h-24 sm:h-28 bg-black/50 p-2 rounded-2xl border border-white/10">
-      <!-- 3 pieces rendered here -->
-    </div>
-
-    <!-- ACTION BUTTONS: CLEAN GETAWAY & EMP JAMMER -->
-    <div class="mt-2.5 flex items-center gap-2">
-      <button id="escapeBtn" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-400 to-green-500 text-black font-hud text-xs font-black uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.5)] active:scale-95 transition disabled:opacity-30 disabled:pointer-events-none" disabled>
-        🚁 EXECUTE CLEAN GETAWAY ($1M READY)
-      </button>
-      <button id="empBtn" class="px-3.5 py-2.5 rounded-xl bg-purple-950/80 border border-purple-500 text-purple-300 font-hud text-[10px] font-black uppercase tracking-wider shadow active:scale-95 transition flex items-center gap-1">
-        <span>⚡ EMP</span>
-        <span id="empBadge" class="bg-purple-500 text-black text-[9px] font-black px-1.5 rounded-full">1</span>
-      </button>
-    </div>
+    <!-- EXTRA BASKET BUTTON -->
+    <button id="addBasketBtn" class="touch-btn px-4 py-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-300 hover:brightness-105 border-2 border-amber-500/60 rounded-2xl text-amber-950 font-bold text-xs flex items-center gap-1.5 shadow-md transition active:scale-95">
+      <span>🧺</span>
+      <span>Add Extra Bed</span>
+      <span id="extraBedBadge" class="bg-amber-900 text-amber-100 text-[10px] font-black px-1.5 py-0.2 rounded-full">1</span>
+    </button>
   </footer>
 
   <!-- ========================================================================= -->
-  <!-- HEIST RESULT / GAME OVER MODAL                                            -->
+  <!-- LEVEL COMPLETE / SO COZY MODAL                                            -->
   <!-- ========================================================================= -->
-  <div id="resultModal" class="fixed inset-0 bg-black/92 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden select-none">
-    <div class="max-w-xs w-full bg-[#0f131a] border-2 border-emerald-500 rounded-3xl p-6 shadow-[0_0_60px_rgba(16,185,129,0.4)] text-center space-y-4">
-      <div id="modalIcon" class="w-16 h-16 mx-auto rounded-2xl bg-emerald-950/80 border-2 border-emerald-500 flex items-center justify-center text-3xl shadow-xl">
-        💰
+  <div id="victoryModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm hidden select-none">
+    <div class="max-w-xs w-full bg-[#fffcf5] border-3 border-amber-300 rounded-3xl p-6 shadow-2xl text-center space-y-4 transform transition-all duration-300 scale-95 animate-bounce">
+      <!-- BIG HAPPY CHUBBY PET -->
+      <div id="victoryPetAvatar" class="w-20 h-20 mx-auto rounded-3xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-5xl shadow-md">
+        🐱
       </div>
+
       <div>
-        <h2 id="modalTitle" class="font-gta text-3xl font-black text-emerald-400 tracking-wider">
-          CLEAN GETAWAY!
+        <h2 class="font-fun text-3xl font-black text-amber-950 tracking-wide">
+          SO COZY!
         </h2>
-        <p id="modalSubtitle" class="text-xs text-slate-400 font-bold tracking-wider mt-1">THE SYNDICATE ESCAPED WITH MILLIONS</p>
+        <p id="victoryQuote" class="text-xs text-amber-800 font-bold tracking-wide mt-1">
+          All the mochi pets are snuggled together and happily purring! 💖
+        </p>
       </div>
 
-      <!-- STATS -->
-      <div class="bg-black/60 p-4 rounded-2xl border border-white/10 space-y-2 text-left text-xs font-bold">
-        <div class="flex justify-between items-center">
-          <span class="text-slate-400">Loot Secured:</span>
-          <span id="finalLootVal" class="font-hud font-black text-emerald-400 text-sm">$0</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-slate-400">Vaults Cracked:</span>
-          <span id="finalSafesVal" class="font-hud font-black text-cyan-400">0</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-slate-400">Max Police Heat:</span>
-          <span id="finalHeatVal" class="font-hud font-black text-amber-400">★ ★ ★</span>
-        </div>
+      <!-- 3 GOLDEN STARS -->
+      <div class="flex items-center justify-center gap-2 text-3xl">
+        <span class="text-amber-400 drop-shadow">⭐</span>
+        <span class="text-amber-400 drop-shadow">⭐</span>
+        <span class="text-amber-400 drop-shadow">⭐</span>
       </div>
 
-      <button id="restartBtn" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-400 text-black font-gta text-lg font-black uppercase tracking-wider rounded-2xl shadow-xl active:scale-95 transition">
-        START NEW HEIST ➔
+      <!-- NEXT LEVEL BUTTON -->
+      <button id="nextLevelBtn" class="touch-btn w-full py-3.5 bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 border-2 border-amber-500/80 rounded-2xl text-amber-950 font-black text-base shadow-lg transition active:scale-95">
+        NEXT COZY LEVEL ➔
       </button>
     </div>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- JAVASCRIPT: BULLETPROOF HEIST ENGINE (ZERO LAG, ZERO FREEZE)              -->
+  <!-- JAVASCRIPT: MOCHI PETS SQUEEZE & CUDDLE ENGINE                            -->
   <!-- ========================================================================= -->
   <script>
     /**
-     * GTA: HEIST SYNDICATE ENGINE
-     * 100% stable, zero background error intervals, buttery smooth 60 FPS
+     * MOCHI PETS: SQUEEZE & CUDDLE
+     * -----------------------------
+     * 1. Animals Are Liquid! Tap to stretch and squeeze into cozy baskets.
+     * 2. Handcrafted SVG Vector Mochi Animals:
+     *    - 🐱 Calico Orange Cat (Meow, cute whiskers)
+     *    - 🐶 Shiba Inu Doggo (Happy blep, golden ears)
+     *    - 🐹 Sleepy Capybara (Chill king with orange on head)
+     *    - 🐼 Baby Bamboo Panda (Chubby cheeks & green sprout)
+     *    - 🐰 Marshmallow Bunny (Floppy ears & twitching nose)
+     * 3. ASMR Web Audio Synthesizer: Soft kalimba notes, cute squeaks, warm purrs, and victory chime.
+     * 4. 100% responsive, accessible in 2 seconds, pure cute dopamine!
      */
 
     // =========================================================================
-    // 1. CLEAN & ERROR-FREE AUDIO SYNTHESIZER (Web Audio API)
+    // 1. ASMR COZY AUDIO ENGINE (Pure Web Audio API — Zero External Files)
     // =========================================================================
-    class CleanAudio {
+    class CozyAudioEngine {
       constructor() {
         this.ctx = null;
         this.enabled = true;
@@ -331,697 +245,619 @@
         return this.enabled;
       }
 
-      // Snap Tile Placement Sound
-      playSnap() {
+      // Soft Cute Pick-Up Pop (Kalimba Note)
+      playPick() {
         if (!this.enabled || !this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = "sine";
-        osc.frequency.setValueAtTime(220, now);
-        osc.frequency.exponentialRampToValueAtTime(70, now + 0.08);
-        gain.gain.setValueAtTime(0.25, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+        osc.frequency.setValueAtTime(440, now); // A4
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.1);
+        osc.stop(now + 0.14);
       }
 
-      // Vault Lock Crack + Cash Roll Sound
-      playCrack(combo = 1) {
+      // Squishy Mochi Plop / Land Sound
+      playPlop() {
         if (!this.enabled || !this.ctx) return;
         const now = this.ctx.currentTime;
-
-        // Metallic Clank
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = "square";
-        osc.frequency.setValueAtTime(380, now);
-        osc.frequency.exponentialRampToValueAtTime(120, now + 0.16);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(620, now);
+        osc.frequency.exponentialRampToValueAtTime(260, now + 0.14);
+        gain.gain.setValueAtTime(0.28, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.22);
+        osc.stop(now + 0.18);
+      }
 
-        // Banknote Count Chimes
+      // Happy Cuddle Purr / Snuggle Chime
+      playCuddle() {
+        if (!this.enabled || !this.ctx) return;
+        const now = this.ctx.currentTime;
         [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
-          const cOsc = this.ctx.createOscillator();
-          const cGain = this.ctx.createGain();
-          const t = now + 0.06 + idx * 0.05;
-          cOsc.type = "sine";
-          cOsc.frequency.setValueAtTime(freq, t);
-          cGain.gain.setValueAtTime(0.2, t);
-          cGain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
-          cOsc.connect(cGain);
-          cGain.connect(this.ctx.destination);
-          cOsc.start(t);
-          cOsc.stop(t + 0.12);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = now + idx * 0.08;
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.18, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.28);
         });
       }
 
-      // C4 Detonation Sound
-      playExplosion() {
+      // Level Complete Victory Fanfare (Sparkling Music Box)
+      playVictory() {
         if (!this.enabled || !this.ctx) return;
         const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(110, now);
-        osc.frequency.exponentialRampToValueAtTime(25, now + 0.35);
-        gain.gain.setValueAtTime(0.5, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.42);
-      }
-
-      // EMP Cyber Zap
-      playEmp() {
-        if (!this.enabled || !this.ctx) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(240, now);
-        osc.frequency.linearRampToValueAtTime(960, now + 0.25);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.32);
+        const melody = [523.25, 659.25, 783.99, 1046.5, 1318.51, 1567.98];
+        melody.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = now + idx * 0.11;
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.25, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.45);
+        });
       }
     }
 
-    const sound = new CleanAudio();
+    const sound = new CozyAudioEngine();
 
     // =========================================================================
-    // 2. HEIST GAME STATE & TOKEN CONSTANTS
+    // 2. THE OG CUTE ANIMAL DEFINITIONS & CUTE SVG ARTWORK
     // =========================================================================
-    const GRID_SIZE = 6;
-    const STATE = {
-      board: Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null)),
-      loot: 0,
-      targetLoot: 1000000,
-      heat: 1,
-      swatMoves: 5,
-      isSwatActive: false,
-      multiplier: 1.0,
-      crackedCount: 0,
-      empCount: 1,
-      isGameOver: false,
-
-      dockPieces: [null, null, null],
-      selectedPieceIdx: null
+    const PET_DEFS = {
+      CAT: {
+        id: "cat",
+        name: "Calico Cat",
+        icon: "🐱",
+        color: "#fb923c",
+        bgGrad: "from-amber-200 to-orange-300",
+        quote: "Purrr! The kitties found their soft blanket!",
+        svg: `
+          <svg viewBox="0 0 100 90" class="w-full h-full drop-shadow-md">
+            <!-- Round chubby body -->
+            <ellipse cx="50" cy="52" rx="42" ry="34" fill="#fed7aa" stroke="#ea580c" stroke-width="2.5"/>
+            <!-- Orange Calico Patches -->
+            <path d="M22 28 Q35 32 30 48 Q20 44 22 28 Z" fill="#fb923c"/>
+            <path d="M78 30 Q65 35 70 50 Q82 46 78 30 Z" fill="#fdba74"/>
+            <!-- Cute triangular ears with pink inside -->
+            <polygon points="20,32 12,10 36,22" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+            <polygon points="20,29 16,14 32,23" fill="#f472b6"/>
+            <polygon points="80,32 88,10 64,22" fill="#fb923c" stroke="#ea580c" stroke-width="2"/>
+            <polygon points="80,29 84,14 68,23" fill="#f472b6"/>
+            <!-- Happy closed curved eyes ( ^ ω ^ ) -->
+            <path d="M32 46 Q40 40 48 46" fill="none" stroke="#431407" stroke-width="3" stroke-linecap="round"/>
+            <path d="M52 46 Q60 40 68 46" fill="none" stroke="#431407" stroke-width="3" stroke-linecap="round"/>
+            <!-- Tiny nose & cat mouth -->
+            <polygon points="50,50 47,48 53,48" fill="#f43f5e"/>
+            <path d="M46 52 Q50 56 50 53 Q50 56 54 52" fill="none" stroke="#431407" stroke-width="2.2" stroke-linecap="round"/>
+            <!-- Cute Whiskers -->
+            <line x1="16" y1="48" x2="28" y2="50" stroke="#7c2d12" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="16" y1="54" x2="28" y2="54" stroke="#7c2d12" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="84" y1="48" x2="72" y2="50" stroke="#7c2d12" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="84" y1="54" x2="72" y2="54" stroke="#7c2d12" stroke-width="1.8" stroke-linecap="round"/>
+            <!-- Rosy blushing cheeks -->
+            <circle cx="28" cy="54" r="5" fill="#f472b6" opacity="0.6"/>
+            <circle cx="72" cy="54" r="5" fill="#f472b6" opacity="0.6"/>
+          </svg>
+        `
+      },
+      SHIBA: {
+        id: "shiba",
+        name: "Shiba Inu",
+        icon: "🐶",
+        color: "#f59e0b",
+        bgGrad: "from-amber-100 to-amber-300",
+        quote: "Woof! The good doggos are all cuddled up!",
+        svg: `
+          <svg viewBox="0 0 100 90" class="w-full h-full drop-shadow-md">
+            <!-- Body -->
+            <ellipse cx="50" cy="52" rx="42" ry="34" fill="#f59e0b" stroke="#b45309" stroke-width="2.5"/>
+            <!-- White Muzzle Mask -->
+            <ellipse cx="50" cy="58" rx="26" ry="18" fill="#fffbeb"/>
+            <!-- Soft Shiba ears -->
+            <polygon points="18,34 16,12 36,25" fill="#d97706" stroke="#b45309" stroke-width="2"/>
+            <polygon points="82,34 84,12 64,25" fill="#d97706" stroke="#b45309" stroke-width="2"/>
+            <!-- White eyebrows -->
+            <circle cx="36" cy="38" r="3.5" fill="#fffbeb"/>
+            <circle cx="64" cy="38" r="3.5" fill="#fffbeb"/>
+            <!-- Happy eyes -->
+            <circle cx="36" cy="46" r="3.5" fill="#451a03"/>
+            <circle cx="64" cy="46" r="3.5" fill="#451a03"/>
+            <!-- Nose & Tongue Blep ( ᵔ ᴥ ᵔ ) -->
+            <ellipse cx="50" cy="52" rx="3.5" ry="2.5" fill="#1c1917"/>
+            <path d="M46 56 Q50 59 54 56" fill="none" stroke="#451a03" stroke-width="2" stroke-linecap="round"/>
+            <path d="M48 57 C48 62 52 62 52 57 Z" fill="#f43f5e"/>
+            <!-- Cheeks -->
+            <circle cx="26" cy="56" r="4.5" fill="#fb7185" opacity="0.5"/>
+            <circle cx="74" cy="56" r="4.5" fill="#fb7185" opacity="0.5"/>
+          </svg>
+        `
+      },
+      CAPYBARA: {
+        id: "capybara",
+        name: "Capybara",
+        icon: "🐹",
+        color: "#a16207",
+        bgGrad: "from-amber-200 to-yellow-600",
+        quote: "Ok I pull up! The chillest capybaras are cozy!",
+        svg: `
+          <svg viewBox="0 0 100 90" class="w-full h-full drop-shadow-md">
+            <!-- Body -->
+            <ellipse cx="50" cy="54" rx="43" ry="32" fill="#b45309" stroke="#78350f" stroke-width="2.5"/>
+            <!-- Tiny Round Ears -->
+            <circle cx="22" cy="30" r="7" fill="#92400e" stroke="#78350f" stroke-width="1.8"/>
+            <circle cx="78" cy="30" r="7" fill="#92400e" stroke="#78350f" stroke-width="1.8"/>
+            <!-- Sleepy Chill Eyelids ( - ‿ - ) -->
+            <line x1="32" y1="46" x2="44" y2="46" stroke="#451a03" stroke-width="3" stroke-linecap="round"/>
+            <line x1="56" y1="46" x2="68" y2="46" stroke="#451a03" stroke-width="3" stroke-linecap="round"/>
+            <!-- Flat Capy Snout -->
+            <ellipse cx="50" cy="58" rx="14" ry="10" fill="#92400e"/>
+            <circle cx="46" cy="56" r="2" fill="#451a03"/>
+            <circle cx="54" cy="56" r="2" fill="#451a03"/>
+            <line x1="50" y1="58" x2="50" y2="63" stroke="#451a03" stroke-width="2" stroke-linecap="round"/>
+            <!-- Orange Fruit on Head (Signature Capy!) -->
+            <circle cx="50" cy="22" r="9" fill="#f97316" stroke="#ea580c" stroke-width="1.8"/>
+            <path d="M50 13 Q53 10 56 12" fill="none" stroke="#15803d" stroke-width="2.2" stroke-linecap="round"/>
+            <!-- Cheeks -->
+            <circle cx="26" cy="56" r="4.5" fill="#f43f5e" opacity="0.4"/>
+            <circle cx="74" cy="56" r="4.5" fill="#f43f5e" opacity="0.4"/>
+          </svg>
+        `
+      },
+      PANDA: {
+        id: "panda",
+        name: "Baby Panda",
+        icon: "🐼",
+        color: "#3f3f46",
+        bgGrad: "from-zinc-100 to-zinc-300",
+        quote: "Munch munch! The baby pandas love their cozy bed!",
+        svg: `
+          <svg viewBox="0 0 100 90" class="w-full h-full drop-shadow-md">
+            <!-- Body -->
+            <ellipse cx="50" cy="52" rx="42" ry="34" fill="#ffffff" stroke="#27272a" stroke-width="2.5"/>
+            <!-- Black Panda Ears -->
+            <circle cx="20" cy="24" r="10" fill="#27272a"/>
+            <circle cx="80" cy="24" r="10" fill="#27272a"/>
+            <!-- Black Eye Patches -->
+            <ellipse cx="34" cy="46" rx="8" ry="11" fill="#27272a" transform="rotate(-15 34 46)"/>
+            <ellipse cx="66" cy="46" rx="8" ry="11" fill="#27272a" transform="rotate(15 66 46)"/>
+            <!-- Gentle Sparkly Eyes -->
+            <circle cx="35" cy="45" r="3" fill="#ffffff"/>
+            <circle cx="65" cy="45" r="3" fill="#ffffff"/>
+            <!-- Cute Triangle Nose & Smile -->
+            <polygon points="50,54 46,51 54,51" fill="#27272a"/>
+            <path d="M46 56 Q50 60 54 56" fill="none" stroke="#27272a" stroke-width="2" stroke-linecap="round"/>
+            <!-- Bamboo Sprout in Mouth -->
+            <path d="M54 58 Q66 58 72 54" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"/>
+            <ellipse cx="72" cy="52" rx="4" ry="2" fill="#22c55e" transform="rotate(-20 72 52)"/>
+            <!-- Cheeks -->
+            <circle cx="22" cy="54" r="4.5" fill="#f472b6" opacity="0.5"/>
+            <circle cx="78" cy="54" r="4.5" fill="#f472b6" opacity="0.5"/>
+          </svg>
+        `
+      },
+      BUNNY: {
+        id: "bunny",
+        name: "Marshmallow Bunny",
+        icon: "🐰",
+        color: "#ec4899",
+        bgGrad: "from-pink-100 to-rose-200",
+        quote: "Hop hop! The soft marshmallow bunnies are sleeping!",
+        svg: `
+          <svg viewBox="0 0 100 90" class="w-full h-full drop-shadow-md">
+            <!-- Long Floppy Bunny Ears -->
+            <ellipse cx="32" cy="18" rx="7" ry="16" fill="#ffffff" stroke="#f472b6" stroke-width="2" transform="rotate(-10 32 18)"/>
+            <ellipse cx="32" cy="18" rx="4" ry="12" fill="#fbcfe8" transform="rotate(-10 32 18)"/>
+            <ellipse cx="68" cy="18" rx="7" ry="16" fill="#ffffff" stroke="#f472b6" stroke-width="2" transform="rotate(10 68 18)"/>
+            <ellipse cx="68" cy="18" rx="4" ry="12" fill="#fbcfe8" transform="rotate(10 68 18)"/>
+            <!-- Round Body -->
+            <ellipse cx="50" cy="54" rx="42" ry="32" fill="#ffffff" stroke="#f472b6" stroke-width="2.2"/>
+            <!-- Big Cute Anime Eyes -->
+            <circle cx="36" cy="48" r="4" fill="#374151"/>
+            <circle cx="37" cy="46.5" r="1.5" fill="#ffffff"/>
+            <circle cx="64" cy="48" r="4" fill="#374151"/>
+            <circle cx="65" cy="46.5" r="1.5" fill="#ffffff"/>
+            <!-- Heart Nose & Tiny Mouth -->
+            <polygon points="50,54 48,52 52,52" fill="#ec4899"/>
+            <path d="M47 56 Q50 58 53 56" fill="none" stroke="#4b5563" stroke-width="1.8" stroke-linecap="round"/>
+            <!-- Cheeks -->
+            <circle cx="26" cy="54" r="5" fill="#f472b6" opacity="0.5"/>
+            <circle cx="74" cy="54" r="5" fill="#f472b6" opacity="0.5"/>
+          </svg>
+        `
+      }
     };
 
-    const TOKENS = {
-      CASH: { id: "cash", label: "$", name: "CASH", val: 15000, color: "tile-cash" },
-      GOLD: { id: "gold", label: "Au", name: "GOLD", val: 40000, color: "tile-gold" },
-      DIAMOND: { id: "diamond", label: "💎", name: "DIAMOND", val: 100000, color: "tile-diamond" },
-      C4: { id: "c4", label: "🧨", name: "C4", val: 50000, color: "tile-c4", isExplosive: true },
-      SAFE: { id: "safe", label: "🗄️", name: "SAFE", val: 120000, color: "tile-safe", isSafe: true },
-      LOCKED: { id: "locked", label: "🔒", name: "LOCKDOWN", val: 0, color: "tile-locked" }
-    };
+    // =========================================================================
+    // 3. LEVEL DESIGN (Progressive, Engaging, 100% Solvable)
+    // =========================================================================
+    const BASKET_CAPACITY = 3; // Each basket holds 3 cuddled pets
 
-    // Clean, Fun Polyomino Shapes
-    const PIECE_PRESETS = [
-      { shape: [[1]], type: "CASH" },
-      { shape: [[1]], type: "GOLD" },
-      { shape: [[1]], type: "DIAMOND" },
-      { shape: [[1]], type: "C4" },
-      { shape: [[1, 1]], type: "CASH" },
-      { shape: [[1], [1]], type: "CASH" },
-      { shape: [[1, 1]], type: "GOLD" },
-      { shape: [[1, 1, 1]], type: "CASH" },
-      { shape: [[1], [1], [1]], type: "GOLD" },
-      { shape: [[1, 0], [1, 1]], type: "CASH" },
-      { shape: [[0, 1], [1, 1]], type: "GOLD" },
-      { shape: [[1, 1], [1, 1]], type: "CASH" }
+    const LEVELS = [
+      // Level 1: Gentle Warmup (Cats & Puppies, 3 baskets)
+      {
+        baskets: [
+          ["CAT", "SHIBA", "CAT"],
+          ["SHIBA", "CAT", "SHIBA"],
+          [] // Empty cozy basket
+        ]
+      },
+      // Level 2: Meet the Capybara! (Cats, Shibas, Capybaras, 4 baskets)
+      {
+        baskets: [
+          ["CAT", "CAPYBARA", "SHIBA"],
+          ["SHIBA", "CAT", "CAPYBARA"],
+          ["CAPYBARA", "SHIBA", "CAT"],
+          [] // Empty
+        ]
+      },
+      // Level 3: Panda Joins the Cuddle! (4 animal types, 5 baskets)
+      {
+        baskets: [
+          ["PANDA", "CAT", "PANDA"],
+          ["SHIBA", "CAPYBARA", "CAT"],
+          ["CAPYBARA", "SHIBA", "PANDA"],
+          ["CAT", "CAPYBARA", "SHIBA"],
+          [] // Empty
+        ]
+      },
+      // Level 4: Bunny Hop! (5 animal types, 6 baskets)
+      {
+        baskets: [
+          ["BUNNY", "CAT", "SHIBA"],
+          ["PANDA", "CAPYBARA", "BUNNY"],
+          ["CAT", "SHIBA", "PANDA"],
+          ["CAPYBARA", "BUNNY", "CAT"],
+          ["SHIBA", "PANDA", "CAPYBARA"],
+          [] // Empty
+        ]
+      },
+      // Level 5: Master Cuddler (5 types with 2 empty beds, deeper strategy)
+      {
+        baskets: [
+          ["CAT", "PANDA", "SHIBA"],
+          ["BUNNY", "CAPYBARA", "CAT"],
+          ["PANDA", "SHIBA", "BUNNY"],
+          ["CAPYBARA", "CAT", "PANDA"],
+          ["SHIBA", "BUNNY", "CAPYBARA"],
+          [], // Empty
+          []  // Empty
+        ]
+      }
     ];
 
     // =========================================================================
-    // 3. BOARD CREATION & RENDERING
+    // 4. GAME STATE & HISTORY FOR UNDO
     // =========================================================================
-    const vaultGrid = document.getElementById("vaultGrid");
+    const STATE = {
+      levelIdx: 0,
+      baskets: [],
+      selectedBasketIdx: null,
+      history: [],
+      isWon: false,
+      extraBedUsed: false
+    };
 
-    function initGridDOM() {
-      vaultGrid.innerHTML = "";
-      for (let r = 0; r < GRID_SIZE; r++) {
-        for (let c = 0; c < GRID_SIZE; c++) {
-          const cell = document.createElement("div");
-          cell.className = "grid-cell rounded-2xl flex flex-col items-center justify-center relative cursor-pointer";
-          cell.dataset.r = r;
-          cell.dataset.c = c;
+    // =========================================================================
+    // 5. BASKET RENDERING & SQUISHY MOCHI ART
+    // =========================================================================
+    const container = document.getElementById("basketsContainer");
 
-          // Mouse/Touch Hover Preview
-          cell.addEventListener("pointerenter", () => previewPlacement(r, c));
-          cell.addEventListener("pointerleave", () => clearPreview());
+    function renderLevel() {
+      container.innerHTML = "";
+      const totalBaskets = STATE.baskets.length;
 
-          // Click / Tap to place
-          cell.addEventListener("click", () => handleCellClick(r, c));
+      // Update Header Info
+      document.getElementById("levelLabel").innerText = `LEVEL ${STATE.levelIdx + 1}`;
+      document.getElementById("undoBtn").disabled = STATE.history.length === 0;
 
-          vaultGrid.appendChild(cell);
-        }
-      }
-    }
+      // Count cuddled complete baskets
+      const cuddledCount = STATE.baskets.filter(isBasketComplete).length;
+      const totalNeeded = STATE.baskets.filter(b => b.length > 0).length;
+      document.getElementById("cuddleText").innerText = `${cuddledCount} CUDDLED`;
 
-    function renderBoard() {
-      for (let r = 0; r < GRID_SIZE; r++) {
-        for (let c = 0; c < GRID_SIZE; c++) {
-          const cell = vaultGrid.children[r * GRID_SIZE + c];
-          const token = STATE.board[r][c];
+      // Update Friends Icons in Footer
+      const activeTypes = new Set();
+      STATE.baskets.forEach(b => b.forEach(type => activeTypes.add(type)));
+      const iconsHtml = Array.from(activeTypes).map(t => PET_DEFS[t]?.icon || "🐾").join(" ");
+      document.getElementById("petIconsRow").innerText = iconsHtml;
 
-          if (token) {
-            cell.innerHTML = `
-              <div class="w-full h-full rounded-2xl ${token.color} flex flex-col items-center justify-center font-hud font-black text-xs sm:text-sm drop-shadow select-none transform transition-transform duration-100 scale-95">
-                <span class="leading-none">${token.label}</span>
-                <span class="text-[6.5px] sm:text-[7.5px] font-bold opacity-85 uppercase mt-0.5 leading-none">
-                  ${token.id === 'locked' ? 'LOCK' : (token.val > 0 ? '$' + (token.val / 1000).toFixed(0) + 'K' : '')}
-                </span>
+      // Render Each Woven Basket
+      STATE.baskets.forEach((basketPets, bIdx) => {
+        const isSelected = STATE.selectedBasketIdx === bIdx;
+        const isComplete = isBasketComplete(basketPets);
+
+        const basketWrap = document.createElement("div");
+        basketWrap.className = `flex flex-col items-center justify-end relative cursor-pointer transition-all duration-200 select-none ${isSelected ? 'basket-active' : ''}`;
+        basketWrap.style.width = totalBaskets > 5 ? "85px" : (totalBaskets > 4 ? "95px" : "105px");
+
+        // The Woven Basket Dish
+        const basketDish = document.createElement("div");
+        basketDish.className = `w-full rounded-3xl p-2 sm:p-2.5 flex flex-col-reverse items-center gap-1.5 transition-all duration-200 basket-shadow ${
+          isComplete 
+            ? 'bg-gradient-to-b from-amber-200 to-amber-300 border-2 border-amber-400 cuddle-complete' 
+            : (isSelected ? 'bg-amber-100 border-2 border-amber-400' : 'bg-[#fffcf7] border-2 border-amber-200/80 hover:border-amber-300')
+        }`;
+        basketDish.style.minHeight = totalBaskets > 5 ? "150px" : "175px";
+
+        // If basket is complete -> Show giant cuddling mega-pet!
+        if (isComplete) {
+          const petDef = PET_DEFS[basketPets[0]];
+          basketDish.innerHTML = `
+            <div class="w-full flex flex-col items-center justify-center py-2 animate-bounce">
+              <div class="w-16 h-16 sm:w-20 sm:h-20">
+                ${petDef.svg}
               </div>
-            `;
-          } else {
-            cell.innerHTML = "";
-          }
-        }
-      }
-    }
+              <div class="mt-1 bg-amber-900/10 text-amber-950 font-black text-[9px] px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span>💖</span> COZY!
+              </div>
+            </div>
+          `;
+        } else {
+          // Render individual pets stacked in basket (from bottom to top)
+          for (let pIdx = 0; pIdx < BASKET_CAPACITY; pIdx++) {
+            const petType = basketPets[pIdx];
+            const slot = document.createElement("div");
+            slot.className = "w-full flex items-center justify-center relative";
+            slot.style.height = totalBaskets > 5 ? "40px" : "48px";
 
-    // =========================================================================
-    // 4. DOCK PIECES (TAP TO SELECT & PLACE)
-    // =========================================================================
-    const piecesDock = document.getElementById("piecesDock");
+            if (petType) {
+              const petDef = PET_DEFS[petType];
+              const isTop = (pIdx === basketPets.length - 1);
+              const isBeingHeld = (isSelected && isTop);
 
-    function refillDock() {
-      for (let i = 0; i < 3; i++) {
-        if (!STATE.dockPieces[i]) {
-          const preset = PIECE_PRESETS[Math.floor(Math.random() * PIECE_PRESETS.length)];
-          STATE.dockPieces[i] = {
-            shape: preset.shape,
-            token: TOKENS[preset.type]
-          };
-        }
-      }
-      renderDock();
-      checkRemainingMoves();
-    }
-
-    function renderDock() {
-      piecesDock.innerHTML = "";
-
-      STATE.dockPieces.forEach((pData, idx) => {
-        const slot = document.createElement("div");
-        slot.className = "flex-1 h-full rounded-2xl bg-zinc-900/70 border border-white/10 flex flex-col items-center justify-center p-2 cursor-pointer transition-all duration-150 active:scale-95";
-        slot.dataset.idx = idx;
-
-        if (STATE.selectedPieceIdx === idx) {
-          slot.classList.add("slot-selected");
-        }
-
-        if (pData) {
-          const shape = pData.shape;
-          const rows = shape.length;
-          const cols = shape[0].length;
-
-          const preview = document.createElement("div");
-          preview.className = "grid gap-1.5 pointer-events-none";
-          preview.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
-
-          for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-              const dot = document.createElement("div");
-              if (shape[r][c]) {
-                dot.className = `w-4 h-4 sm:w-5 sm:h-5 rounded-lg ${pData.token.color} flex items-center justify-center text-[8px] font-black shadow`;
-                dot.innerText = pData.token.label;
-              } else {
-                dot.className = "w-4 h-4 sm:w-5 sm:h-5 opacity-0";
-              }
-              preview.appendChild(dot);
-            }
-          }
-
-          slot.appendChild(preview);
-
-          // Click / Tap on slot
-          slot.addEventListener("click", () => {
-            sound.init();
-            if (STATE.selectedPieceIdx === idx) {
-              STATE.selectedPieceIdx = null; // Deselect
+              slot.innerHTML = `
+                <div class="w-12 h-12 sm:w-14 sm:h-14 transition-all duration-200 ${isBeingHeld ? 'mochi-picked' : 'mochi-idle'}">
+                  ${petDef.svg}
+                </div>
+              `;
             } else {
-              STATE.selectedPieceIdx = idx; // Select
+              // Empty slot placeholder (soft cushion indicator)
+              slot.innerHTML = `
+                <div class="w-8 h-2 rounded-full bg-amber-900/5 border border-dashed border-amber-900/15"></div>
+              `;
             }
-            renderDock();
-            clearPreview();
-          });
+            basketDish.appendChild(slot);
+          }
         }
 
-        piecesDock.appendChild(slot);
+        // Basket Base Label / Tag
+        const tag = document.createElement("div");
+        tag.className = "mt-1.5 text-[10px] font-bold text-amber-900/70 flex items-center gap-1";
+        if (isComplete) {
+          tag.innerHTML = `<span class="text-rose-500">💖</span> Done`;
+        } else if (basketPets.length === 0) {
+          tag.innerHTML = `<span class="opacity-60">Cozy Bed</span>`;
+        } else {
+          tag.innerHTML = `<span>${basketPets.length}/${BASKET_CAPACITY}</span>`;
+        }
+
+        basketWrap.appendChild(basketDish);
+        basketWrap.appendChild(tag);
+
+        // Tap on Basket to Select or Move
+        basketWrap.addEventListener("click", () => handleBasketTap(bIdx));
+
+        container.appendChild(basketWrap);
       });
     }
 
+    function isBasketComplete(pets) {
+      if (pets.length !== BASKET_CAPACITY) return false;
+      return pets.every(p => p === pets[0]);
+    }
+
     // =========================================================================
-    // 5. PLACEMENT & CELL INTERACTION
+    // 6. CORE GAMEPLAY INTERACTION (TAP & SQUEEZE)
     // =========================================================================
-    function canPlace(piece, startR, startC) {
-      if (!piece) return false;
-      const shape = piece.shape;
-      const rows = shape.length;
-      const cols = shape[0].length;
-
-      if (startR + rows > GRID_SIZE || startC + cols > GRID_SIZE) return false;
-
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          if (shape[r][c] && STATE.board[startR + r][startC + c] !== null) {
-            return false;
-          }
-        }
-      }
-      return true;
-    }
-
-    function previewPlacement(startR, startC) {
-      clearPreview();
-      if (STATE.selectedPieceIdx === null) return;
-      const piece = STATE.dockPieces[STATE.selectedPieceIdx];
-      if (!piece) return;
-
-      const valid = canPlace(piece, startR, startC);
-      const shape = piece.shape;
-      const rows = shape.length;
-      const cols = shape[0].length;
-
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          if (shape[r][c]) {
-            const tr = startR + r;
-            const tc = startC + c;
-            if (tr < GRID_SIZE && tc < GRID_SIZE) {
-              const cell = vaultGrid.children[tr * GRID_SIZE + tc];
-              cell.classList.add(valid ? "preview-valid" : "preview-invalid");
-            }
-          }
-        }
-      }
-    }
-
-    function clearPreview() {
-      for (let i = 0; i < vaultGrid.children.length; i++) {
-        vaultGrid.children[i].classList.remove("preview-valid", "preview-invalid");
-      }
-    }
-
-    function handleCellClick(startR, startC) {
+    function handleBasketTap(targetIdx) {
       sound.init();
-      if (STATE.selectedPieceIdx === null) return;
-      const piece = STATE.dockPieces[STATE.selectedPieceIdx];
-      if (!piece) return;
+      if (STATE.isWon) return;
 
-      if (!canPlace(piece, startR, startC)) {
-        return; // Invalid move
+      const currentSelected = STATE.selectedBasketIdx;
+
+      // 1. If NO basket is selected yet: Pick up top pet from target
+      if (currentSelected === null) {
+        const sourcePets = STATE.baskets[targetIdx];
+        if (sourcePets.length === 0) return; // Can't pick from empty basket
+        if (isBasketComplete(sourcePets)) return; // Already happily cuddled!
+
+        STATE.selectedBasketIdx = targetIdx;
+        sound.playPick();
+        renderLevel();
+        return;
       }
 
-      sound.playSnap();
-      const shape = piece.shape;
-      const rows = shape.length;
-      const cols = shape[0].length;
+      // 2. If clicking the SAME basket again: Deselect
+      if (currentSelected === targetIdx) {
+        STATE.selectedBasketIdx = null;
+        renderLevel();
+        return;
+      }
 
-      let hasC4 = false;
-      let c4R = 0, c4C = 0;
+      // 3. Move pet from currentSelected -> targetIdx
+      const sourcePets = STATE.baskets[currentSelected];
+      const destPets = STATE.baskets[targetIdx];
 
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          if (shape[r][c]) {
-            STATE.board[startR + r][startC + c] = piece.token;
-            if (piece.token.isExplosive) {
-              hasC4 = true;
-              c4R = startR + r;
-              c4C = startC + c;
-            }
-          }
+      // Validate destination basket
+      if (destPets.length >= BASKET_CAPACITY) {
+        // Destination is full!
+        STATE.selectedBasketIdx = targetIdx; // Switch selection
+        sound.playPick();
+        renderLevel();
+        return;
+      }
+
+      const movingPet = sourcePets[sourcePets.length - 1];
+      const destTopPet = destPets.length > 0 ? destPets[destPets.length - 1] : null;
+
+      // Move is valid if dest is empty OR dest top pet matches moving pet
+      if (destTopPet === null || destTopPet === movingPet) {
+        // Save history for Undo
+        saveHistory();
+
+        // Perform move
+        sourcePets.pop();
+        destPets.push(movingPet);
+        STATE.selectedBasketIdx = null;
+
+        sound.playPlop();
+
+        // Check if destination just cuddled same species
+        if (destPets.length > 1 && destPets[destPets.length - 2] === movingPet) {
+          sound.playCuddle();
+          spawnHearts(targetIdx);
         }
-      }
 
-      // Clear piece from dock
-      STATE.dockPieces[STATE.selectedPieceIdx] = null;
-      STATE.selectedPieceIdx = null;
-      clearPreview();
-      renderBoard();
-      renderDock();
-
-      // C4 Explosion or Normal Check
-      if (hasC4) {
-        setTimeout(() => triggerC4(c4R, c4C), 160);
+        renderLevel();
+        checkVictoryCondition();
       } else {
-        checkLineClears();
-      }
-
-      // SWAT Moves Countdown
-      if (STATE.isSwatActive) {
-        STATE.swatMoves--;
-        document.getElementById("swatMoves").innerText = STATE.swatMoves;
-        if (STATE.swatMoves <= 0) {
-          triggerGameOver("SWAT RAID — BUSTED!", false);
-          return;
-        }
-      }
-
-      // Refill dock if all used
-      if (STATE.dockPieces.every(p => p === null)) {
-        refillDock();
-      } else {
-        checkRemainingMoves();
-      }
-    }
-
-    // Detonate C4 (Clears 3x3 radius and awards loot)
-    function triggerC4(cr, cc) {
-      sound.playExplosion();
-      triggerScreenShake();
-
-      let cleared = 0;
-      for (let r = Math.max(0, cr - 1); r <= Math.min(GRID_SIZE - 1, cr + 1); r++) {
-        for (let c = Math.max(0, cc - 1); c <= Math.min(GRID_SIZE - 1, cc + 1); c++) {
-          if (STATE.board[r][c] !== null) {
-            cleared++;
-            STATE.board[r][c] = null;
-          }
-        }
-      }
-
-      const reward = 80000 + cleared * 20000;
-      addLoot(reward);
-      showFloatText(`💥 C4 BREACH! +$${reward.toLocaleString()}`, "#ef4444");
-
-      // C4 raises heat
-      increaseHeat(1);
-      renderBoard();
-      checkLineClears();
-    }
-
-    // Check Row / Column Vault Clears
-    function checkLineClears() {
-      const rows = [];
-      const cols = [];
-
-      for (let r = 0; r < GRID_SIZE; r++) {
-        let full = true;
-        for (let c = 0; c < GRID_SIZE; c++) {
-          if (STATE.board[r][c] === null || STATE.board[r][c].id === "locked") {
-            full = false;
-            break;
-          }
-        }
-        if (full) rows.push(r);
-      }
-
-      for (let c = 0; c < GRID_SIZE; c++) {
-        let full = true;
-        for (let r = 0; r < GRID_SIZE; r++) {
-          if (STATE.board[r][c] === null || STATE.board[r][c].id === "locked") {
-            full = false;
-            break;
-          }
-        }
-        if (full) cols.push(c);
-      }
-
-      const totalLines = rows.length + cols.length;
-
-      if (totalLines > 0) {
-        sound.playCrack(totalLines);
-        triggerScreenShake();
-        STATE.crackedCount += totalLines;
-        document.getElementById("crackedLinesVal").innerText = STATE.crackedCount;
-
-        STATE.multiplier = Math.min(5.0, (1.0 + (totalLines - 1) * 0.5).toFixed(1));
-        document.getElementById("multiplierVal").innerText = `${STATE.multiplier}X`;
-
-        let lineLoot = 0;
-        let crackedSafes = 0;
-
-        rows.forEach(r => {
-          for (let c = 0; c < GRID_SIZE; c++) {
-            if (STATE.board[r][c]) {
-              if (STATE.board[r][c].isSafe) crackedSafes++;
-              lineLoot += STATE.board[r][c].val;
-              STATE.board[r][c] = null;
-            }
-          }
-        });
-
-        cols.forEach(c => {
-          for (let r = 0; r < GRID_SIZE; r++) {
-            if (STATE.board[r][c]) {
-              if (STATE.board[r][c].isSafe) crackedSafes++;
-              lineLoot += STATE.board[r][c].val;
-              STATE.board[r][c] = null;
-            }
-          }
-        });
-
-        const totalEarned = Math.floor((lineLoot + totalLines * 35000) * STATE.multiplier);
-        addLoot(totalEarned);
-
-        if (crackedSafes > 0) {
-          showFloatText(`🗄️ ${crackedSafes}x TITANIUM SAFE CRACKED!`, "#38bdf8");
-        } else if (totalLines >= 2) {
-          showFloatText(`🔥 ${totalLines}X SPREE! +$${totalEarned.toLocaleString()}`, "#f59e0b");
+        // Invalid destination: switch selection to target
+        if (destPets.length > 0 && !isBasketComplete(destPets)) {
+          STATE.selectedBasketIdx = targetIdx;
+          sound.playPick();
         } else {
-          showFloatText(`💰 VAULT CRACKED! +$${totalEarned.toLocaleString()}`, "#10b981");
+          STATE.selectedBasketIdx = null;
         }
-
-        renderBoard();
-      } else {
-        STATE.multiplier = 1.0;
-        document.getElementById("multiplierVal").innerText = "1.0X";
+        renderLevel();
       }
     }
 
-    // =========================================================================
-    // 6. LOOT & HEAT PROGRESSION
-    // =========================================================================
-    function addLoot(amt) {
-      STATE.loot += amt;
-      document.getElementById("cashVal").innerText = `$${STATE.loot.toLocaleString()}`;
-
-      const pct = Math.min(100, (STATE.loot / STATE.targetLoot) * 100);
-      document.getElementById("progressBar").style.width = `${pct}%`;
-
-      if (STATE.loot >= STATE.targetLoot) {
-        const btn = document.getElementById("escapeBtn");
-        btn.disabled = false;
-        btn.classList.add("animate-bounce");
-      }
-
-      if (STATE.loot > 700000 && STATE.heat < 4) increaseHeat(4);
-      else if (STATE.loot > 400000 && STATE.heat < 3) increaseHeat(3);
-      else if (STATE.loot > 150000 && STATE.heat < 2) increaseHeat(2);
+    function saveHistory() {
+      const snap = STATE.baskets.map(b => [...b]);
+      STATE.history.push(snap);
+      if (STATE.history.length > 15) STATE.history.shift();
     }
 
-    function increaseHeat(lvl) {
-      STATE.heat = Math.min(5, Math.max(STATE.heat, lvl));
-      updateHeatUI();
-
-      if (STATE.heat >= 4) {
-        // Lock 2 random empty cells
-        let count = 0;
-        for (let tries = 0; tries < 20 && count < 2; tries++) {
-          const r = Math.floor(Math.random() * GRID_SIZE);
-          const c = Math.floor(Math.random() * GRID_SIZE);
-          if (STATE.board[r][c] === null) {
-            STATE.board[r][c] = TOKENS.LOCKED;
-            count++;
-          }
-        }
-        renderBoard();
-      }
-
-      if (STATE.heat >= 5 && !STATE.isSwatActive) {
-        STATE.isSwatActive = true;
-        STATE.swatMoves = 5;
-        document.getElementById("swatMoves").innerText = STATE.swatMoves;
-        document.getElementById("swatBanner").classList.remove("hidden");
-      }
-    }
-
-    function updateHeatUI() {
-      const row = document.getElementById("starsRow");
-      row.innerHTML = "";
-      for (let i = 0; i < 5; i++) {
-        const star = document.createElement("span");
-        if (i < STATE.heat) {
-          star.className = "text-amber-400 drop-shadow-[0_0_6px_#f59e0b]";
-        } else {
-          star.className = "text-zinc-600 opacity-40";
-        }
-        star.innerText = "★";
-        row.appendChild(star);
-      }
-
-      const body = document.getElementById("appBody");
-      if (STATE.heat >= 4) {
-        body.classList.add("heat-strobe");
-      } else {
-        body.classList.remove("heat-strobe");
-      }
-    }
-
-    // =========================================================================
-    // 7. EMP JAMMER GADGET
-    // =========================================================================
-    document.getElementById("empBtn").addEventListener("click", () => {
+    function undoMove() {
+      if (STATE.history.length === 0) return;
       sound.init();
-      if (STATE.empCount > 0) {
-        STATE.empCount--;
-        document.getElementById("empBadge").innerText = STATE.empCount;
-        sound.playEmp();
-        triggerScreenShake();
+      const lastSnap = STATE.history.pop();
+      STATE.baskets = lastSnap;
+      STATE.selectedBasketIdx = null;
+      renderLevel();
+    }
 
-        // Clear all lockdown tiles
-        for (let r = 0; r < GRID_SIZE; r++) {
-          for (let c = 0; c < GRID_SIZE; c++) {
-            if (STATE.board[r][c] && STATE.board[r][c].id === "locked") {
-              STATE.board[r][c] = null;
-            }
-          }
-        }
+    // =========================================================================
+    // 7. VICTORY CHECK & LEVEL PROGRESSION
+    // =========================================================================
+    function checkVictoryCondition() {
+      // Level is won if all non-empty baskets are complete
+      const allComplete = STATE.baskets.every(b => b.length === 0 || isBasketComplete(b));
 
-        STATE.heat = Math.max(1, STATE.heat - 2);
-        STATE.isSwatActive = false;
-        document.getElementById("swatBanner").classList.add("hidden");
-        updateHeatUI();
+      if (allComplete) {
+        STATE.isWon = true;
+        sound.playVictory();
 
-        showFloatText("⚡ EMP ACTIVATED! HEAT -2", "#c084fc");
-        renderBoard();
+        setTimeout(() => {
+          showVictoryModal();
+        }, 500);
+      }
+    }
+
+    function showVictoryModal() {
+      const modal = document.getElementById("victoryModal");
+      const quote = document.getElementById("victoryQuote");
+      const avatar = document.getElementById("victoryPetAvatar");
+
+      // Pick random completed pet for avatar
+      const completedTypes = STATE.baskets.filter(b => b.length > 0).map(b => b[0]);
+      const chosenType = completedTypes[Math.floor(Math.random() * completedTypes.length)] || "CAT";
+      const petDef = PET_DEFS[chosenType];
+
+      avatar.innerText = petDef.icon;
+      quote.innerText = petDef.quote;
+
+      modal.classList.remove("hidden");
+    }
+
+    function startLevel(lvlIdx) {
+      STATE.levelIdx = lvlIdx % LEVELS.length;
+      const levelData = LEVELS[STATE.levelIdx];
+
+      // Deep copy level baskets
+      STATE.baskets = levelData.baskets.map(b => [...b]);
+      STATE.selectedBasketIdx = null;
+      STATE.history = [];
+      STATE.isWon = false;
+      STATE.extraBedUsed = false;
+
+      document.getElementById("addBasketBtn").disabled = false;
+      document.getElementById("extraBedBadge").innerText = "1";
+      document.getElementById("victoryModal").classList.add("hidden");
+
+      renderLevel();
+    }
+
+    // Extra Basket Helper Perk
+    document.getElementById("addBasketBtn").addEventListener("click", () => {
+      sound.init();
+      if (!STATE.extraBedUsed && !STATE.isWon) {
+        STATE.extraBedUsed = true;
+        saveHistory();
+        STATE.baskets.push([]); // Add new empty cozy basket!
+        document.getElementById("addBasketBtn").disabled = true;
+        document.getElementById("extraBedBadge").innerText = "0";
+        sound.playCuddle();
+        renderLevel();
       }
     });
 
-    // =========================================================================
-    // 8. ESCAPE & GAME OVER
-    // =========================================================================
-    function checkRemainingMoves() {
-      let possible = false;
-      for (let i = 0; i < 3; i++) {
-        const piece = STATE.dockPieces[i];
-        if (piece) {
-          for (let r = 0; r < GRID_SIZE; r++) {
-            for (let c = 0; c < GRID_SIZE; c++) {
-              if (canPlace(piece, r, c)) {
-                possible = true;
-                break;
-              }
-            }
-            if (possible) break;
-          }
-        }
-        if (possible) break;
-      }
+    // Spawn Floating Hearts Particles
+    function spawnHearts(basketIdx) {
+      const overlay = document.getElementById("particleOverlay");
+      for (let i = 0; i < 4; i++) {
+        const heart = document.createElement("div");
+        heart.className = "heart-particle absolute text-xl pointer-events-none select-none";
+        heart.innerText = ["💖", "💕", "✨", "🌸"][Math.floor(Math.random() * 4)];
 
-      if (!possible && STATE.dockPieces.some(p => p !== null)) {
-        triggerGameOver("NO MOVES — BUSTED!", false);
+        const x = window.innerWidth / 2 + (Math.random() - 0.5) * 160;
+        const y = window.innerHeight / 2 + (Math.random() - 0.5) * 80;
+        heart.style.left = `${x}px`;
+        heart.style.top = `${y}px`;
+
+        overlay.appendChild(heart);
+        setTimeout(() => heart.remove(), 1100);
       }
     }
 
-    document.getElementById("escapeBtn").addEventListener("click", () => {
-      sound.init();
-      triggerGameOver("CLEAN GETAWAY EXECUTED!", true);
-    });
-
-    function triggerGameOver(title, isVictory) {
-      STATE.isGameOver = true;
-      document.getElementById("modalTitle").innerText = title;
-      document.getElementById("modalTitle").className = isVictory
-        ? "font-gta text-3xl font-black text-emerald-400 tracking-wider"
-        : "font-gta text-3xl font-black text-rose-500 tracking-wider";
-
-      document.getElementById("modalIcon").innerText = isVictory ? "🚁" : "🚨";
-      document.getElementById("modalSubtitle").innerText = isVictory
-        ? "HEIST SYNDICATE ESCAPED UNTOUCHED"
-        : "SWAT CORNERED THE VAULT";
-
-      document.getElementById("finalLootVal").innerText = `$${STATE.loot.toLocaleString()}`;
-      document.getElementById("finalSafesVal").innerText = STATE.crackedCount;
-      document.getElementById("finalHeatVal").innerText = "★ ".repeat(STATE.heat).trim();
-
-      document.getElementById("resultModal").classList.remove("hidden");
-    }
-
-    document.getElementById("restartBtn").addEventListener("click", () => {
-      sound.init();
-      document.getElementById("resultModal").classList.add("hidden");
-      resetGame();
-    });
-
-    function resetGame() {
-      STATE.isGameOver = false;
-      STATE.loot = 0;
-      STATE.heat = 1;
-      STATE.swatMoves = 5;
-      STATE.isSwatActive = false;
-      STATE.multiplier = 1.0;
-      STATE.crackedCount = 0;
-      STATE.empCount = 1;
-      STATE.board = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
-      STATE.dockPieces = [null, null, null];
-      STATE.selectedPieceIdx = null;
-
-      document.getElementById("cashVal").innerText = "$0";
-      document.getElementById("progressBar").style.width = "0%";
-      document.getElementById("multiplierVal").innerText = "1.0X";
-      document.getElementById("crackedLinesVal").innerText = "0";
-      document.getElementById("empBadge").innerText = "1";
-      document.getElementById("swatBanner").classList.add("hidden");
-      document.getElementById("escapeBtn").disabled = true;
-      document.getElementById("escapeBtn").classList.remove("animate-bounce");
-
-      updateHeatUI();
-      initGridDOM();
-
-      // Place 2 initial Titanium Safes in center
-      STATE.board[2][2] = TOKENS.SAFE;
-      STATE.board[3][3] = TOKENS.SAFE;
-
-      renderBoard();
-      refillDock();
-    }
-
     // =========================================================================
-    // 9. JUICE & EFFECTS
+    // 8. BUTTON LISTENERS & STARTUP
     // =========================================================================
-    function triggerScreenShake() {
-      const body = document.getElementById("appBody");
-      body.classList.remove("screen-shake");
-      void body.offsetWidth;
-      body.classList.add("screen-shake");
-    }
-
-    function showFloatText(text, glowColor = "#10b981") {
-      const overlay = document.getElementById("floatingOverlay");
-      const el = document.createElement("div");
-      el.className = "float-text font-hud text-xs sm:text-sm font-black uppercase tracking-wider text-white px-4 py-1.5 rounded-full bg-black/90 border shadow-2xl mb-2";
-      el.style.borderColor = glowColor;
-      el.style.boxShadow = `0 0 20px ${glowColor}`;
-      el.innerText = text;
-      overlay.appendChild(el);
-      setTimeout(() => el.remove(), 1000);
-    }
+    document.getElementById("undoBtn").addEventListener("click", undoMove);
+    document.getElementById("restartBtn").addEventListener("click", () => startLevel(STATE.levelIdx));
+    document.getElementById("nextLevelBtn").addEventListener("click", () => startLevel(STATE.levelIdx + 1));
 
     document.getElementById("soundToggleBtn").addEventListener("click", () => {
       sound.init();
       const on = sound.toggle();
-      document.getElementById("soundToggleBtn").innerText = on ? "🔊 ON" : "🔇 OFF";
+      document.getElementById("soundToggleBtn").innerText = on ? "🔊" : "🔇";
     });
 
-    // START ENGINE
     window.addEventListener("pointerdown", () => sound.init(), { once: true });
-    initGridDOM();
-    resetGame();
+
+    // START FIRST COZY LEVEL
+    startLevel(0);
   </script>
 </body>
 </html>
