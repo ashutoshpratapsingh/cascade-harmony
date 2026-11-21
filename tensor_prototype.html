@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>TENSOR: The Acoustic Cartographer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * {
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      -webkit-touch-callout: none;
+    }
+    body {
+      background-color: #05050a;
+      color: #e2e8f0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.08); }
+    }
+    .pulse-glow {
+      animation: pulseGlow 2.5s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="w-screen h-screen relative flex flex-col bg-black overflow-hidden select-none">
+
+  <!-- HUD Header -->
+  <header class="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-4 py-3 bg-gradient-to-b from-black/80 via-black/40 to-transparent pointer-events-none">
+    <div class="flex items-center gap-2.5">
+      <div class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></div>
+      <div>
+        <h1 class="text-sm font-black tracking-widest text-cyan-300 font-mono">TENSOR // 01</h1>
+        <p class="text-[10px] text-zinc-400 font-mono tracking-wider" id="chamberTitle">CHAMBER: BLIND PASSAGE</p>
+      </div>
+    </div>
+
+    <!-- Live Acoustic Sensor HUD -->
+    <div class="flex items-center gap-3 font-mono text-[11px]">
+      <div class="bg-zinc-900/80 border border-zinc-800 px-2.5 py-1 rounded-lg backdrop-blur flex items-center gap-1.5">
+        <span class="text-zinc-500">FREQ:</span>
+        <span class="text-emerald-400 font-bold" id="freqVal">110 Hz</span>
+      </div>
+      <div class="bg-zinc-900/80 border border-zinc-800 px-2.5 py-1 rounded-lg backdrop-blur flex items-center gap-1.5">
+        <span class="text-zinc-500">TENSION:</span>
+        <span class="text-amber-400 font-bold" id="tensionVal">0%</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive Instruction Hint Overlay -->
+  <div id="instructionBanner" class="absolute top-16 left-1/2 -translate-x-1/2 z-20 bg-zinc-900/90 border border-cyan-500/40 px-4 py-2 rounded-full backdrop-blur shadow-lg shadow-cyan-950/40 pointer-events-none transition-opacity duration-500">
+    <p class="text-xs text-cyan-200 font-mono text-center flex items-center gap-2">
+      <span class="text-cyan-400 text-sm">⚡</span>
+      <span id="instructionText">Use TWO fingers (or Click & Drag) to stretch the acoustic string</span>
+    </p>
+  </div>
+
+  <!-- Main Dark Canvas -->
+  <main class="w-full h-full relative">
+    <canvas id="gameCanvas"></canvas>
+  </main>
+
+  <!-- Bottom Objective / Status Bar -->
+  <footer class="absolute bottom-4 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
+    <div class="bg-zinc-900/80 border border-zinc-800/80 px-3 py-1.5 rounded-xl backdrop-blur">
+      <span class="text-[10px] text-zinc-400 uppercase tracking-wider block font-mono">Objective</span>
+      <span class="text-xs font-bold text-cyan-300" id="objectiveText">Feel the dark barrier, snap string to illuminate, reach the Core</span>
+    </div>
+    <button id="resetChamberBtn" class="pointer-events-auto bg-zinc-800/80 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 text-xs font-mono px-3 py-1.5 rounded-xl backdrop-blur transition active:scale-95">
+      ↺ RESET
+    </button>
+  </footer>
+
+  <!-- Chamber Complete Modal -->
+  <div id="clearModal" class="hidden absolute inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-6">
+    <div class="bg-zinc-900 border-2 border-cyan-500/50 p-6 rounded-3xl max-w-sm w-full text-center shadow-2xl shadow-cyan-500/20">
+      <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-cyan-950 border border-cyan-400 flex items-center justify-center text-2xl">
+        ✨
+      </div>
+      <h2 class="text-lg font-black text-cyan-300 font-mono tracking-widest uppercase mb-1">RESONANCE LOCKED</h2>
+      <p class="text-xs text-zinc-400 mb-5">Chamber mapped and neutralized through acoustic echolocation.</p>
+      <button id="nextChamberBtn" class="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-black font-mono rounded-xl tracking-wider transition active:scale-95 shadow-lg shadow-cyan-500/30">
+        DESCEND DEEPER ➔
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // TENSOR: THE ACOUSTIC CARTOGRAPHER (WORLD FIRST SENSORY MECHANIC)
+    // =========================================================================
+
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let canvasW = 0;
+    let canvasH = 0;
+
+    function resizeCanvas() {
+      canvasW = window.innerWidth;
+      canvasH = window.innerHeight;
+      canvas.width = canvasW * window.devicePixelRatio;
+      canvas.height = canvasH * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    // =========================================================================
+    // 1. WEB AUDIO SYNTHESIZER ENGINE (PHYSICAL RESONANCE & STRING HARMONICS)
+    // =========================================================================
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.droneOsc = null;
+        this.droneGain = null;
+        this.filter = null;
+        this.isPlaying = false;
+      }
+
+      init() {
+        if (this.ctx) return;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        this.ctx = new AudioContext();
+
+        // Main low-pass resonance filter
+        this.filter = this.ctx.createBiquadFilter();
+        this.filter.type = "lowpass";
+        this.filter.frequency.value = 400;
+        this.filter.Q.value = 4.5;
+        this.filter.connect(this.ctx.destination);
+
+        // Continuous tension string oscillator
+        this.droneOsc = this.ctx.createOscillator();
+        this.droneOsc.type = "sawtooth";
+        this.droneOsc.frequency.value = 110; // A2 baseline
+
+        this.droneGain = this.ctx.createGain();
+        this.droneGain.gain.value = 0.0001;
+
+        this.droneOsc.connect(this.droneGain);
+        this.droneGain.connect(this.filter);
+        this.droneOsc.start();
+        this.isPlaying = true;
+      }
+
+      setTension(tension01, frequencyHz) {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        // Fade in string hum when tension exists
+        const targetVol = tension01 > 0.05 ? Math.min(0.22, 0.04 + tension01 * 0.18) : 0.0001;
+        this.droneGain.gain.setTargetAtTime(targetVol, now, 0.05);
+
+        // Frequency bends sharply as string tightens or encounters obstacles
+        this.droneOsc.frequency.setTargetAtTime(frequencyHz, now, 0.04);
+        this.filter.frequency.setTargetAtTime(frequencyHz * 2.8, now, 0.04);
+      }
+
+      // Pluck Acoustic Snap: Snapping string sends physical impact twang
+      pluck(intensity = 1.0, freq = 220) {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq * 1.5, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.5, now + 0.35);
+
+        gain.gain.setValueAtTime(0.35 * intensity, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.48);
+
+        // Haptic feedback tremor
+        if (navigator.vibrate) {
+          navigator.vibrate(Math.min(60, Math.floor(intensity * 45)));
+        }
+      }
+
+      playCoreAbsorbed() {
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        [220, 277.18, 329.63, 440, 554.37].forEach((f, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(f, now + idx * 0.07);
+          gain.gain.setValueAtTime(0.2, now + idx * 0.07);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.07 + 0.6);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + idx * 0.07);
+          osc.stop(now + idx * 0.07 + 0.65);
+        });
+      }
+    }
+
+    const sound = new SoundEngine();
+
+    // =========================================================================
+    // 2. CHAMBER LEVEL GEOMETRY & OBJECTIVES
+    // =========================================================================
+    const CHAMBERS = [
+      {
+        title: "CHAMBER 01: THE BLIND PASSAGE",
+        objective: "Feel the invisible wall in the dark, snap string to illuminate, reach the Core",
+        hint: "Stretch string across the room. Hear the pitch rise when hitting the invisible wall!",
+        // Invisible geometry
+        obstacles: [
+          { type: "rect", x: 0.15, y: 0.45, w: 0.70, h: 0.08, revealed: 0 }
+        ],
+        // The Goal Resonance Core
+        core: { x: 0.5, y: 0.2, r: 24, unlocked: true }
+      },
+      {
+        title: "CHAMBER 02: THE TWIN MONOLITHS",
+        objective: "Echolocate the two invisible pillars, weave your string between them to reach the Core",
+        hint: "Snap the string to reveal the hidden pillars with an acoustic shockwave!",
+        obstacles: [
+          { type: "circle", x: 0.35, y: 0.52, r: 0.12, revealed: 0 },
+          { type: "circle", x: 0.65, y: 0.52, r: 0.12, revealed: 0 }
+        ],
+        core: { x: 0.5, y: 0.18, r: 26, unlocked: true }
+      },
+      {
+        title: "CHAMBER 03: THE LABYRINTH GATE",
+        objective: "Navigate the zigzag barrier using harmonic pitch feedback",
+        hint: "Higher pitch means you are closer to an invisible obstacle. Pluck to illuminate!",
+        obstacles: [
+          { type: "rect", x: 0.0, y: 0.38, w: 0.65, h: 0.06, revealed: 0 },
+          { type: "rect", x: 0.35, y: 0.62, w: 0.65, h: 0.06, revealed: 0 }
+        ],
+        core: { x: 0.5, y: 0.16, r: 28, unlocked: true }
+      }
+    ];
+
+    let currentChamberIdx = 0;
+    let chamber = CHAMBERS[currentChamberIdx];
+
+    // Shockwave sonar ripple particles
+    let shockwaves = [];
+    let sparkles = [];
+
+    // =========================================================================
+    // 3. TWO-TOUCH KINETIC STRING & INPUT CONTROLLER
+    // =========================================================================
+    // String Endpoints P1 and P2
+    let p1 = { x: 0, y: 0, active: false, id: null };
+    let p2 = { x: 0, y: 0, active: false, id: null };
+
+    // String segments for Verlet bending
+    const NUM_SEGMENTS = 14;
+    let stringPoints = [];
+
+    function resetStringPoints() {
+      stringPoints = [];
+      for (let i = 0; i <= NUM_SEGMENTS; i++) {
+        stringPoints.push({ x: 0, y: 0, vx: 0, vy: 0, isPinned: false });
+      }
+    }
+    resetStringPoints();
+
+    // Mouse / Touch Event Handlers
+    let isMouseDown = false;
+    let mouseStart = { x: 0, y: 0 };
+
+    window.addEventListener("pointerdown", (e) => {
+      sound.init();
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Handle multi-touch or mouse emulation
+      if (!p1.active) {
+        p1.x = x; p1.y = y; p1.active = true; p1.id = e.pointerId;
+        // Desktop single-pointer emulation: anchor P2 slightly offset until dragged
+        if (e.pointerType === "mouse") {
+          isMouseDown = true;
+          mouseStart = { x, y };
+          p2.x = x + 1; p2.y = y + 1; p2.active = true; p2.id = "mouse_p2";
+        }
+      } else if (!p2.active && e.pointerId !== p1.id) {
+        p2.x = x; p2.y = y; p2.active = true; p2.id = e.pointerId;
+      }
+      dismissHint();
+    });
+
+    window.addEventListener("pointermove", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (p1.active && p1.id === e.pointerId) {
+        p1.x = x; p1.y = y;
+      }
+      if (p2.active && p2.id === e.pointerId) {
+        p2.x = x; p2.y = y;
+      }
+      if (isMouseDown && p2.active && p2.id === "mouse_p2") {
+        p2.x = x; p2.y = y;
+      }
+    });
+
+    function releasePointer(pointerId) {
+      if (p1.active && (p1.id === pointerId || pointerId === "all")) {
+        triggerPluckSnap(p1.x, p1.y);
+        p1.active = false; p1.id = null;
+      }
+      if (p2.active && (p2.id === pointerId || pointerId === "all")) {
+        triggerPluckSnap(p2.x, p2.y);
+        p2.active = false; p2.id = null;
+      }
+      if (isMouseDown && (pointerId === "mouse_p2" || pointerId === "all")) {
+        isMouseDown = false;
+        triggerPluckSnap(p2.x, p2.y);
+        p2.active = false; p2.id = null;
+        p1.active = false; p1.id = null;
+      }
+    }
+
+    window.addEventListener("pointerup", (e) => releasePointer(e.pointerId));
+    window.addEventListener("pointercancel", (e) => releasePointer(e.pointerId));
+
+    function dismissHint() {
+      const banner = document.getElementById("instructionBanner");
+      if (banner) banner.style.opacity = "0";
+    }
+
+    // Trigger Pluck: Acoustic shockwave reveals invisible geometry
+    function triggerPluckSnap(snapX, snapY) {
+      // Find midpoint of string
+      const midX = (p1.x + p2.x) / 2 || snapX;
+      const midY = (p1.y + p2.y) / 2 || snapY;
+      const tension = currentTension01;
+
+      sound.pluck(Math.max(0.4, tension), currentFreq);
+
+      // Create glowing echolocation shockwave
+      shockwaves.push({
+        x: midX,
+        y: midY,
+        r: 10,
+        maxR: Math.max(canvasW, canvasH) * 0.75,
+        alpha: 1.0,
+        color: tension > 0.4 ? "#f59e0b" : "#38bdf8"
+      });
+
+      // Sparkles at snap
+      for (let i = 0; i < 18; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 5 + 2;
+        sparkles.push({
+          x: midX,
+          y: midY,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          life: 1.0,
+          color: tension > 0.4 ? "#fef08a" : "#7dd3fc"
+        });
+      }
+
+      // Check if shockwave hits invisible obstacles to reveal them
+      chamber.obstacles.forEach(obs => {
+        obs.revealed = 1.0; // fully illuminates wireframe!
+      });
+    }
+
+    // =========================================================================
+    // 4. VERLET STRING COLLISION & ACOUSTIC TENSION CALCULATION
+    // =========================================================================
+    let currentTension01 = 0;
+    let currentFreq = 110;
+    let isTouchingObstacle = false;
+
+    function updateVerletString() {
+      if (!p1.active || !p2.active) {
+        currentTension01 = 0;
+        sound.setTension(0, 110);
+        document.getElementById("tensionVal").innerText = "0%";
+        document.getElementById("freqVal").innerText = "110 Hz";
+        return;
+      }
+
+      const dx = p2.x - p1.x;
+      const dy = p2.y - p1.y;
+      const dist = Math.hypot(dx, dy);
+
+      // Base tension from physical stretch distance
+      const baseTension = Math.min(1.0, dist / (Math.min(canvasW, canvasH) * 0.7));
+
+      // Interpolate string points along straight baseline
+      for (let i = 0; i <= NUM_SEGMENTS; i++) {
+        const t = i / NUM_SEGMENTS;
+        stringPoints[i].x = p1.x + dx * t;
+        stringPoints[i].y = p1.y + dy * t;
+      }
+
+      // Check collision with invisible obstacles
+      let obstacleOverlapCount = 0;
+      let minObstacleDist = 9999;
+
+      chamber.obstacles.forEach(obs => {
+        if (obs.type === "rect") {
+          const rx = obs.x * canvasW;
+          const ry = obs.y * canvasH;
+          const rw = obs.w * canvasW;
+          const rh = obs.h * canvasH;
+
+          // Check if string points penetrate rect
+          for (let i = 1; i < NUM_SEGMENTS; i++) {
+            const pt = stringPoints[i];
+            if (pt.x >= rx && pt.x <= rx + rw && pt.y >= ry && pt.y <= ry + rh) {
+              obstacleOverlapCount++;
+              // Push string point out to edge (Verlet wrap)
+              const cy = ry + rh / 2;
+              pt.y = pt.y < cy ? ry - 4 : ry + rh + 4;
+            }
+          }
+        } else if (obs.type === "circle") {
+          const cx = obs.x * canvasW;
+          const cy = obs.y * canvasH;
+          const cr = obs.r * canvasW;
+
+          for (let i = 1; i < NUM_SEGMENTS; i++) {
+            const pt = stringPoints[i];
+            const d = Math.hypot(pt.x - cx, pt.y - cy);
+            if (d < cr) {
+              obstacleOverlapCount++;
+              const angle = Math.atan2(pt.y - cy, pt.x - cx);
+              pt.x = cx + Math.cos(angle) * (cr + 4);
+              pt.y = cy + Math.sin(angle) * (cr + 4);
+            }
+          }
+        }
+      });
+
+      isTouchingObstacle = obstacleOverlapCount > 0;
+
+      // Obstacle collision sharply elevates tension and bends frequency!
+      let totalTension = Math.min(1.0, baseTension + (obstacleOverlapCount * 0.15));
+      currentTension01 = totalTension;
+
+      // Pitch calculation: 110 Hz (A2) to 587 Hz (D5)
+      currentFreq = Math.round(110 + Math.pow(totalTension, 1.3) * 440);
+
+      sound.setTension(totalTension, currentFreq);
+
+      // HUD readout
+      document.getElementById("tensionVal").innerText = `${Math.round(totalTension * 100)}%`;
+      document.getElementById("freqVal").innerText = `${currentFreq} Hz`;
+
+      // Check Core Victory Trigger: String touches or encloses the Resonance Core!
+      const core = chamber.core;
+      const corePxX = core.x * canvasW;
+      const corePxY = core.y * canvasH;
+
+      for (let i = 0; i <= NUM_SEGMENTS; i++) {
+        const d = Math.hypot(stringPoints[i].x - corePxX, stringPoints[i].y - corePxY);
+        if (d < core.r + 10) {
+          triggerChamberVictory();
+          break;
+        }
+      }
+    }
+
+    let isChamberCleared = false;
+
+    function triggerChamberVictory() {
+      if (isChamberCleared) return;
+      isChamberCleared = true;
+
+      sound.playCoreAbsorbed();
+
+      // Golden celebratory burst
+      for (let i = 0; i < 40; i++) {
+        const ang = Math.random() * Math.PI * 2;
+        const spd = Math.random() * 8 + 3;
+        sparkles.push({
+          x: chamber.core.x * canvasW,
+          y: chamber.core.y * canvasH,
+          vx: Math.cos(ang) * spd,
+          vy: Math.sin(ang) * spd,
+          life: 1.4,
+          color: "#fbbf24"
+        });
+      }
+
+      document.getElementById("clearModal").classList.remove("hidden");
+    }
+
+    // =========================================================================
+    // 5. RENDER LOOP (ATMOSPHERIC DARK ACOUSTIC CARTOGRAPHY)
+    // =========================================================================
+    function draw() {
+      ctx.fillStyle = "#05050a";
+      ctx.fillRect(0, 0, canvasW, canvasH);
+
+      // 1. Subtle Oscilloscope Grid Background
+      ctx.strokeStyle = "rgba(30, 41, 59, 0.35)";
+      ctx.lineWidth = 1;
+      const step = 48;
+      for (let x = 0; x < canvasW; x += step) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvasH); ctx.stroke();
+      }
+      for (let y = 0; y < canvasH; y += step) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvasW, y); ctx.stroke();
+      }
+
+      // 2. Render Invisible Geometry (Fade visibility based on sonar echo)
+      chamber.obstacles.forEach(obs => {
+        // Slow fade back to darkness
+        obs.revealed = Math.max(0.04, obs.revealed - 0.007);
+
+        ctx.save();
+        if (obs.type === "rect") {
+          const rx = obs.x * canvasW;
+          const ry = obs.y * canvasH;
+          const rw = obs.w * canvasW;
+          const rh = obs.h * canvasH;
+
+          // Wireframe illuminated by sonar
+          ctx.strokeStyle = `rgba(56, 189, 248, ${obs.revealed * 0.9})`;
+          ctx.lineWidth = 2.5;
+          ctx.strokeRect(rx, ry, rw, rh);
+
+          // Subtle inner glow
+          ctx.fillStyle = `rgba(14, 165, 233, ${obs.revealed * 0.18})`;
+          ctx.fillRect(rx, ry, rw, rh);
+
+          // Grid hashes inside wall
+          ctx.strokeStyle = `rgba(56, 189, 248, ${obs.revealed * 0.35})`;
+          ctx.lineWidth = 1;
+          for (let gx = rx + 16; gx < rx + rw; gx += 20) {
+            ctx.beginPath(); ctx.moveTo(gx, ry); ctx.lineTo(gx, ry + rh); ctx.stroke();
+          }
+        } else if (obs.type === "circle") {
+          const cx = obs.x * canvasW;
+          const cy = obs.y * canvasH;
+          const cr = obs.r * canvasW;
+
+          ctx.strokeStyle = `rgba(56, 189, 248, ${obs.revealed * 0.9})`;
+          ctx.lineWidth = 2.5;
+          ctx.beginPath(); ctx.arc(cx, cy, cr, 0, Math.PI * 2); ctx.stroke();
+
+          ctx.fillStyle = `rgba(14, 165, 233, ${obs.revealed * 0.18})`;
+          ctx.beginPath(); ctx.arc(cx, cy, cr, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.restore();
+      });
+
+      // 3. Render Sonar Shockwaves
+      for (let i = shockwaves.length - 1; i >= 0; i--) {
+        const sw = shockwaves[i];
+        sw.r += 14;
+        sw.alpha -= 0.024;
+
+        if (sw.alpha <= 0 || sw.r >= sw.maxR) {
+          shockwaves.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.strokeStyle = sw.color;
+        ctx.globalAlpha = sw.alpha;
+        ctx.lineWidth = Math.max(1.5, 4 * sw.alpha);
+        ctx.beginPath();
+        ctx.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 4. Update & Draw Verlet Tension String
+      updateVerletString();
+
+      if (p1.active && p2.active) {
+        ctx.save();
+
+        // Color shifts from calm cyan to tense amber to intense crimson based on tension
+        let stringColor = "#38bdf8";
+        let glowColor = "rgba(56, 189, 248, 0.4)";
+        if (currentTension01 > 0.6) {
+          stringColor = "#ef4444";
+          glowColor = "rgba(239, 68, 68, 0.5)";
+        } else if (currentTension01 > 0.3) {
+          stringColor = "#f59e0b";
+          glowColor = "rgba(245, 158, 11, 0.45)";
+        }
+
+        // Draw Outer Glow Beam
+        ctx.strokeStyle = glowColor;
+        ctx.lineWidth = 9;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(stringPoints[0].x, stringPoints[0].y);
+        for (let i = 1; i <= NUM_SEGMENTS; i++) {
+          ctx.lineTo(stringPoints[i].x, stringPoints[i].y);
+        }
+        ctx.stroke();
+
+        // Draw Core Laser String
+        ctx.strokeStyle = stringColor;
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.moveTo(stringPoints[0].x, stringPoints[0].y);
+        for (let i = 1; i <= NUM_SEGMENTS; i++) {
+          ctx.lineTo(stringPoints[i].x, stringPoints[i].y);
+        }
+        ctx.stroke();
+
+        // String Center Waveform Vibration Ripple
+        const midIdx = Math.floor(NUM_SEGMENTS / 2);
+        const midPt = stringPoints[midIdx];
+        const now = Date.now();
+        const ripple = Math.sin(now * (currentFreq * 0.05)) * (4 + currentTension01 * 8);
+
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(midPt.x, midPt.y + ripple, 5, 0, Math.PI * 2);
+        ctx.fillStyle = stringColor;
+        ctx.fill();
+        ctx.stroke();
+
+        // Draw Touch Anchor Rings at Finger 1 & Finger 2
+        [p1, p2].forEach((p, idx) => {
+          ctx.strokeStyle = stringColor;
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 24, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = stringColor;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Label
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "9px monospace";
+          ctx.fillText(`PROBE ${idx + 1}`, p.x - 18, p.y - 32);
+        });
+
+        ctx.restore();
+      }
+
+      // 5. Draw Resonance Goal Core
+      const core = chamber.core;
+      const corePxX = core.x * canvasW;
+      const corePxY = core.y * canvasH;
+
+      ctx.save();
+      // Outer breathing aura
+      const auraScale = 1 + Math.sin(Date.now() * 0.005) * 0.12;
+      const auraGrad = ctx.createRadialGradient(corePxX, corePxY, 0, corePxX, corePxY, core.r * 2.2 * auraScale);
+      auraGrad.addColorStop(0, "rgba(251, 191, 36, 0.45)");
+      auraGrad.addColorStop(0.6, "rgba(245, 158, 11, 0.15)");
+      auraGrad.addColorStop(1, "rgba(245, 158, 11, 0)");
+      ctx.fillStyle = auraGrad;
+      ctx.beginPath();
+      ctx.arc(corePxX, corePxY, core.r * 2.2 * auraScale, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Rotating core diamond
+      ctx.translate(corePxX, corePxY);
+      ctx.rotate(Date.now() * 0.0018);
+      ctx.strokeStyle = "#fbbf24";
+      ctx.lineWidth = 2.8;
+      ctx.strokeRect(-core.r * 0.6, -core.r * 0.6, core.r * 1.2, core.r * 1.2);
+
+      // Core center orb
+      ctx.fillStyle = "#fef08a";
+      ctx.beginPath();
+      ctx.arc(0, 0, core.r * 0.45, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // 6. Draw Sparkles
+      for (let i = sparkles.length - 1; i >= 0; i--) {
+        const sp = sparkles[i];
+        sp.x += sp.vx;
+        sp.y += sp.vy;
+        sp.vx *= 0.95;
+        sp.vy *= 0.95;
+        sp.life -= 0.025;
+
+        if (sp.life <= 0) {
+          sparkles.splice(i, 1);
+          continue;
+        }
+
+        ctx.fillStyle = sp.color;
+        ctx.globalAlpha = sp.life;
+        ctx.beginPath();
+        ctx.arc(sp.x, sp.y, 3 * sp.life, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    requestAnimationFrame(draw);
+
+    // =========================================================================
+    // 6. CHAMBER ADVANCEMENT & CONTROLS
+    // =========================================================================
+    function loadChamber(idx) {
+      currentChamberIdx = idx % CHAMBERS.length;
+      chamber = CHAMBERS[currentChamberIdx];
+      isChamberCleared = false;
+
+      document.getElementById("chamberTitle").innerText = chamber.title;
+      document.getElementById("objectiveText").innerText = chamber.objective;
+      document.getElementById("instructionText").innerText = chamber.hint;
+      document.getElementById("instructionBanner").style.opacity = "1";
+
+      document.getElementById("clearModal").classList.add("hidden");
+
+      chamber.obstacles.forEach(o => o.revealed = 0);
+      shockwaves = [];
+      sparkles = [];
+      resetStringPoints();
+      p1.active = false;
+      p2.active = false;
+    }
+
+    document.getElementById("nextChamberBtn").addEventListener("click", () => {
+      loadChamber(currentChamberIdx + 1);
+    });
+
+    document.getElementById("resetChamberBtn").addEventListener("click", () => {
+      loadChamber(currentChamberIdx);
+    });
+
+  </script>
+</body>
+</html>
