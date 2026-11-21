@@ -3,18 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>SAN ANDREAS: GETAWAY 3D — 5-Star Los Santos Police Pursuit</title>
+  <title>GTA HEIST SYNDICATE — Urban Vault Breaker</title>
 
-  <!-- Google Fonts: Orbitron, Rajdhani, Bebas Neue, Permanent Marker -->
+  <!-- Google Fonts: Orbitron, Rajdhani, Bebas Neue, Chakra Petch -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700;900&family=Permanent+Marker&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Chakra+Petch:wght@600;700;800&family=Orbitron:wght@700;800;900&family=Rajdhani:wght@600;700;800&display=swap" rel="stylesheet">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Three.js (r128) WebGL 3D Engine -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
     * {
@@ -22,350 +19,354 @@
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       user-select: none;
-      font-family: 'Rajdhani', sans-serif;
-    }
-
-    /* GTA San Andreas Typography */
-    .font-gta {
-      font-family: 'Bebas Neue', 'Orbitron', cursive, sans-serif;
-      letter-spacing: 0.08em;
+      font-family: 'Chakra Petch', 'Rajdhani', sans-serif;
     }
 
     .font-hud {
       font-family: 'Orbitron', monospace, sans-serif;
     }
 
-    .font-street {
-      font-family: 'Permanent Marker', cursive, sans-serif;
+    .font-gta {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.06em;
     }
 
     body {
-      background: #060508;
+      background-color: #050608;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),
+        linear-gradient(to bottom, #06070a 0%, #030406 100%);
       color: #fff;
     }
 
-    /* GTA San Andreas Green Money Glow */
-    .gta-cash-glow {
-      text-shadow: 0 0 12px rgba(52, 211, 153, 0.8), 0 0 25px rgba(16, 185, 129, 0.5);
+    /* Grid Cell Luxury Bevel & Glow */
+    .vault-cell {
+      background: rgba(15, 18, 26, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.7);
+      transition: all 0.16s ease-out;
+    }
+    .vault-cell.highlight {
+      background: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10b981 !important;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.5), inset 0 0 8px rgba(16, 185, 129, 0.3) !important;
+    }
+    .vault-cell.invalid-highlight {
+      background: rgba(239, 68, 68, 0.25) !important;
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.5) !important;
     }
 
-    /* 5-Star Wanted Star Flashes */
-    @keyframes starPulseAnim {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px #eab308); }
-      50% { transform: scale(1.35); filter: drop-shadow(0 0 16px #ef4444); }
+    /* Token Visual Styles */
+    .token-cash {
+      background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #10b981 100%);
+      border: 1.5px solid #34d399;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
     }
-    .wanted-star-active {
-      animation: starPulseAnim 0.65s ease-in-out infinite;
+    .token-gold {
+      background: linear-gradient(135deg, #78350f 0%, #b45309 40%, #f59e0b 80%, #fef08a 100%);
+      border: 1.5px solid #fde047;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    }
+    .token-diamond {
+      background: linear-gradient(135deg, #0e7490 0%, #06b6d4 50%, #a5f3fc 100%);
+      border: 1.5px solid #67e8f9;
+      box-shadow: 0 4px 16px rgba(6, 182, 212, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+    }
+    .token-c4 {
+      background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 50%, #f87171 100%);
+      border: 1.5px solid #fca5a5;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+    }
+    .token-emp {
+      background: linear-gradient(135deg, #581c87 0%, #7e22ce 50%, #c084fc 100%);
+      border: 1.5px solid #e9d5ff;
+      box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+    }
+    .token-locked {
+      background: #1c1917;
+      border: 1.5px dashed #78716c;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Screen Emergency Siren Strobe on Border (High Heat) */
+    @keyframes policeStrobePulse {
+      0%, 100% { box-shadow: inset 0 0 35px rgba(239, 68, 68, 0.5); }
+      50% { box-shadow: inset 0 0 35px rgba(59, 130, 246, 0.5); }
+    }
+    .high-heat-strobe {
+      animation: policeStrobePulse 0.48s ease-in-out infinite alternate;
+    }
+
+    /* Wanted Star Flashes */
+    @keyframes starPulseAnim {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 3px #f59e0b); }
+      50% { transform: scale(1.3); filter: drop-shadow(0 0 12px #ef4444); }
+    }
+    .star-active {
+      animation: starPulseAnim 0.7s ease-in-out infinite;
       color: #f59e0b;
     }
-    .wanted-star-inactive {
+    .star-inactive {
       color: #374151;
-      opacity: 0.35;
+      opacity: 0.3;
     }
 
-    /* Screen Emergency Siren Strobe on Border */
-    @keyframes sirenStrobeBorder {
-      0%, 100% { box-shadow: inset 0 0 45px rgba(239, 68, 68, 0.45); }
-      50% { box-shadow: inset 0 0 45px rgba(59, 130, 246, 0.45); }
+    /* Screen Shake on Big Clear / C4 Explosion */
+    @keyframes shakeAnim {
+      0%, 100% { transform: translate(0, 0); }
+      20% { transform: translate(-5px, 4px) rotate(-0.5deg); }
+      40% { transform: translate(5px, -3px) rotate(0.5deg); }
+      60% { transform: translate(-3px, 2px); }
+      80% { transform: translate(3px, -2px); }
     }
-    .police-siren-strobe {
-      animation: sirenStrobeBorder 0.45s ease-in-out infinite alternate;
-    }
-
-    /* Cinematic Slow-Mo Vignette for Stunt Jumps */
-    .stunt-vignette {
-      box-shadow: inset 0 0 90px rgba(245, 158, 11, 0.65);
+    .screen-shake {
+      animation: shakeAnim 0.28s cubic-bezier(0.36, 0.07, 0.19, 0.97);
     }
 
-    /* Bouncy Touch Controls */
-    .touch-btn:active {
-      transform: scale(0.92);
-      filter: brightness(1.25);
+    /* Floating Money Numbers */
+    @keyframes floatUpFade {
+      0% { opacity: 0; transform: translateY(10px) scale(0.8); }
+      20% { opacity: 1; transform: translateY(0) scale(1.15); }
+      100% { opacity: 0; transform: translateY(-48px) scale(1); }
+    }
+    .floating-loot {
+      animation: floatUpFade 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    /* Radar Scanline Animation */
-    @keyframes radarSweepAnim {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .radar-sweep {
-      animation: radarSweepAnim 2.2s linear infinite;
-      transform-origin: center center;
+    /* Laser Line Divider (Circuit aesthetic) */
+    .circuit-laser {
+      background: linear-gradient(90deg, transparent, #10b981, #06b6d4, transparent);
+      height: 1px;
     }
   </style>
 </head>
-<body id="appBody" class="flex flex-col justify-between items-center h-full max-h-[100dvh] w-full overflow-hidden select-none bg-black relative">
+<body id="appBody" class="flex flex-col justify-between items-center h-full max-h-[100dvh] w-full overflow-hidden select-none bg-[#050608]">
 
   <!-- ========================================================================= -->
-  <!-- 3D WEBGL CANVAS VIEWPORT                                                  -->
+  <!-- TOP GTA HEIST HUD (Wanted Heat, Cash Counter, Target Progress)            -->
   <!-- ========================================================================= -->
-  <div id="canvasContainer" class="absolute inset-0 w-full h-full z-0 overflow-hidden">
-    <!-- WebGL canvas injected here by Three.js -->
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- TOP GTA SAN ANDREAS HUD                                                   -->
-  <!-- ========================================================================= -->
-  <header class="w-full flex items-start justify-between z-20 px-3 sm:px-6 pt-2 pointer-events-none">
-    <!-- LEFT: SAN ANDREAS LOGO & CURRENT DISTRICT -->
-    <div class="flex flex-col items-start pointer-events-auto">
-      <div class="flex items-center gap-2 bg-black/75 backdrop-blur-md px-3 py-1 rounded-xl border border-amber-500/40 shadow-xl">
-        <span class="text-amber-400 font-gta text-lg sm:text-xl tracking-wider leading-none drop-shadow">SAN ANDREAS</span>
-        <span class="bg-amber-500 text-black font-hud text-[9px] font-black px-1.5 py-0.5 rounded tracking-tighter">3D</span>
+  <header class="w-full max-w-md mx-auto flex flex-col z-20 px-3 pt-2 pb-1 bg-black/70 backdrop-blur-md border-b border-white/10 shadow-2xl">
+    <div class="flex items-center justify-between">
+      <!-- HEIST LOGO & CREW BADGE -->
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-emerald-950/80 border border-emerald-500/60 flex items-center justify-center text-emerald-400 font-black text-sm shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+          $
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="font-gta text-amber-400 text-lg leading-none tracking-wider">HEIST SYNDICATE</span>
+            <span class="bg-emerald-500/20 text-emerald-300 font-hud text-[8px] font-black px-1.5 py-0.2 rounded border border-emerald-500/40">VAULT</span>
+          </div>
+          <div class="text-[9px] text-slate-400 font-bold uppercase tracking-widest leading-none mt-0.5">
+            LOCATION: <span class="text-cyan-300" id="currentBankName">PACIFIC STANDARD</span>
+          </div>
+        </div>
       </div>
-      <div id="districtBanner" class="mt-1 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2.5 py-0.5 rounded-lg border border-white/10 text-[10px] sm:text-xs text-amber-200 font-bold uppercase tracking-widest shadow">
-        <span>📍</span>
-        <span id="districtName">LOS SANTOS — DOWNTOWN</span>
+
+      <!-- POLICE HEAT METER (5-Star Wanted Level) -->
+      <div class="flex flex-col items-end">
+        <div class="flex items-center gap-1">
+          <span class="text-[8px] font-hud font-black uppercase tracking-widest text-slate-400">HEAT</span>
+          <div id="starsRow" class="flex items-center gap-0.5 text-base sm:text-lg leading-none">
+            <span class="star-node star-active">★</span>
+            <span class="star-node star-inactive">★</span>
+            <span class="star-node star-inactive">★</span>
+            <span class="star-node star-inactive">★</span>
+            <span class="star-node star-inactive">★</span>
+          </div>
+        </div>
+        <div class="text-[8px] text-rose-400 font-bold uppercase tracking-wider mt-0.5" id="heatWarningLabel">
+          PATROL MONITORING
+        </div>
       </div>
     </div>
 
-    <!-- CENTER: 5-STAR WANTED LEVEL -->
-    <div class="flex flex-col items-center bg-black/80 backdrop-blur-md px-4 py-1.5 rounded-2xl border border-amber-500/50 shadow-2xl pointer-events-auto">
-      <span class="text-[8px] font-hud font-black uppercase tracking-widest text-slate-400 leading-none mb-0.5">WANTED LEVEL</span>
-      <div id="wantedStarsContainer" class="flex items-center gap-1 text-lg sm:text-2xl leading-none">
-        <span class="star-node wanted-star-active">★</span>
-        <span class="star-node wanted-star-inactive">★</span>
-        <span class="star-node wanted-star-inactive">★</span>
-        <span class="star-node wanted-star-inactive">★</span>
-        <span class="star-node wanted-star-inactive">★</span>
+    <!-- CASH COUNTER & HEIST TARGET BAR -->
+    <div class="mt-2 flex items-center justify-between gap-3 bg-zinc-950/80 p-2 rounded-xl border border-white/5">
+      <!-- STASH TALLY -->
+      <div>
+        <div class="text-[8px] font-hud uppercase tracking-widest text-slate-400 font-bold leading-none">HEIST LOOT SECURED</div>
+        <div id="lootCounter" class="font-hud text-lg sm:text-xl font-black text-emerald-400 tabular-nums leading-tight drop-shadow-[0_0_12px_rgba(52,211,153,0.5)]">
+          $0
+        </div>
       </div>
-    </div>
 
-    <!-- RIGHT: CASH HEIST STASH & IN-GAME CLOCK -->
-    <div class="flex flex-col items-end pointer-events-auto">
-      <!-- GREEN CASH COUNTER -->
-      <div class="flex items-center gap-1.5 bg-black/80 backdrop-blur-md px-3.5 py-1.5 rounded-2xl border border-emerald-500/50 shadow-2xl">
-        <span class="text-emerald-400 font-black text-base leading-none">$</span>
-        <div id="cashVal" class="font-hud text-base sm:text-xl font-black text-emerald-400 tabular-nums leading-none gta-cash-glow">
-          125,000
+      <!-- TARGET PROGRESS BAR -->
+      <div class="flex-1 max-w-[170px] text-right">
+        <div class="flex justify-between items-center text-[8px] font-hud font-bold text-slate-400 mb-0.5">
+          <span>ESCAPE TARGET</span>
+          <span id="targetLabel" class="text-amber-300">$1,000,000</span>
+        </div>
+        <div class="w-full h-2 bg-zinc-900 rounded-full overflow-hidden border border-white/10 p-0.5">
+          <div id="targetProgressBar" class="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-400 rounded-full transition-all duration-300" style="width: 0%;"></div>
         </div>
       </div>
-      <!-- CLOCK & RESPECT -->
-      <div class="mt-1 flex items-center gap-2 text-[10px] text-slate-300 font-bold bg-black/60 backdrop-blur-sm px-2.5 py-0.5 rounded-lg border border-white/10">
-        <div class="flex items-center gap-1">
-          <span class="text-cyan-400">🕒</span>
-          <span id="clockVal" class="font-hud font-black text-cyan-300">21:45</span>
-        </div>
-        <span class="text-slate-600">|</span>
-        <div class="flex items-center gap-1">
-          <span class="text-purple-400">👑 RESPECT:</span>
-          <span id="respectVal" class="font-hud font-black text-purple-300">100%</span>
-        </div>
+
+      <!-- AUDIO & CREW BUTTONS -->
+      <div class="flex items-center gap-1">
+        <button id="soundBtn" class="p-1 px-1.5 rounded-lg bg-zinc-900 border border-zinc-700 text-zinc-300 text-[10px] font-bold shadow hover:bg-zinc-800">
+          🔊
+        </button>
       </div>
     </div>
   </header>
 
   <!-- ========================================================================= -->
-  <!-- CENTER OVERLAYS: STUNT JUMP BANNER, PAY 'N' SPRAY, NOTIFICATIONS          -->
+  <!-- MAIN HEIST BOARD: 6x6 VAULT BLUEPRINT & FLOATING NOTIFICATIONS             -->
   <!-- ========================================================================= -->
-  <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-30 space-y-3">
-    <!-- INSANE STUNT JUMP POPUP -->
-    <div id="stuntBanner" class="hidden flex-col items-center justify-center bg-black/90 border-2 border-amber-400 px-6 py-3 rounded-3xl shadow-[0_0_40px_rgba(245,158,11,0.8)] backdrop-blur-md transform scale-110 transition-all duration-200">
-      <div class="text-amber-400 font-gta text-2xl sm:text-3xl tracking-widest leading-none drop-shadow">INSANE STUNT BONUS!</div>
-      <div id="stuntStats" class="font-hud text-xs sm:text-sm text-yellow-200 font-bold mt-1">AIR TIME: 2.4s | DISTANCE: 68m | +$15,000</div>
+  <main class="relative w-full flex-1 flex flex-col items-center justify-center p-2 min-h-0 overflow-hidden">
+
+    <!-- FLOATING COMBO & HEIST POPUPS -->
+    <div id="floatingOverlay" class="absolute inset-0 pointer-events-none z-30 flex items-center justify-center overflow-hidden">
+      <!-- Combo banners will spawn here -->
     </div>
 
-    <!-- NOTIFICATION PILL (Cop Wrecked, Pay 'N' Spray, Loot) -->
-    <div id="hudNotify" class="hidden font-hud text-xs sm:text-sm font-black uppercase tracking-wider text-amber-300 bg-black/90 px-5 py-2 rounded-full border border-amber-400 shadow-2xl">
-      💥 POLICE CRUISER TOTALED! +$5,000
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- BOTTOM AREA: RADAR MINIMAP, DASHBOARD SPEEDOMETER & TOUCH CONTROLS        -->
-  <!-- ========================================================================= -->
-  <footer class="w-full flex items-end justify-between z-20 p-2 sm:p-4 pointer-events-none select-none">
-    
-    <!-- BOTTOM-LEFT: AUTHENTIC GTA RADAR MINIMAP (CANVAS) -->
-    <div class="flex flex-col items-start pointer-events-auto">
-      <!-- RADIO STATION WIDGET (Click to change station!) -->
-      <button id="radioToggleBtn" class="touch-btn mb-2 flex items-center gap-2 bg-black/85 backdrop-blur-md px-3 py-1 rounded-xl border border-cyan-500/50 text-[10px] sm:text-xs font-bold text-cyan-300 shadow-lg hover:border-cyan-400 transition">
-        <span>📻</span>
-        <span id="radioStationName">RADIO LOS SANTOS (G-FUNK)</span>
-        <span class="animate-pulse text-cyan-400">♫</span>
-      </button>
-
-      <!-- CIRCULAR RADAR HUD -->
-      <div class="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-black/85 border-2 border-zinc-700 shadow-2xl overflow-hidden p-1 backdrop-blur-md">
-        <!-- Radar Map Canvas -->
-        <canvas id="radarCanvas" class="w-full h-full rounded-full block"></canvas>
-        <!-- Rotating Radar Sweep Line -->
-        <div class="absolute inset-0 pointer-events-none rounded-full border border-cyan-500/20">
-          <div class="w-full h-full radar-sweep opacity-30 bg-gradient-to-tr from-transparent via-cyan-500/30 to-transparent"></div>
-        </div>
-        <!-- Center Player Indicator (Gold Chevron) -->
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div class="w-2.5 h-2.5 bg-amber-400 rounded-full border border-white shadow-[0_0_8px_#f59e0b]"></div>
-        </div>
-        <!-- Compass Labels -->
-        <span class="absolute top-1 left-1/2 -translate-x-1/2 text-[8px] font-hud font-black text-amber-400">N</span>
-        <span class="absolute bottom-1 left-1/2 -translate-x-1/2 text-[8px] font-hud font-black text-slate-500">S</span>
-        <span class="absolute left-1 top-1/2 -translate-y-1/2 text-[8px] font-hud font-black text-slate-500">W</span>
-        <span class="absolute right-1 top-1/2 -translate-y-1/2 text-[8px] font-hud font-black text-slate-500">E</span>
+    <!-- SWAT RAID EMERGENCY BANNER (Appears at 5 Stars) -->
+    <div id="swatRaidBanner" class="hidden absolute top-2 left-4 right-4 z-40 bg-rose-950/90 border-2 border-rose-500 rounded-2xl p-2.5 text-center shadow-[0_0_30px_rgba(239,68,68,0.8)] backdrop-blur-md animate-pulse">
+      <div class="font-hud text-xs sm:text-sm font-black text-rose-300 uppercase tracking-widest">
+        🚨 SWAT BREACH INCOMING IN <span id="swatMovesCountdown" class="text-white text-base">5</span> MOVES!
+      </div>
+      <div class="text-[9px] text-rose-200/80 font-bold tracking-wider">
+        USE EMP JAMMER OR COMPLETE CLEAN ESCAPE NOW!
       </div>
     </div>
 
-    <!-- CENTER: ONSCREEN TOUCH STEERING (MOBILE-FIRST) -->
-    <div class="flex-1 flex items-center justify-center gap-2 sm:gap-4 px-2 pointer-events-auto">
-      <!-- STEER LEFT BUTTON -->
-      <button id="touchSteerLeft" class="touch-btn w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-black/75 backdrop-blur-md border-2 border-amber-500/60 flex flex-col items-center justify-center text-amber-400 active:bg-amber-500/30 shadow-2xl">
-        <span class="text-2xl sm:text-3xl leading-none font-black">◀</span>
-        <span class="text-[8px] font-hud font-black tracking-widest mt-0.5">STEER</span>
-      </button>
+    <!-- 6x6 VAULT BLUEPRINT BOARD -->
+    <div class="relative p-2.5 rounded-3xl bg-[#090c12]/90 border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+      <!-- Background Cyber Grid Accent -->
+      <div class="absolute inset-2 border border-cyan-500/10 rounded-2xl pointer-events-none"></div>
 
-      <!-- HYDRAULICS HOP / JUMP BUTTON -->
-      <button id="touchHopBtn" class="touch-btn w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-purple-950/80 backdrop-blur-md border-2 border-purple-500/60 flex flex-col items-center justify-center text-purple-300 active:bg-purple-600/40 shadow-2xl">
-        <span class="text-xl sm:text-2xl leading-none">🦘</span>
-        <span class="text-[7.5px] font-hud font-black tracking-widest mt-0.5">HOP</span>
-      </button>
-
-      <!-- HANDBRAKE / DRIFT BUTTON -->
-      <button id="touchDriftBtn" class="touch-btn w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-amber-950/80 backdrop-blur-md border-2 border-yellow-500/60 flex flex-col items-center justify-center text-yellow-300 active:bg-yellow-500/40 shadow-2xl">
-        <span class="text-xl sm:text-2xl leading-none">⚡</span>
-        <span class="text-[7.5px] font-hud font-black tracking-widest mt-0.5">DRIFT</span>
-      </button>
-
-      <!-- STEER RIGHT BUTTON -->
-      <button id="touchSteerRight" class="touch-btn w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-black/75 backdrop-blur-md border-2 border-amber-500/60 flex flex-col items-center justify-center text-amber-400 active:bg-amber-500/30 shadow-2xl">
-        <span class="text-2xl sm:text-3xl leading-none font-black">▶</span>
-        <span class="text-[8px] font-hud font-black tracking-widest mt-0.5">STEER</span>
-      </button>
+      <!-- THE 6x6 GRID CONTAINER -->
+      <div id="vaultGrid" class="grid grid-cols-6 gap-1.5 sm:gap-2 w-[310px] h-[310px] sm:w-[350px] sm:h-[350px] relative z-10">
+        <!-- Cells generated by JavaScript -->
+      </div>
     </div>
 
-    <!-- BOTTOM-RIGHT: PEDALS, NITRO BOOST & SPEEDOMETER -->
-    <div class="flex flex-col items-end pointer-events-auto">
-      <!-- CAMERA VIEW & SOUND BUTTONS -->
-      <div class="flex items-center gap-1.5 mb-2">
-        <button id="camToggleBtn" class="touch-btn bg-black/80 backdrop-blur-md border border-white/20 text-white/90 text-[10px] font-hud font-black px-2.5 py-1 rounded-xl shadow hover:bg-white/10">
-          📷 CAM: CHASE
-        </button>
-        <button id="sirenSoundBtn" class="touch-btn bg-black/80 backdrop-blur-md border border-white/20 text-white/90 text-[10px] font-hud font-black px-2 py-1 rounded-xl shadow hover:bg-white/10">
-          🔊 AUDIO
-        </button>
+    <!-- COMBO MULTIPLIER / STATUS PILL -->
+    <div class="mt-2 flex items-center gap-3 font-hud text-[10px] font-bold">
+      <div class="flex items-center gap-1.5 bg-zinc-900/80 px-2.5 py-1 rounded-full border border-white/10">
+        <span class="text-amber-400">⚡ MULTIPLIER:</span>
+        <span id="multiplierVal" class="text-amber-300 font-black">1.0X</span>
       </div>
-
-      <!-- SPEEDOMETER & NITRO GAUGE HUD -->
-      <div class="bg-black/85 backdrop-blur-md border-2 border-zinc-700 p-2.5 rounded-2xl shadow-2xl flex items-center gap-3">
-        <!-- SPEED DIGITAL GAUGE -->
-        <div class="text-right">
-          <div class="text-[8px] font-hud font-bold text-slate-400 uppercase tracking-widest">SPEED</div>
-          <div class="flex items-baseline justify-end gap-1">
-            <span id="speedVal" class="font-hud text-xl sm:text-2xl font-black text-amber-400 leading-none">0</span>
-            <span class="text-[9px] font-hud font-bold text-slate-400">MPH</span>
-          </div>
-          <!-- ARMOR HEALTH BAR -->
-          <div class="w-20 sm:w-24 h-1.5 bg-zinc-800 rounded-full overflow-hidden mt-1 border border-zinc-700">
-            <div id="armorBar" class="h-full bg-gradient-to-r from-emerald-500 to-green-400 transition-all duration-100" style="width: 100%;"></div>
-          </div>
-        </div>
-
-        <!-- NITRO BOOST ACTION BUTTON -->
-        <button id="touchNitroBtn" class="touch-btn px-3 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-hud text-xs font-black uppercase tracking-wider shadow-[0_0_15px_rgba(6,182,212,0.8)] active:scale-95 transition flex flex-col items-center">
-          <span>🚀 NITRO</span>
-          <div class="w-12 h-1 bg-black/40 rounded-full overflow-hidden mt-1">
-            <div id="nitroBar" class="h-full bg-cyan-200 transition-all duration-75" style="width: 100%;"></div>
-          </div>
-        </button>
-
-        <!-- GAS / BRAKE PEDALS -->
-        <div class="flex items-center gap-1.5">
-          <button id="touchBrake" class="touch-btn w-11 h-14 rounded-xl bg-rose-950/80 border border-rose-500 text-rose-300 font-hud text-[9px] font-black flex flex-col items-center justify-center active:bg-rose-600/40">
-            <span>REV</span>
-            <span class="text-sm">▼</span>
-          </button>
-          <button id="touchGas" class="touch-btn w-12 h-14 rounded-xl bg-emerald-950/80 border-2 border-emerald-500 text-emerald-300 font-hud text-xs font-black flex flex-col items-center justify-center active:bg-emerald-600/40 shadow-lg">
-            <span>GAS</span>
-            <span class="text-base">▲</span>
-          </button>
-        </div>
+      <div class="flex items-center gap-1.5 bg-zinc-900/80 px-2.5 py-1 rounded-full border border-white/10">
+        <span class="text-cyan-400">💥 DRILLS CRACKED:</span>
+        <span id="crackedLinesVal" class="text-cyan-300 font-black">0</span>
       </div>
+    </div>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- BOTTOM AREA: HEIST CREW PIECES DOCK (DRAG OR TAP TO PLACE)                -->
+  <!-- ========================================================================= -->
+  <footer class="w-full max-w-md mx-auto flex flex-col z-20 px-3 pb-3 pt-1 bg-black/80 backdrop-blur-md border-t border-white/10 shadow-2xl">
+    <!-- PIECES INSTRUCTION BAR -->
+    <div class="flex items-center justify-between text-[9px] font-hud font-bold text-slate-400 px-1 mb-1.5">
+      <span>HEIST GEAR PIECES</span>
+      <span class="text-emerald-400 flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+        DRAG OR TAP TO DEPLOY
+      </span>
+    </div>
+
+    <!-- 3 HEIST GEAR DOCK SLOTS -->
+    <div id="piecesDock" class="flex items-center justify-between gap-2 h-24 sm:h-28 bg-[#090b10] p-2 rounded-2xl border border-white/10">
+      <!-- 3 Draggable piece cards injected dynamically -->
+    </div>
+
+    <!-- ACTION BUTTONS: CLEAN GETAWAY / ESCAPE (When target met) -->
+    <div class="mt-2 flex items-center gap-2">
+      <!-- CLEAN GETAWAY TRIGGER BUTTON -->
+      <button id="escapeBtn" class="flex-1 py-2 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-500 to-green-400 hover:brightness-110 text-black font-hud text-xs font-black uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.5)] active:scale-95 transition disabled:opacity-40 disabled:pointer-events-none" disabled>
+        🚁 EXECUTE CLEAN GETAWAY ($1M REACHED)
+      </button>
+
+      <!-- CREW PERK ABILITY (EMP BLAST) -->
+      <button id="empBlastBtn" class="px-3 py-2 rounded-xl bg-purple-950/80 border border-purple-500/70 text-purple-300 font-hud text-[10px] font-black uppercase tracking-wider shadow hover:bg-purple-900 active:scale-95 transition flex items-center gap-1">
+        <span>⚡ EMP JAMMER</span>
+        <span id="empCountBadge" class="bg-purple-500 text-black text-[9px] font-black px-1.5 rounded-full">1</span>
+      </button>
     </div>
   </footer>
 
   <!-- ========================================================================= -->
-  <!-- "WASTED / BUSTED" GAME OVER MODAL (AUTHENTIC SAN ANDREAS STYLE)           -->
+  <!-- "HEIST COMPLETE" / "BUSTED" MODAL                                         -->
   <!-- ========================================================================= -->
-  <div id="gameOverModal" class="fixed inset-0 bg-black/92 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden select-none">
-    <div class="max-w-sm w-full bg-[#120707] border-3 border-rose-600 rounded-3xl p-6 shadow-[0_0_60px_rgba(239,68,68,0.7)] text-center space-y-4">
-      <!-- ICON -->
-      <div class="w-16 h-16 mx-auto rounded-2xl bg-rose-950 border-2 border-rose-600 flex items-center justify-center text-3xl shadow-2xl animate-pulse">
-        🚨
+  <div id="heistResultModal" class="fixed inset-0 bg-black/92 z-50 flex items-center justify-center p-4 backdrop-blur-md hidden select-none">
+    <div class="max-w-sm w-full bg-[#0d0f14] border-2 border-emerald-500 rounded-3xl p-6 shadow-[0_0_60px_rgba(16,185,129,0.4)] text-center space-y-4">
+      <!-- MODAL ICON -->
+      <div id="resultIcon" class="w-16 h-16 mx-auto rounded-2xl bg-emerald-950/80 border-2 border-emerald-500 flex items-center justify-center text-3xl shadow-2xl">
+        💰
       </div>
 
       <div>
-        <h2 id="gameOverTitle" class="font-gta text-4xl font-black text-rose-500 tracking-widest drop-shadow-[0_0_20px_rgba(239,68,68,1)]">
-          BUSTED!
+        <h2 id="resultTitle" class="font-gta text-3xl sm:text-4xl font-black text-emerald-400 tracking-wider drop-shadow-[0_0_20px_rgba(16,185,129,0.6)]">
+          CLEAN GETAWAY!
         </h2>
-        <p class="text-xs text-slate-400 font-bold tracking-wider mt-1">LSPD & SWAT CORNERED YOUR LOWRIDER</p>
+        <p id="resultSubtitle" class="text-xs text-slate-400 font-bold tracking-wider mt-1">THE SYNDICATE HAULED THE MILLIONS</p>
       </div>
 
-      <!-- STATS BREAKDOWN -->
-      <div class="bg-black/75 p-4 rounded-2xl border border-rose-900/60 space-y-2 text-left text-xs font-bold">
+      <!-- HEIST STATS BREAKDOWN -->
+      <div class="bg-black/75 p-4 rounded-2xl border border-white/10 space-y-2 text-left text-xs font-bold">
         <div class="flex justify-between items-center">
-          <span class="text-slate-400">Total Heist Loot:</span>
+          <span class="text-slate-400">Total Loot Secured:</span>
           <span id="finalLoot" class="font-hud font-black text-emerald-400 text-sm">$0</span>
         </div>
         <div class="flex justify-between items-center">
-          <span class="text-slate-400">Police Cruisers Totaled:</span>
-          <span id="finalCops" class="font-hud font-black text-amber-400">0</span>
+          <span class="text-slate-400">Vault Tumblers Cracked:</span>
+          <span id="finalTumblers" class="font-hud font-black text-cyan-400">0</span>
         </div>
         <div class="flex justify-between items-center">
-          <span class="text-slate-400">Insane Stunt Jumps:</span>
-          <span id="finalStunts" class="font-hud font-black text-cyan-400">0</span>
-        </div>
-        <div class="flex justify-between items-center">
-          <span class="text-slate-400">Highest Wanted Stars:</span>
-          <span id="finalStars" class="font-hud font-black text-yellow-300">★ ★ ★ ★ ★</span>
+          <span class="text-slate-400">Max Heat Survived:</span>
+          <span id="finalHeatStars" class="font-hud font-black text-amber-400">★ ★ ★</span>
         </div>
         <div class="flex justify-between items-center border-t border-white/10 pt-1.5">
-          <span class="text-slate-400">San Andreas Respect:</span>
-          <span id="finalRespect" class="font-hud font-black text-purple-400">RESPECT +</span>
+          <span class="text-slate-400">Syndicate Rating:</span>
+          <span id="finalRank" class="font-hud font-black text-purple-400">S-TIER MASTER HEIST</span>
         </div>
       </div>
 
-      <!-- RESPAWN IN GROVE STREET BUTTON -->
-      <button id="restartBtn" class="w-full py-3.5 bg-gradient-to-r from-rose-600 via-amber-500 to-yellow-500 hover:brightness-110 text-black font-gta text-lg font-black uppercase tracking-wider rounded-2xl shadow-2xl transition active:scale-95">
-        RESPAWN IN GROVE STREET ➔
+      <!-- NEXT HEIST BUTTON -->
+      <button id="nextHeistBtn" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-400 hover:brightness-110 text-black font-gta text-lg font-black uppercase tracking-wider rounded-2xl shadow-2xl transition active:scale-95">
+        START NEXT HEIST ➔
       </button>
     </div>
   </div>
 
   <!-- ========================================================================= -->
-  <!-- JAVASCRIPT: THE COMPLETE 3D SAN ANDREAS ENGINE                            -->
+  <!-- JAVASCRIPT: THE COMPLETE GTA HEIST SYNDICATE ENGINE                       -->
   <!-- ========================================================================= -->
   <script>
     /**
-     * SAN ANDREAS: GETAWAY 3D — FULL THREE.JS ACTION ENGINE
-     * -----------------------------------------------------
-     * - Authentic 3D Los Santos: Vinewood Sign, Downtown Skyscrapers, Maze Tower, Grove Street, Pay 'N' Spray, Stunt Ramps
-     * - Realistic 3D Muscle Lowrider with 4 rotating/steering wheels, headlights, taillights, hydraulics hop, nitro flame jets
-     * - 5-Star Police Pursuit AI: LSPD Cruisers, Interceptors, SWAT Armored Vans, and Overhead Police Maverick Helicopter
-     * - Synthesized 90s West Coast G-Funk Radio (Dr. Dre whistling lead synth, 808 bass kick, snare), engine rumble, tire screeches
-     * - Circular Radar Minimap, GTA San Andreas green rolling cash counter, speedometer, stunt jump detector
+     * GTA HEIST SYNDICATE — LUXURY URBAN VAULT BREAKER
+     * ------------------------------------------------
+     * 1. Procedural 808 Trap Sub-Bass & Heist Audio Synthesizer (Web Audio API)
+     * 2. 6x6 Bank Vault Grid with Cash, Gold Bullion, Diamonds, C4 & EMP Jammers
+     * 3. Row/Column Tumbler Breaker with Floating Raining Cash Particles & Screen Shake
+     * 4. 5-Star Police Heat Meter with SWAT Breach Countdown & Clean Getaway Extraction
+     * 5. Mobile-first drag & drop + smart tap-to-place mechanics
      */
 
     // =========================================================================
-    // 1. SYNTHESIZED WEST COAST G-FUNK & SOUND FX ENGINE (Web Audio API)
+    // 1. SYNTHESIZED 808 TRAP BEAT & HEIST SOUND ENGINE (Web Audio API)
     // =========================================================================
-    class SanAndreasAudioEngine {
+    class HeistAudioEngine {
       constructor() {
         this.ctx = null;
         this.muted = false;
-        this.activeRadio = "gfunk"; // "gfunk" | "bounce" | "rock" | "off"
-        this.radioInterval = null;
-        this.engineOsc = null;
-        this.engineGain = null;
+        this.beatTimer = null;
         this.sirenOsc = null;
         this.sirenGain = null;
+        this.heatLevel = 1;
       }
 
       init() {
         if (!this.ctx) {
           const AudioContext = window.AudioContext || window.webkitAudioContext;
           this.ctx = new AudioContext();
-          this.initEngineSound();
-          this.initPoliceSiren();
-          this.startRadioStation();
+          this.startTrapBeat();
+          this.initSiren();
         }
         if (this.ctx.state === "suspended") {
           this.ctx.resume();
@@ -374,68 +375,78 @@
 
       toggleMute() {
         this.muted = !this.muted;
-        if (this.engineGain) this.engineGain.gain.setValueAtTime(this.muted ? 0 : 0.08, this.ctx.currentTime);
-        if (this.sirenGain) this.sirenGain.gain.setValueAtTime(this.muted ? 0 : 0.05, this.ctx.currentTime);
+        if (this.sirenGain) {
+          this.sirenGain.gain.setValueAtTime(this.muted ? 0 : 0.04, this.ctx.currentTime);
+        }
         return !this.muted;
       }
 
-      nextRadioStation() {
-        const stations = ["gfunk", "bounce", "rock", "off"];
-        const curIdx = stations.indexOf(this.activeRadio);
-        this.activeRadio = stations[(curIdx + 1) % stations.length];
-        this.startRadioStation();
-        return this.getStationDisplayName();
+      // Continuous 808 Trap Beat (Punchy Sub-Bass, Crisp Snare, Trap Hi-Hats)
+      startTrapBeat() {
+        let step = 0;
+        this.beatTimer = setInterval(() => {
+          if (!this.ctx || this.muted) return;
+          const now = this.ctx.currentTime;
+
+          // 1. Deep 808 Sub-Bass Kick (Step 0 and 6)
+          if (step % 8 === 0 || step % 8 === 6) {
+            const osc = this.ctx.createOscillator();
+            const g = this.ctx.createGain();
+            osc.frequency.setValueAtTime(125, now);
+            osc.frequency.exponentialRampToValueAtTime(34, now + 0.22);
+            g.gain.setValueAtTime(0.35, now);
+            g.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+            osc.connect(g);
+            g.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.35);
+          }
+
+          // 2. Crisp Trap Snare (Step 4 and 12)
+          if (step % 8 === 4) {
+            const sn = this.ctx.createOscillator();
+            const sng = this.ctx.createGain();
+            sn.type = "triangle";
+            sn.frequency.setValueAtTime(260, now);
+            sn.frequency.exponentialRampToValueAtTime(70, now + 0.12);
+            sng.gain.setValueAtTime(0.18, now);
+            sng.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+            sn.connect(sng);
+            sng.connect(this.ctx.destination);
+            sn.start(now);
+            sn.stop(now + 0.16);
+          }
+
+          // 3. Ticking Trap Hi-Hats (every step, faster roll at high heat)
+          const hat = this.ctx.createOscillator();
+          const hatG = this.ctx.createGain();
+          hat.type = "highpass";
+          hat.frequency.setValueAtTime(8200, now);
+          hatG.gain.setValueAtTime(0.04, now);
+          hatG.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+          hat.connect(hatG);
+          hatG.connect(this.ctx.destination);
+          hat.start(now);
+          hat.stop(now + 0.04);
+
+          step = (step + 1) % 16;
+        }, 140); // 107 BPM Trap Groove
       }
 
-      getStationDisplayName() {
-        switch (this.activeRadio) {
-          case "gfunk": return "RADIO LOS SANTOS (G-FUNK)";
-          case "bounce": return "BOUNCE FM (70s FUNK)";
-          case "rock": return "K-DST (CLASSIC ROCK)";
-          case "off": return "RADIO OFF";
-        }
-      }
-
-      // Continuous V8 Lowrider Engine Rumble
-      initEngineSound() {
-        if (!this.ctx) return;
-        this.engineOsc = this.ctx.createOscillator();
-        this.engineGain = this.ctx.createGain();
-        this.engineOsc.type = "sawtooth";
-        this.engineOsc.frequency.setValueAtTime(55, this.ctx.currentTime);
-        this.engineGain.gain.setValueAtTime(0.06, this.ctx.currentTime);
-
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = "lowpass";
-        filter.frequency.setValueAtTime(280, this.ctx.currentTime);
-
-        this.engineOsc.connect(filter);
-        filter.connect(this.engineGain);
-        this.engineGain.connect(this.ctx.destination);
-        this.engineOsc.start();
-      }
-
-      updateEnginePitch(speedRatio, isNitro) {
-        if (!this.engineOsc || this.muted) return;
-        const now = this.ctx.currentTime;
-        const baseFreq = isNitro ? 160 : 45 + speedRatio * 95;
-        this.engineOsc.frequency.setTargetAtTime(baseFreq, now, 0.05);
-      }
-
-      // Continuous Wailing LAPD Police Siren
-      initPoliceSiren() {
+      // Police Siren on High Heat
+      initSiren() {
         if (!this.ctx) return;
         this.sirenOsc = this.ctx.createOscillator();
         this.sirenGain = this.ctx.createGain();
-        this.sirenOsc.type = "triangle";
-        this.sirenGain.gain.setValueAtTime(0.0, this.ctx.currentTime); // Initially off
+        this.sirenOsc.type = "sawtooth";
+        this.sirenGain.gain.setValueAtTime(0, this.ctx.currentTime); // Off initially
 
         const lfo = this.ctx.createOscillator();
         const lfoGain = this.ctx.createGain();
-        lfo.frequency.setValueAtTime(0.8, this.ctx.currentTime);
-        lfoGain.gain.setValueAtTime(260, this.ctx.currentTime);
+        lfo.frequency.setValueAtTime(0.75, this.ctx.currentTime);
+        lfoGain.gain.setValueAtTime(240, this.ctx.currentTime);
 
-        this.sirenOsc.frequency.setValueAtTime(720, this.ctx.currentTime);
+        this.sirenOsc.frequency.setValueAtTime(680, this.ctx.currentTime);
         lfo.connect(this.sirenOsc.frequency);
 
         this.sirenOsc.connect(this.sirenGain);
@@ -445,134 +456,74 @@
         lfo.start();
       }
 
-      setSirenActive(active) {
+      updateSirenHeat(heat) {
+        this.heatLevel = heat;
         if (!this.sirenGain || this.muted) return;
         const now = this.ctx.currentTime;
-        this.sirenGain.gain.setTargetAtTime(active ? 0.06 : 0.0, now, 0.2);
+        // Siren kicks in audibly at 3+ Stars
+        const targetGain = heat >= 3 ? 0.045 : 0;
+        this.sirenGain.gain.setTargetAtTime(targetGain, now, 0.2);
       }
 
-      // Synthesizer for West Coast G-Funk / Radio
-      startRadioStation() {
-        if (this.radioInterval) clearInterval(this.radioInterval);
-        if (this.activeRadio === "off") return;
-
-        let beat = 0;
-        // G-Funk Lead Notes (Iconic high pitch portamento whistle)
-        const gFunkNotes = [880, 987.77, 1174.66, 987.77, 880, 783.99, 880, 1174.66]; // A5, B5, D6...
-
-        this.radioInterval = setInterval(() => {
-          if (!this.ctx || this.muted || this.activeRadio === "off") return;
-          const now = this.ctx.currentTime;
-
-          // 1. Kick Bass
-          if (beat % 4 === 0) {
-            const osc = this.ctx.createOscillator();
-            const g = this.ctx.createGain();
-            osc.frequency.setValueAtTime(130, now);
-            osc.frequency.exponentialRampToValueAtTime(36, now + 0.16);
-            g.gain.setValueAtTime(0.3, now);
-            g.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-            osc.connect(g);
-            g.connect(this.ctx.destination);
-            osc.start(now);
-            osc.stop(now + 0.25);
-          }
-
-          // 2. Snare / Clack on beats 2 and 6
-          if (beat % 4 === 2) {
-            const sn = this.ctx.createOscillator();
-            const sng = this.ctx.createGain();
-            sn.type = "triangle";
-            sn.frequency.setValueAtTime(220, now);
-            sng.gain.setValueAtTime(0.12, now);
-            sng.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-            sn.connect(sng);
-            sng.connect(this.ctx.destination);
-            sn.start(now);
-            sn.stop(now + 0.14);
-          }
-
-          // 3. Iconic West Coast High Portamento Whistle (every 2 beats)
-          if (this.activeRadio === "gfunk" && beat % 2 === 0) {
-            const lead = this.ctx.createOscillator();
-            const leadGain = this.ctx.createGain();
-            lead.type = "sine";
-            const note = gFunkNotes[(beat / 2) % gFunkNotes.length];
-            lead.frequency.setValueAtTime(note, now);
-            lead.frequency.linearRampToValueAtTime(note * 1.05, now + 0.18);
-            leadGain.gain.setValueAtTime(0.08, now);
-            leadGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-            lead.connect(leadGain);
-            leadGain.connect(this.ctx.destination);
-            lead.start(now);
-            lead.stop(now + 0.24);
-          }
-
-          beat = (beat + 1) % 16;
-        }, 150); // 100 BPM
+      // Tile Snap / Magnetic Placement Thud
+      playSnap() {
+        if (!this.ctx || this.muted) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.frequency.setValueAtTime(240, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
+        g.gain.setValueAtTime(0.2, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+        osc.connect(g);
+        g.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.1);
       }
 
-      // Sound FX: Tire Drift Screech
-      playTireScreech() {
+      // Vault Tumbler Line Crack Sound (Heavy Clank + Cash Chime)
+      playTumblerCrack(combo = 1) {
+        if (!this.ctx || this.muted) return;
+        const now = this.ctx.currentTime;
+
+        // Metallic Clank
+        const clk = this.ctx.createOscillator();
+        const clkG = this.ctx.createGain();
+        clk.type = "square";
+        clk.frequency.setValueAtTime(440, now);
+        clk.frequency.exponentialRampToValueAtTime(140, now + 0.18);
+        clkG.gain.setValueAtTime(0.3, now);
+        clkG.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        clk.connect(clkG);
+        clkG.connect(this.ctx.destination);
+        clk.start(now);
+        clk.stop(now + 0.24);
+
+        // Banknote Counting Machine Roll
+        for (let i = 0; i < 4; i++) {
+          const tick = this.ctx.createOscillator();
+          const tg = this.ctx.createGain();
+          const tTime = now + 0.06 + i * 0.05;
+          tick.frequency.setValueAtTime(880 + i * 110, tTime);
+          tg.gain.setValueAtTime(0.15, tTime);
+          tg.gain.exponentialRampToValueAtTime(0.001, tTime + 0.04);
+          tick.connect(tg);
+          tg.connect(this.ctx.destination);
+          tick.start(tTime);
+          tick.stop(tTime + 0.05);
+        }
+      }
+
+      // C4 Breacher Detonation
+      playC4Explosion() {
         if (!this.ctx || this.muted) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const g = this.ctx.createGain();
         osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(800 + Math.random() * 200, now);
-        osc.frequency.exponentialRampToValueAtTime(500, now + 0.1);
-        g.gain.setValueAtTime(0.06, now);
-        g.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-        osc.connect(g);
-        g.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.12);
-      }
-
-      // Sound FX: Hydraulics Hop
-      playHydraulicsHop() {
-        if (!this.ctx || this.muted) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(120, now);
-        osc.frequency.exponentialRampToValueAtTime(320, now + 0.15);
-        g.gain.setValueAtTime(0.3, now);
-        g.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-        osc.connect(g);
-        g.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.22);
-      }
-
-      // Sound FX: Nitro Turbo Flame
-      playNitroBurst() {
-        if (!this.ctx || this.muted) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(140, now);
-        osc.frequency.exponentialRampToValueAtTime(620, now + 0.3);
-        g.gain.setValueAtTime(0.22, now);
-        g.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-        osc.connect(g);
-        g.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.38);
-      }
-
-      // Sound FX: Crash Explosion
-      playCrash() {
-        if (!this.ctx || this.muted) return;
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(100, now);
+        osc.frequency.setValueAtTime(110, now);
         osc.frequency.exponentialRampToValueAtTime(20, now + 0.4);
-        g.gain.setValueAtTime(0.45, now);
+        g.gain.setValueAtTime(0.5, now);
         g.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
         osc.connect(g);
         g.connect(this.ctx.destination);
@@ -580,1606 +531,773 @@
         osc.stop(now + 0.48);
       }
 
-      // Sound FX: Pay 'N' Spray Spray Can & Respect Jingle
-      playPayNSpray() {
+      // EMP Jammer Pulse
+      playEmpPulse() {
         if (!this.ctx || this.muted) return;
         const now = this.ctx.currentTime;
-        // Spray hiss
         const osc = this.ctx.createOscillator();
         const g = this.ctx.createGain();
-        osc.type = "square";
-        osc.frequency.setValueAtTime(1200, now);
-        g.gain.setValueAtTime(0.15, now);
-        g.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.linearRampToValueAtTime(1200, now + 0.2);
+        osc.frequency.linearRampToValueAtTime(400, now + 0.4);
+        g.gain.setValueAtTime(0.3, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
         osc.connect(g);
         g.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.52);
-
-        // Respect Jingle (GTA SA sound)
-        setTimeout(() => {
-          if (!this.ctx || this.muted) return;
-          const t = this.ctx.currentTime;
-          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
-            const jOsc = this.ctx.createOscillator();
-            const jG = this.ctx.createGain();
-            jOsc.frequency.setValueAtTime(freq, t + idx * 0.08);
-            jG.gain.setValueAtTime(0.25, t + idx * 0.08);
-            jG.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.08 + 0.2);
-            jOsc.connect(jG);
-            jG.connect(this.ctx.destination);
-            jOsc.start(t + idx * 0.08);
-            jOsc.stop(t + idx * 0.08 + 0.22);
-          });
-        }, 300);
+        osc.stop(now + 0.48);
       }
 
-      // Sound FX: Cash Pickup Chime
-      playCashChime() {
+      // Victory Extraction Stinger
+      playHeistVictory() {
         if (!this.ctx || this.muted) return;
         const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const g = this.ctx.createGain();
-        osc.frequency.setValueAtTime(1046.5, now); // C6
-        osc.frequency.setValueAtTime(1318.51, now + 0.08); // E6
-        g.gain.setValueAtTime(0.25, now);
-        g.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-        osc.connect(g);
-        g.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.3);
+        [523.25, 659.25, 783.99, 1046.5, 1318.51].forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          const t = now + idx * 0.1;
+          osc.frequency.setValueAtTime(freq, t);
+          g.gain.setValueAtTime(0.25, t);
+          g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+          osc.connect(g);
+          g.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.35);
+        });
       }
     }
 
-    const sound = new SanAndreasAudioEngine();
+    const sound = new HeistAudioEngine();
 
     // =========================================================================
-    // 2. GAME STATE & VARIABLES
+    // 2. GAME STATE & CONSTANTS
     // =========================================================================
+    const GRID_SIZE = 6;
     const STATE = {
-      cash: 125000,
-      bestCash: 125000,
-      health: 100,
-      nitro: 100,
-      respect: 100,
-      wantedStars: 1,
-      copsWrecked: 0,
-      stuntsCompleted: 0,
-      startTime: Date.now(),
-      elapsedSeconds: 0,
+      board: Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null)),
+      loot: 0,
+      targetLoot: 1000000,
+      bestLoot: 1000000,
+      heatStars: 1,
+      swatCountdown: 5,
+      isSwatAlert: false,
+      multiplier: 1.0,
+      crackedLines: 0,
+      empJammers: 1,
       isGameOver: false,
-      cameraMode: "chase", // "chase" | "hood" | "drone"
 
-      // In-Game Time (San Andreas Clock)
-      gameHours: 21,
-      gameMinutes: 45,
-
-      // Stunt Jump State
-      inAir: false,
-      airStartTime: 0,
-      airStartPos: { x: 0, y: 0, z: 0 },
-
-      // Inputs
-      steer: 0, // -1 to 1
-      throttle: 0, // -1 (brake) to 1 (gas)
-      isDrifting: false,
-      isNitro: false,
-
-      // Entities
-      copCars: [],
-      particles: [],
-      cashDrops: [],
-      stuntRamps: [],
-      landmarks: []
+      // Active Dock Pieces (3 available)
+      dockPieces: [null, null, null],
+      selectedPieceIdx: null
     };
 
-    // Load Best Score
+    // Load Best Stash Record
     try {
-      STATE.bestCash = parseInt(localStorage.getItem("gta_sa_best") || "125000", 10);
+      STATE.bestLoot = parseInt(localStorage.getItem("gta_heist_best") || "1000000", 10);
     } catch(e) {}
 
-    // =========================================================================
-    // 3. THREE.JS 3D SCENE SETUP & LIGHTING
-    // =========================================================================
-    const container = document.getElementById("canvasContainer");
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x1a0f1c); // California dusk haze
-    scene.fog = new THREE.FogExp2(0x2d182e, 0.0022); // Atmospheric sunset fog
+    // HEIST TOKENS DEFINITIONS
+    const TOKEN_TYPES = {
+      CASH: { id: "cash", label: "$", name: "CASH STACK", val: 15000, color: "token-cash" },
+      GOLD: { id: "gold", label: "Au", name: "GOLD BULLION", val: 40000, color: "token-gold" },
+      DIAMOND: { id: "diamond", label: "💎", name: "ROYAL DIAMOND", val: 100000, color: "token-diamond" },
+      C4: { id: "c4", label: "🧨", name: "C4 BREACHER", val: 50000, color: "token-c4", isExplosive: true },
+      SAFE: { id: "safe", label: "🗄️", name: "TITANIUM SAFE", val: 120000, color: "token-diamond", isSafe: true },
+      LOCKED: { id: "locked", label: "🔒", name: "POLICE LOCKDOWN", val: 0, color: "token-locked" }
+    };
 
-    const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1500);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
-    container.appendChild(renderer.domElement);
-
-    // Dynamic California Sunset Sun Lighting
-    const hemiLight = new THREE.HemisphereLight(0xffb07c, 0x180f24, 0.7);
-    scene.add(hemiLight);
-
-    const sunLight = new THREE.DirectionalLight(0xff7733, 1.4);
-    sunLight.position.set(250, 400, -300);
-    sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 1024;
-    sunLight.shadow.mapSize.height = 1024;
-    sunLight.shadow.camera.near = 10;
-    sunLight.shadow.camera.far = 1200;
-    const d = 350;
-    sunLight.shadow.camera.left = -d;
-    sunLight.shadow.camera.right = d;
-    sunLight.shadow.camera.top = d;
-    sunLight.shadow.camera.bottom = -d;
-    scene.add(sunLight);
+    // HEIST PIECE SHAPES (Tactile Polyominoes)
+    const PIECE_SHAPES = [
+      // Single
+      { shape: [[1]], type: "CASH" },
+      { shape: [[1]], type: "GOLD" },
+      { shape: [[1]], type: "DIAMOND" },
+      { shape: [[1]], type: "C4" },
+      // 2-Bar
+      { shape: [[1, 1]], type: "CASH" },
+      { shape: [[1], [1]], type: "CASH" },
+      { shape: [[1, 1]], type: "GOLD" },
+      // 3-Bar
+      { shape: [[1, 1, 1]], type: "CASH" },
+      { shape: [[1], [1], [1]], type: "CASH" },
+      // L-Shape
+      { shape: [[1, 0], [1, 1]], type: "CASH" },
+      { shape: [[0, 1], [1, 1]], type: "GOLD" },
+      { shape: [[1, 1], [0, 1]], type: "CASH" },
+      // 2x2 Vault Box
+      { shape: [[1, 1], [1, 1]], type: "GOLD" },
+      // T-Shape
+      { shape: [[1, 1, 1], [0, 1, 0]], type: "CASH" }
+    ];
 
     // =========================================================================
-    // 4. SAN ANDREAS 3D CITY BUILDER (Vinewood, Downtown, Grove St, Pay 'N' Spray)
+    // 3. BOARD INITIALIZATION & RENDERING
     // =========================================================================
-    const CITY_BOUNDARY = 900;
-    const buildingColliders = [];
+    const vaultGrid = document.getElementById("vaultGrid");
 
-    function buildSanAndreasCity() {
-      // 1. Asphalt Ground
-      const groundGeo = new THREE.PlaneGeometry(CITY_BOUNDARY * 2.4, CITY_BOUNDARY * 2.4);
-      const groundMat = new THREE.MeshStandardMaterial({
-        color: 0x141418,
-        roughness: 0.85,
-        metalness: 0.15
-      });
-      const ground = new THREE.Mesh(groundGeo, groundMat);
-      ground.rotation.x = -Math.PI / 2;
-      ground.receiveShadow = true;
-      scene.add(ground);
+    function initBoard() {
+      vaultGrid.innerHTML = "";
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const cell = document.createElement("div");
+          cell.className = "vault-cell rounded-xl flex items-center justify-center relative cursor-pointer";
+          cell.dataset.row = r;
+          cell.dataset.col = c;
 
-      // 2. Road Grid with Street Markings
-      buildRoadNetwork();
+          // Drag / Drop events
+          cell.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            highlightPlacement(r, c);
+          });
+          cell.addEventListener("dragleave", () => clearHighlights());
+          cell.addEventListener("drop", (e) => {
+            e.preventDefault();
+            handlePieceDrop(r, c);
+          });
 
-      // 3. Downtown Los Santos (Skyscrapers + Maze Bank Tower)
-      buildDowntownSkyscrapers();
+          // Tap-to-Place support
+          cell.addEventListener("click", () => {
+            handleCellClick(r, c);
+          });
 
-      // 4. Grove Street Cul-de-Sac (South)
-      buildGroveStreet();
-
-      // 5. Giant 3D "VINEWOOD" Sign (North Hills)
-      buildVinewoodSign();
-
-      // 6. Pay 'N' Spray Garage (West)
-      buildPayNSprayGarage();
-
-      // 7. Stunt Ramps
-      buildStuntRamps();
-
-      // 8. 3D Californian Palm Trees & Streetlights
-      buildPalmTreesAndLights();
-
-      // 9. Scatter Cash Loot Pickups
-      for (let i = 0; i < 35; i++) {
-        spawnCashDrop();
-      }
-    }
-
-    // Road Grid Layout
-    function buildRoadNetwork() {
-      const roadMat = new THREE.MeshBasicMaterial({ color: 0x222228 });
-      const stripeMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b }); // Yellow double stripes
-
-      // Main East-West and North-South Boulevards
-      for (let pos = -600; pos <= 600; pos += 200) {
-        // N-S Road
-        const nsRoad = new THREE.Mesh(new THREE.PlaneGeometry(32, CITY_BOUNDARY * 2), roadMat);
-        nsRoad.rotation.x = -Math.PI / 2;
-        nsRoad.position.set(pos, 0.05, 0);
-        scene.add(nsRoad);
-
-        // N-S Yellow Divider
-        const nsStripe = new THREE.Mesh(new THREE.PlaneGeometry(0.8, CITY_BOUNDARY * 2), stripeMat);
-        nsStripe.rotation.x = -Math.PI / 2;
-        nsStripe.position.set(pos, 0.08, 0);
-        scene.add(nsStripe);
-
-        // E-W Road
-        const ewRoad = new THREE.Mesh(new THREE.PlaneGeometry(CITY_BOUNDARY * 2, 32), roadMat);
-        ewRoad.rotation.x = -Math.PI / 2;
-        ewRoad.position.set(0, 0.05, pos);
-        scene.add(ewRoad);
-
-        // E-W Yellow Divider
-        const ewStripe = new THREE.Mesh(new THREE.PlaneGeometry(CITY_BOUNDARY * 2, 0.8), stripeMat);
-        ewStripe.rotation.x = -Math.PI / 2;
-        ewStripe.position.set(0, 0.08, pos);
-        scene.add(ewStripe);
-      }
-    }
-
-    // Downtown Los Santos Skyscrapers
-    function buildDowntownSkyscrapers() {
-      const blockPositions = [
-        { x: -300, z: -200, w: 120, d: 120 },
-        { x: -100, z: -200, w: 120, d: 120 },
-        { x: 100, z: -200, w: 120, d: 120 },
-        { x: 300, z: -200, w: 120, d: 120 },
-
-        { x: -300, z: -400, w: 120, d: 120 },
-        { x: -100, z: -400, w: 120, d: 120 },
-        { x: 100, z: -400, w: 120, d: 120 },
-        { x: 300, z: -400, w: 120, d: 120 },
-
-        { x: -300, z: 0, w: 120, d: 120 },
-        { x: 300, z: 0, w: 120, d: 120 },
-        { x: -300, z: 200, w: 120, d: 120 },
-        { x: 300, z: 200, w: 120, d: 120 }
-      ];
-
-      const bldColors = [0x1e1b4b, 0x0f172a, 0x18181b, 0x172554, 0x27272a];
-
-      blockPositions.forEach((blk, idx) => {
-        const height = 90 + Math.random() * 140;
-        const color = bldColors[idx % bldColors.length];
-
-        const bldGeo = new THREE.BoxGeometry(blk.w, height, blk.d);
-        const bldMat = new THREE.MeshStandardMaterial({
-          color: color,
-          roughness: 0.35,
-          metalness: 0.65
-        });
-        const building = new THREE.Mesh(bldGeo, bldMat);
-        building.position.set(blk.x, height / 2, blk.z);
-        building.castShadow = true;
-        building.receiveShadow = true;
-        scene.add(building);
-
-        // Neon Billboard with Authentic San Andreas Brands
-        const neonBrands = [
-          { text: "CLUCKIN' BELL", bg: "#7f1d1d", textCol: "#fef08a" },
-          { text: "AMMU-NATION", bg: "#18181b", textCol: "#ef4444" },
-          { text: "SPRUNK", bg: "#064e3b", textCol: "#a7f3d0" },
-          { text: "MAFIA CASINO", bg: "#4c1d95", textCol: "#fbbf24" },
-          { text: "ZIP STORE", bg: "#1e3a8a", textCol: "#67e8f9" }
-        ];
-        const brand = neonBrands[idx % neonBrands.length];
-
-        const nbCanvas = document.createElement("canvas");
-        nbCanvas.width = 256;
-        nbCanvas.height = 80;
-        const nbCtx = nbCanvas.getContext("2d");
-        nbCtx.fillStyle = brand.bg;
-        nbCtx.fillRect(0, 0, 256, 80);
-        nbCtx.strokeStyle = brand.textCol;
-        nbCtx.lineWidth = 6;
-        nbCtx.strokeRect(4, 4, 248, 72);
-        nbCtx.fillStyle = brand.textCol;
-        nbCtx.font = "900 30px 'Orbitron', 'Bebas Neue', sans-serif";
-        nbCtx.textAlign = "center";
-        nbCtx.textBaseline = "middle";
-        nbCtx.fillText(brand.text, 128, 42);
-
-        const neonTex = new THREE.CanvasTexture(nbCanvas);
-        const neonGeo = new THREE.PlaneGeometry(38, 12);
-        const neonMat = new THREE.MeshBasicMaterial({ map: neonTex, side: THREE.DoubleSide });
-        const neonSign = new THREE.Mesh(neonGeo, neonMat);
-        neonSign.position.set(blk.x, height - 14, blk.z + blk.d / 2 + 0.5);
-        scene.add(neonSign);
-
-        // Store collider box
-        buildingColliders.push({
-          minX: blk.x - blk.w / 2 - 2,
-          maxX: blk.x + blk.w / 2 + 2,
-          minZ: blk.z - blk.d / 2 - 2,
-          maxZ: blk.z + blk.d / 2 + 2
-        });
-      });
-
-      // Iconic MAZE BANK TOWER (Cylindrical Downtown Landmark)
-      const mazeHeight = 280;
-      const mazeGeo = new THREE.CylinderGeometry(40, 48, mazeHeight, 24);
-      const mazeMat = new THREE.MeshStandardMaterial({
-        color: 0x1e293b,
-        roughness: 0.2,
-        metalness: 0.8
-      });
-      const mazeTower = new THREE.Mesh(mazeGeo, mazeMat);
-      mazeTower.position.set(100, mazeHeight / 2, -400);
-      mazeTower.castShadow = true;
-      scene.add(mazeTower);
-
-      // Maze Bank Helipad on top
-      const helipadGeo = new THREE.CylinderGeometry(36, 36, 4, 24);
-      const helipadMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
-      const helipad = new THREE.Mesh(helipadGeo, helipadMat);
-      helipad.position.set(100, mazeHeight + 2, -400);
-      scene.add(helipad);
-
-      // Blinking Red Aviation Warning Beacon on Tower Spire
-      const spireLight = new THREE.PointLight(0xef4444, 2.5, 120);
-      spireLight.position.set(100, mazeHeight + 18, -400);
-      scene.add(spireLight);
-
-      buildingColliders.push({
-        minX: 100 - 45,
-        maxX: 100 + 45,
-        minZ: -400 - 45,
-        maxZ: -400 + 45
-      });
-    }
-
-    // Grove Street Cul-de-Sac (South)
-    function buildGroveStreet() {
-      const groveCenter = { x: 0, z: 460 };
-
-      // Circular Cul-de-sac asphalt
-      const culDeSacGeo = new THREE.CircleGeometry(55, 32);
-      const culDeSacMat = new THREE.MeshBasicMaterial({ color: 0x222228 });
-      const culDeSac = new THREE.Mesh(culDeSacGeo, culDeSacMat);
-      culDeSac.rotation.x = -Math.PI / 2;
-      culDeSac.position.set(groveCenter.x, 0.06, groveCenter.z);
-      scene.add(culDeSac);
-
-      // Central Grass Island
-      const islandGeo = new THREE.CircleGeometry(16, 24);
-      const islandMat = new THREE.MeshStandardMaterial({ color: 0x14532d });
-      const island = new THREE.Mesh(islandGeo, islandMat);
-      island.rotation.x = -Math.PI / 2;
-      island.position.set(groveCenter.x, 0.08, groveCenter.z);
-      scene.add(island);
-
-      // Grove Street Tree
-      const treeTrunkGeo = new THREE.CylinderGeometry(1.5, 2, 14, 8);
-      const treeTrunkMat = new THREE.MeshStandardMaterial({ color: 0x451a03 });
-      const trunk = new THREE.Mesh(treeTrunkGeo, treeTrunkMat);
-      trunk.position.set(groveCenter.x, 7, groveCenter.z);
-      scene.add(trunk);
-
-      const foliageGeo = new THREE.DodecahedronGeometry(8);
-      const foliageMat = new THREE.MeshStandardMaterial({ color: 0x15803d });
-      const foliage = new THREE.Mesh(foliageGeo, foliageMat);
-      foliage.position.set(groveCenter.x, 17, groveCenter.z);
-      scene.add(foliage);
-
-      // Suburban Houses around Grove Street
-      const angles = [Math.PI * 0.2, Math.PI * 0.5, Math.PI * 0.8, -Math.PI * 0.2, -Math.PI * 0.5, -Math.PI * 0.8];
-      angles.forEach((ang, idx) => {
-        const hx = groveCenter.x + Math.cos(ang) * 65;
-        const hz = groveCenter.z + Math.sin(ang) * 65;
-
-        // House Body
-        const hGeo = new THREE.BoxGeometry(24, 12, 20);
-        const hMat = new THREE.MeshStandardMaterial({
-          color: idx === 1 ? 0x166534 : 0x78716c // Carl Johnson green-trimmed house at center!
-        });
-        const house = new THREE.Mesh(hGeo, hMat);
-        house.position.set(hx, 6, hz);
-        house.rotation.y = -ang + Math.PI / 2;
-        house.castShadow = true;
-        scene.add(house);
-
-        // Pitched Roof
-        const roofGeo = new THREE.ConeGeometry(18, 7, 4);
-        const roofMat = new THREE.MeshStandardMaterial({ color: 0x3f3f46 });
-        const roof = new THREE.Mesh(roofGeo, roofMat);
-        roof.position.set(hx, 15, hz);
-        roof.rotation.y = -ang + Math.PI / 4;
-        scene.add(roof);
-
-        buildingColliders.push({
-          minX: hx - 14,
-          maxX: hx + 14,
-          minZ: hz - 14,
-          maxZ: hz + 14
-        });
-      });
-    }
-
-    // Giant 3D "VINEWOOD" Sign (North Hills)
-    function buildVinewoodSign() {
-      const hillGeo = new THREE.BoxGeometry(CITY_BOUNDARY * 2, 85, 180);
-      const hillMat = new THREE.MeshStandardMaterial({ color: 0x3d2b1f, roughness: 0.95 });
-      const hill = new THREE.Mesh(hillGeo, hillMat);
-      hill.position.set(0, 42, -CITY_BOUNDARY + 80);
-      scene.add(hill);
-
-      // 3D Letters: V I N E W O O D
-      const letters = ["V", "I", "N", "E", "W", "O", "O", "D"];
-      const startX = -175;
-
-      letters.forEach((char, idx) => {
-        // Create Canvas Texture for each huge white letter
-        const lCanvas = document.createElement("canvas");
-        lCanvas.width = 128;
-        lCanvas.height = 160;
-        const lCtx = lCanvas.getContext("2d");
-        lCtx.fillStyle = "#ffffff";
-        lCtx.fillRect(0, 0, 128, 160);
-        lCtx.strokeStyle = "#94a3b8";
-        lCtx.lineWidth = 8;
-        lCtx.strokeRect(4, 4, 120, 152);
-        lCtx.fillStyle = "#0f172a";
-        lCtx.font = "900 110px 'Bebas Neue', 'Arial Black', sans-serif";
-        lCtx.textAlign = "center";
-        lCtx.textBaseline = "middle";
-        lCtx.fillText(char, 64, 82);
-
-        const lTex = new THREE.CanvasTexture(lCanvas);
-        const lMat = new THREE.MeshStandardMaterial({
-          map: lTex,
-          roughness: 0.3,
-          metalness: 0.1
-        });
-
-        const letterMesh = new THREE.Mesh(new THREE.BoxGeometry(26, 36, 3), lMat);
-        letterMesh.position.set(startX + idx * 50, 95, -CITY_BOUNDARY + 140);
-        letterMesh.castShadow = true;
-        scene.add(letterMesh);
-
-        // Wooden Stilt Supports behind the letter
-        const stiltMat = new THREE.MeshStandardMaterial({ color: 0x52525b });
-        const stiltLeft = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 28, 6), stiltMat);
-        stiltLeft.position.set(startX + idx * 50 - 8, 80, -CITY_BOUNDARY + 138);
-        scene.add(stiltLeft);
-
-        const stiltRight = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 28, 6), stiltMat);
-        stiltRight.position.set(startX + idx * 50 + 8, 80, -CITY_BOUNDARY + 138);
-        scene.add(stiltRight);
-      });
-    }
-
-    // Pay 'N' Spray Garage (West)
-    const payNSprayZone = { x: -450, z: 0, radius: 28 };
-    function buildPayNSprayGarage() {
-      const gGeo = new THREE.BoxGeometry(45, 18, 38);
-      const gMat = new THREE.MeshStandardMaterial({ color: 0x312e81 });
-      const garage = new THREE.Mesh(gGeo, gMat);
-      garage.position.set(payNSprayZone.x, 9, payNSprayZone.z);
-      garage.castShadow = true;
-      scene.add(garage);
-
-      // Glowing Neon "PAY 'N' SPRAY" Sign
-      const pnsCanvas = document.createElement("canvas");
-      pnsCanvas.width = 256;
-      pnsCanvas.height = 64;
-      const pnsCtx = pnsCanvas.getContext("2d");
-      pnsCtx.fillStyle = "#1e1b4b";
-      pnsCtx.fillRect(0, 0, 256, 64);
-      pnsCtx.strokeStyle = "#fbbf24";
-      pnsCtx.lineWidth = 5;
-      pnsCtx.strokeRect(3, 3, 250, 58);
-      pnsCtx.fillStyle = "#fbbf24";
-      pnsCtx.font = "900 28px 'Orbitron', 'Bebas Neue', sans-serif";
-      pnsCtx.textAlign = "center";
-      pnsCtx.textBaseline = "middle";
-      pnsCtx.fillText("🎨 PAY 'N' SPRAY", 128, 33);
-
-      const pnsTex = new THREE.CanvasTexture(pnsCanvas);
-      const sign = new THREE.Mesh(new THREE.PlaneGeometry(36, 9), new THREE.MeshBasicMaterial({ map: pnsTex, side: THREE.DoubleSide }));
-      sign.position.set(payNSprayZone.x, 18, payNSprayZone.z + 19.5);
-      scene.add(sign);
-
-      // Yellow Beacon Light
-      const sprayLight = new THREE.PointLight(0xfacc15, 2.5, 65);
-      sprayLight.position.set(payNSprayZone.x, 14, payNSprayZone.z + 25);
-      scene.add(sprayLight);
-    }
-
-    // Stunt Ramps around the city with yellow hazard chevrons
-    function buildStuntRamps() {
-      const rampLocs = [
-        { x: -100, z: 120, rot: 0 },
-        { x: 100, z: -80, rot: Math.PI },
-        { x: 220, z: 180, rot: Math.PI / 2 },
-        { x: -220, z: -180, rot: -Math.PI / 2 }
-      ];
-
-      // Procedural Hazard Stripe Texture
-      const hCanvas = document.createElement("canvas");
-      hCanvas.width = 128;
-      hCanvas.height = 128;
-      const hCtx = hCanvas.getContext("2d");
-      hCtx.fillStyle = "#f59e0b";
-      hCtx.fillRect(0, 0, 128, 128);
-      hCtx.fillStyle = "#18181b";
-      for (let i = -128; i < 256; i += 32) {
-        hCtx.beginPath();
-        hCtx.moveTo(i, 0);
-        hCtx.lineTo(i + 32, 0);
-        hCtx.lineTo(i - 16, 128);
-        hCtx.lineTo(i - 48, 128);
-        hCtx.fill();
-      }
-      const hazardTex = new THREE.CanvasTexture(hCanvas);
-      hazardTex.wrapS = THREE.RepeatWrapping;
-      hazardTex.wrapT = THREE.RepeatWrapping;
-      hazardTex.repeat.set(2, 4);
-
-      const rampGeo = new THREE.BufferGeometry();
-      const vertices = new Float32Array([
-        // 1. Angled ramp face
-        -7, 0, -14,   7, 0, -14,   7, 6.0, 14,
-        -7, 0, -14,   7, 6.0, 14,  -7, 6.0, 14,
-        // 2. Back vertical wall
-        -7, 0, 14,    7, 6.0, 14,  7, 0, 14,
-        -7, 0, 14,   -7, 6.0, 14,  7, 6.0, 14,
-        // 3. Left triangle
-        -7, 0, -14,  -7, 6.0, 14, -7, 0, 14,
-        // 4. Right triangle
-        7, 0, -14,    7, 0, 14,    7, 6.0, 14,
-        // 5. Bottom
-        -7, 0, -14,   7, 0, -14,   7, 0, 14,
-        -7, 0, -14,   7, 0, 14,   -7, 0, 14
-      ]);
-      rampGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-      rampGeo.computeVertexNormals();
-
-      const rampMat = new THREE.MeshStandardMaterial({
-        map: hazardTex,
-        roughness: 0.6
-      });
-
-      rampLocs.forEach(r => {
-        const mesh = new THREE.Mesh(rampGeo, rampMat);
-        mesh.position.set(r.x, 0.05, r.z);
-        mesh.rotation.y = r.rot;
-        mesh.castShadow = true;
-        scene.add(mesh);
-
-        STATE.stuntRamps.push({
-          x: r.x,
-          z: r.z,
-          angle: r.rot,
-          height: 6.0
-        });
-      });
-    }
-
-    // 3D Californian Palm Trees & Streetlights
-    function buildPalmTreesAndLights() {
-      const treeMat = new THREE.MeshStandardMaterial({ color: 0x5c3d2e });
-      const leafMat = new THREE.MeshStandardMaterial({ color: 0x15803d, side: THREE.DoubleSide });
-
-      for (let x = -500; x <= 500; x += 160) {
-        for (let z = -350; z <= 350; z += 200) {
-          if (Math.abs(x) < 40 && Math.abs(z) < 40) continue;
-
-          // Palm Tree
-          const palmGroup = new THREE.Group();
-          const trunkGeo = new THREE.CylinderGeometry(0.8, 1.3, 26, 8);
-          const trunk = new THREE.Mesh(trunkGeo, treeMat);
-          trunk.position.y = 13;
-          trunk.rotation.z = (Math.random() - 0.5) * 0.15;
-          palmGroup.add(trunk);
-
-          // Palm Fronds
-          for (let f = 0; f < 7; f++) {
-            const frondGeo = new THREE.PlaneGeometry(3, 14);
-            const frond = new THREE.Mesh(frondGeo, leafMat);
-            frond.position.set(0, 26, 0);
-            frond.rotation.y = (f / 7) * Math.PI * 2;
-            frond.rotation.x = Math.PI * 0.35;
-            palmGroup.add(frond);
-          }
-
-          palmGroup.position.set(x + 18, 0, z + 18);
-          scene.add(palmGroup);
+          vaultGrid.appendChild(cell);
         }
       }
     }
 
-    // Spawn Floating Cash Loot Pickups
-    function spawnCashDrop() {
-      const rx = (Math.random() - 0.5) * (CITY_BOUNDARY * 1.5);
-      const rz = (Math.random() - 0.5) * (CITY_BOUNDARY * 1.5);
+    function renderBoard() {
+      for (let r = 0; r < GRID_SIZE; r++) {
+        for (let c = 0; c < GRID_SIZE; c++) {
+          const cell = vaultGrid.children[r * GRID_SIZE + c];
+          const token = STATE.board[r][c];
 
-      const cashGeo = new THREE.CylinderGeometry(2.5, 2.5, 0.6, 16);
-      const cashMat = new THREE.MeshStandardMaterial({
-        color: 0x10b981,
-        metalness: 0.7,
-        roughness: 0.2
-      });
-      const coin = new THREE.Mesh(cashGeo, cashMat);
-      coin.position.set(rx, 2.5, rz);
-      coin.rotation.x = Math.PI / 2;
-      scene.add(coin);
-
-      STATE.cashDrops.push({
-        mesh: coin,
-        val: Math.random() > 0.4 ? 5000 : 25000,
-        bobOffset: Math.random() * Math.PI * 2
-      });
-    }
-
-    // =========================================================================
-    // 5. 3D PLAYER VEHICLE ("THE SAN ANDREAS LOWRIDER")
-    // =========================================================================
-    class PlayerCar {
-      constructor() {
-        this.group = new THREE.Group();
-        this.speed = 0;
-        this.maxSpeed = 1.35;
-        this.nitroMaxSpeed = 2.25;
-        this.accel = 0.035;
-        this.brakeDecel = 0.055;
-        this.friction = 0.985;
-        this.turnSpeed = 0.042;
-        this.angle = 0;
-
-        // Jump / Hydraulics Physics
-        this.y = 0;
-        this.vy = 0;
-        this.isAirborne = false;
-        this.roll = 0;
-        this.pitch = 0;
-
-        this.wheels = [];
-        this.headlights = [];
-        this.taillights = [];
-        this.exhausts = [];
-
-        this.buildCarModel();
-        scene.add(this.group);
-      }
-
-      buildCarModel() {
-        // 1. Main Metallic Chassis
-        const bodyGeo = new THREE.BoxGeometry(6.4, 2.2, 14.5);
-        this.bodyMat = new THREE.MeshStandardMaterial({
-          color: 0xf59e0b, // Gold metallic default
-          roughness: 0.25,
-          metalness: 0.8
-        });
-        const body = new THREE.Mesh(bodyGeo, this.bodyMat);
-        body.position.y = 1.8;
-        body.castShadow = true;
-        this.group.add(body);
-
-        // 2. Cabin Roof with Tinted Windows
-        const cabinGeo = new THREE.BoxGeometry(5.6, 1.8, 8.2);
-        const cabinMat = new THREE.MeshStandardMaterial({
-          color: 0x09090b,
-          roughness: 0.1,
-          metalness: 0.95
-        });
-        const cabin = new THREE.Mesh(cabinGeo, cabinMat);
-        cabin.position.set(0, 3.4, -0.6);
-        cabin.castShadow = true;
-        this.group.add(cabin);
-
-        // 3. V8 Hood Scoop with Dual Chrome Intakes
-        const scoopGeo = new THREE.BoxGeometry(2.4, 0.8, 4.2);
-        const scoopMat = new THREE.MeshStandardMaterial({ color: 0x18181b, metalness: 0.9 });
-        const scoop = new THREE.Mesh(scoopGeo, scoopMat);
-        scoop.position.set(0, 3.1, 3.6);
-        this.group.add(scoop);
-
-        // 4. Rear Muscle Spoiler
-        const wingGeo = new THREE.BoxGeometry(6.6, 0.4, 2.0);
-        const wingMat = new THREE.MeshStandardMaterial({ color: 0x18181b });
-        const wing = new THREE.Mesh(wingGeo, wingMat);
-        wing.position.set(0, 3.6, -6.4);
-        this.group.add(wing);
-
-        // 5. Four 3D Rotating & Turning Wheels
-        const wheelGeo = new THREE.CylinderGeometry(1.4, 1.4, 0.9, 16);
-        const tireMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.9 });
-        const rimMat = new THREE.MeshStandardMaterial({ color: 0xe4e4e7, metalness: 0.9 });
-
-        const wheelPositions = [
-          { x: -3.3, y: 1.4, z: 4.5, isFront: true },  // Front Left
-          { x: 3.3, y: 1.4, z: 4.5, isFront: true },   // Front Right
-          { x: -3.3, y: 1.4, z: -4.5, isFront: false }, // Rear Left
-          { x: 3.3, y: 1.4, z: -4.5, isFront: false }  // Rear Right
-        ];
-
-        wheelPositions.forEach(wp => {
-          const steerGroup = new THREE.Group();
-          steerGroup.position.set(wp.x, wp.y, wp.z);
-
-          const spinGroup = new THREE.Group();
-          steerGroup.add(spinGroup);
-
-          // Tire
-          const tire = new THREE.Mesh(wheelGeo, tireMat);
-          tire.rotation.z = Math.PI / 2;
-          tire.castShadow = true;
-          spinGroup.add(tire);
-
-          // Chrome Rim
-          const rim = new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 0.95, 8), rimMat);
-          rim.rotation.z = Math.PI / 2;
-          spinGroup.add(rim);
-
-          this.group.add(steerGroup);
-          this.wheels.push({ steerGroup: steerGroup, spinGroup: spinGroup, isFront: wp.isFront });
-        });
-
-        // 6. Dual Forward Spotlights (Headlights)
-        [-2.2, 2.2].forEach(hx => {
-          const light = new THREE.SpotLight(0xfff8db, 2.8, 140, Math.PI * 0.18, 0.4);
-          light.position.set(hx, 2.0, 7.2);
-          light.target.position.set(hx, 0.5, 50);
-          this.group.add(light);
-          this.group.add(light.target);
-          this.headlights.push(light);
-        });
-
-        // 7. Rear Dual Taillights
-        [-2.4, 2.4].forEach(tx => {
-          const tGeo = new THREE.BoxGeometry(0.9, 0.5, 0.2);
-          const tMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
-          const tail = new THREE.Mesh(tGeo, tMat);
-          tail.position.set(tx, 2.0, -7.3);
-          this.group.add(tail);
-          this.taillights.push(tail);
-        });
-      }
-
-      setPaintColor(hexColor) {
-        if (this.bodyMat) {
-          this.bodyMat.color.setHex(hexColor);
-        }
-      }
-
-      hopHydraulics() {
-        if (!this.isAirborne) {
-          this.vy = 0.55;
-          this.isAirborne = true;
-          sound.playHydraulicsHop();
-          triggerScreenShake();
-          showNotification("🦘 HYDRAULICS HOP!");
-        }
-      }
-
-      update() {
-        // 1. Throttle / Acceleration
-        const currentMax = STATE.isNitro ? this.nitroMaxSpeed : this.maxSpeed;
-        if (STATE.throttle > 0) {
-          this.speed = Math.min(currentMax, this.speed + this.accel);
-        } else if (STATE.throttle < 0) {
-          this.speed = Math.max(-0.6, this.speed - this.brakeDecel);
-        } else {
-          this.speed *= this.friction;
-        }
-
-        // Nitro handling
-        if (STATE.isNitro && STATE.nitro > 0) {
-          STATE.nitro = Math.max(0, STATE.nitro - 0.8);
-          this.speed = this.nitroMaxSpeed;
-          this.spawnNitroFlames();
-        } else {
-          STATE.isNitro = false;
-          STATE.nitro = Math.min(100, STATE.nitro + 0.16);
-        }
-        updateNitroHUD();
-
-        // 2. Steering & Drifting
-        const driftMultiplier = STATE.isDrifting ? 1.6 : 1.0;
-        if (Math.abs(this.speed) > 0.05) {
-          const dir = Math.sign(this.speed);
-          this.angle -= STATE.steer * this.turnSpeed * driftMultiplier * dir;
-          if (STATE.isDrifting && Math.abs(this.speed) > 0.4) {
-            sound.playTireScreech();
-            this.spawnTireSmoke();
-            STATE.respect = Math.min(100, STATE.respect + 0.1);
-          }
-        }
-
-        // 3. Movement
-        this.group.rotation.y = this.angle;
-        this.group.position.x += Math.sin(this.angle) * this.speed;
-        this.group.position.z += Math.cos(this.angle) * this.speed;
-
-        // 4. Hydraulics & Gravity
-        this.vy -= 0.024; // Gravity
-        this.y += this.vy;
-        if (this.y <= 0) {
-          this.y = 0;
-          this.vy = 0;
-          if (this.isAirborne) {
-            // Check Stunt Jump Finish
-            this.isAirborne = false;
-            checkStuntJumpLanding();
-          }
-        }
-        this.group.position.y = this.y;
-
-        // 5. Body Tilt on Cornering & Braking
-        const targetRoll = -STATE.steer * 0.14 * (this.speed / this.maxSpeed);
-        this.roll += (targetRoll - this.roll) * 0.15;
-        this.group.rotation.z = this.roll;
-
-        // 6. Wheel Animation
-        this.wheels.forEach(w => {
-          w.spinGroup.rotation.x += this.speed * 0.8;
-          if (w.isFront) {
-            w.steerGroup.rotation.y = STATE.steer * 0.45;
-          }
-        });
-
-        // 7. Check Stunt Ramps
-        STATE.stuntRamps.forEach(ramp => {
-          const dx = this.group.position.x - ramp.x;
-          const dz = this.group.position.z - ramp.z;
-          if (Math.hypot(dx, dz) < 14 && Math.abs(this.speed) > 0.7 && !this.isAirborne) {
-            this.vy = 0.72 + this.speed * 0.3;
-            this.isAirborne = true;
-            STATE.inAir = true;
-            STATE.airStartTime = Date.now();
-            STATE.airStartPos = { ...this.group.position };
-            sound.playNitroBurst();
-            triggerStuntVignette(true);
-          }
-        });
-
-        // 8. Check Pay 'N' Spray Zone
-        const distToSpray = Math.hypot(this.group.position.x - payNSprayZone.x, this.group.position.z - payNSprayZone.z);
-        if (distToSpray < payNSprayZone.radius) {
-          if (STATE.wantedStars > 0 || STATE.health < 100) {
-            // Trigger Spray Paint!
-            const newColors = [0x10b981, 0xef4444, 0x06b6d4, 0xf59e0b, 0x8b5cf6, 0xffffff];
-            const chosen = newColors[Math.floor(Math.random() * newColors.length)];
-            this.setPaintColor(chosen);
-            STATE.wantedStars = 0;
-            STATE.health = 100;
-            updateWantedStarsUI();
-            updateArmorHUD();
-            sound.playPayNSpray();
-            showNotification("🎨 PAY 'N' SPRAY: RESRAY COMPLETE! WANTED LEVEL WIPED!");
-          }
-        }
-
-        // 9. Boundary Barrier
-        const bound = CITY_BOUNDARY - 35;
-        if (Math.abs(this.group.position.x) > bound || Math.abs(this.group.position.z) > bound) {
-          this.speed = -this.speed * 0.6;
-          this.group.position.x = Math.max(-bound, Math.min(bound, this.group.position.x));
-          this.group.position.z = Math.max(-bound, Math.min(bound, this.group.position.z));
-          sound.playCrash();
-          triggerScreenShake();
-          showNotification("⚠️ POLICE BARRICADE! TURN BACK");
-        }
-
-        // 10. Building Collision Detection
-        for (let b of buildingColliders) {
-          if (this.group.position.x > b.minX && this.group.position.x < b.maxX &&
-              this.group.position.z > b.minZ && this.group.position.z < b.maxZ) {
-            // Collision bounce
-            this.speed = -this.speed * 0.5;
-            this.group.position.x -= Math.sin(this.angle) * 8;
-            this.group.position.z -= Math.cos(this.angle) * 8;
-            STATE.health -= 12;
-            updateArmorHUD();
-            sound.playCrash();
-            triggerScreenShake();
-
-            if (STATE.health <= 0) {
-              triggerGameOver("WASTED!");
-            }
-            break;
-          }
-        }
-
-        // Update Sound Engine Pitch
-        sound.updateEnginePitch(Math.abs(this.speed) / this.maxSpeed, STATE.isNitro);
-
-        // Update Speedometer UI
-        const mph = Math.floor(Math.abs(this.speed) * 82);
-        document.getElementById("speedVal").innerText = mph;
-      }
-
-      spawnTireSmoke() {
-        for (let i = 0; i < 2; i++) {
-          const p = createParticle(
-            this.group.position.x - Math.sin(this.angle) * 4.5 + (Math.random() - 0.5) * 2,
-            0.5,
-            this.group.position.z - Math.cos(this.angle) * 4.5 + (Math.random() - 0.5) * 2,
-            0x71717a, 1.8, 0.03
-          );
-          STATE.particles.push(p);
-        }
-      }
-
-      spawnNitroFlames() {
-        for (let i = 0; i < 3; i++) {
-          const p = createParticle(
-            this.group.position.x - Math.sin(this.angle) * 7.5 + (Math.random() - 0.5) * 1.5,
-            1.2,
-            this.group.position.z - Math.cos(this.angle) * 7.5 + (Math.random() - 0.5) * 1.5,
-            0x06b6d4, 2.2, 0.06
-          );
-          STATE.particles.push(p);
-        }
-      }
-    }
-
-    const player = new PlayerCar();
-
-    // =========================================================================
-    // 6. 3D POLICE PURSUIT FLEET (LSPD Cruisers, SWAT Vans & Maverick Helicopter)
-    // =========================================================================
-    class PoliceCruiser {
-      constructor(type = "patrol") {
-        this.type = type; // "patrol" | "interceptor" | "swat"
-        this.group = new THREE.Group();
-        this.speed = type === "interceptor" ? 1.25 : (type === "swat" ? 0.95 : 1.1);
-        this.turnSpeed = 0.035;
-        this.angle = 0;
-        this.strobeTime = 0;
-        this.isWrecked = false;
-
-        this.buildCopModel();
-
-        // Spawn on open road near player
-        const spawnAng = Math.random() * Math.PI * 2;
-        const spawnDist = 180 + Math.random() * 80;
-        this.group.position.set(
-          player.group.position.x + Math.sin(spawnAng) * spawnDist,
-          0,
-          player.group.position.z + Math.cos(spawnAng) * spawnDist
-        );
-
-        scene.add(this.group);
-      }
-
-      buildCopModel() {
-        const isSwat = this.type === "swat";
-        const w = isSwat ? 7.6 : 6.4;
-        const h = isSwat ? 3.4 : 2.2;
-        const l = isSwat ? 16.0 : 14.5;
-
-        // Body
-        const bodyGeo = new THREE.BoxGeometry(w, h, l);
-        const bodyMat = new THREE.MeshStandardMaterial({
-          color: isSwat ? 0x0f172a : 0xf8fafc, // Black SWAT vs White Patrol
-          roughness: 0.3
-        });
-        const body = new THREE.Mesh(bodyGeo, bodyMat);
-        body.position.y = h / 2 + 0.8;
-        body.castShadow = true;
-        this.group.add(body);
-
-        // Black Side Panels for Patrol
-        if (!isSwat) {
-          const sideGeo = new THREE.BoxGeometry(w + 0.1, h * 0.9, l * 0.45);
-          const sideMat = new THREE.MeshStandardMaterial({ color: 0x09090b });
-          const side = new THREE.Mesh(sideGeo, sideMat);
-          side.position.y = h / 2 + 0.8;
-          this.group.add(side);
-        }
-
-        // Roof Emergency Lightbar (Red & Blue Rotating Flashers)
-        const lightbarGeo = new THREE.BoxGeometry(4.2, 0.7, 1.2);
-        const lightbarMat = new THREE.MeshBasicMaterial({ color: 0xef4444 });
-        this.lightbar = new THREE.Mesh(lightbarGeo, lightbarMat);
-        this.lightbar.position.set(0, h + 1.2, 0);
-        this.group.add(this.lightbar);
-
-        // Dynamic 3D Point Light for Strobe
-        this.strobeLight = new THREE.PointLight(0xef4444, 2.5, 45);
-        this.strobeLight.position.set(0, h + 2.0, 0);
-        this.group.add(this.strobeLight);
-      }
-
-      update() {
-        if (this.isWrecked) return;
-
-        // Pursuit Vector towards player
-        const dx = player.group.position.x - this.group.position.x;
-        const dz = player.group.position.z - this.group.position.z;
-        const targetAngle = Math.atan2(dx, dz);
-
-        let diff = targetAngle - this.angle;
-        while (diff < -Math.PI) diff += Math.PI * 2;
-        while (diff > Math.PI) diff -= Math.PI * 2;
-
-        this.angle += Math.sign(diff) * Math.min(Math.abs(diff), this.turnSpeed);
-        this.group.rotation.y = this.angle;
-
-        this.group.position.x += Math.sin(this.angle) * this.speed;
-        this.group.position.z += Math.cos(this.angle) * this.speed;
-
-        // Flashing Red & Blue Lightbar
-        this.strobeTime += 0.25;
-        const isRed = Math.sin(this.strobeTime * 5) > 0;
-        this.lightbar.material.color.setHex(isRed ? 0xef4444 : 0x3b82f6);
-        this.strobeLight.color.setHex(isRed ? 0xef4444 : 0x3b82f6);
-
-        // Check Collision with Buildings (Cops crash themselves!)
-        for (let b of buildingColliders) {
-          if (this.group.position.x > b.minX && this.group.position.x < b.maxX &&
-              this.group.position.z > b.minZ && this.group.position.z < b.maxZ) {
-            this.wreckCop();
-            break;
-          }
-        }
-
-        // Check Collision with Player Car
-        const dist = Math.hypot(player.group.position.x - this.group.position.x, player.group.position.z - this.group.position.z);
-        if (dist < 12) {
-          if (STATE.isNitro) {
-            // Nitro Ram destroys cop instantly!
-            this.wreckCop();
-            showNotification("🚀 NITRO RAM OBLITERATION! +$10,000");
-            STATE.cash += 10000;
+          if (token) {
+            const isLock = token.id === "locked";
+            cell.innerHTML = `
+              <div class="w-full h-full rounded-xl ${token.color} flex flex-col items-center justify-center font-hud font-black text-xs drop-shadow transform transition-all duration-150 scale-95 select-none">
+                <span class="text-xs sm:text-sm leading-none">${token.label}</span>
+                <span class="text-[6.5px] sm:text-[7.5px] font-bold opacity-85 uppercase leading-none mt-0.5">${isLock ? 'LOCKED' : (token.val > 0 ? '$' + (token.val / 1000).toFixed(0) + 'K' : '')}</span>
+              </div>
+            `;
           } else {
-            // Cop rams player
-            STATE.health -= this.type === "swat" ? 22 : 12;
-            updateArmorHUD();
-            sound.playCrash();
-            triggerScreenShake();
+            cell.innerHTML = "";
+          }
+        }
+      }
+    }
 
-            // Push apart
-            player.group.position.x += Math.sin(this.angle) * 8;
-            player.group.position.z += Math.cos(this.angle) * 8;
+    // =========================================================================
+    // 4. PIECES DOCK, TOUCH DRAG & REFILL LOGIC
+    // =========================================================================
+    const piecesDock = document.getElementById("piecesDock");
 
-            if (STATE.health <= 0) {
-              triggerGameOver("BUSTED!");
+    // Floating Drag Ghost element for mobile touch & mouse
+    const dragGhost = document.createElement("div");
+    dragGhost.id = "dragGhost";
+    dragGhost.className = "fixed pointer-events-none z-50 hidden -translate-x-1/2 -translate-y-[120%] drop-shadow-2xl scale-110";
+    document.body.appendChild(dragGhost);
+
+    function refillPiecesDock() {
+      for (let i = 0; i < 3; i++) {
+        if (!STATE.dockPieces[i]) {
+          const template = PIECE_SHAPES[Math.floor(Math.random() * PIECE_SHAPES.length)];
+          const tokenDef = TOKEN_TYPES[template.type];
+          STATE.dockPieces[i] = {
+            shape: template.shape,
+            token: tokenDef
+          };
+        }
+      }
+      renderPiecesDock();
+      checkValidMovesRemaining();
+    }
+
+    function renderPiecesDock() {
+      piecesDock.innerHTML = "";
+      STATE.dockPieces.forEach((pData, idx) => {
+        const slot = document.createElement("div");
+        slot.className = "flex-1 h-full rounded-xl bg-zinc-950/80 border border-white/5 flex flex-col items-center justify-center p-1 relative cursor-grab active:cursor-grabbing hover:border-emerald-500/40 transition touch-none";
+        slot.dataset.dockIdx = idx;
+
+        if (STATE.selectedPieceIdx === idx) {
+          slot.classList.add("border-emerald-400", "bg-emerald-950/30", "shadow-[0_0_15px_rgba(16,185,129,0.4)]");
+        }
+
+        if (pData) {
+          const shape = pData.shape;
+          const rows = shape.length;
+          const cols = shape[0].length;
+
+          const previewGrid = document.createElement("div");
+          previewGrid.className = "grid gap-1 pointer-events-none";
+          previewGrid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+
+          for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+              const cellDot = document.createElement("div");
+              if (shape[r][c]) {
+                cellDot.className = `w-4 h-4 sm:w-5 sm:h-5 rounded-md ${pData.token.color} flex items-center justify-center text-[8px] font-black`;
+                cellDot.innerText = pData.token.label;
+              } else {
+                cellDot.className = "w-4 h-4 sm:w-5 sm:h-5 opacity-0";
+              }
+              previewGrid.appendChild(cellDot);
+            }
+          }
+
+          slot.appendChild(previewGrid);
+
+          // Pointer Touch & Drag Logic
+          let isDragging = false;
+
+          slot.addEventListener("pointerdown", (e) => {
+            sound.init();
+            STATE.selectedPieceIdx = idx;
+            isDragging = true;
+            try { slot.setPointerCapture(e.pointerId); } catch(err) {}
+
+            dragGhost.innerHTML = previewGrid.outerHTML;
+            dragGhost.style.left = `${e.clientX}px`;
+            dragGhost.style.top = `${e.clientY}px`;
+            dragGhost.classList.remove("hidden");
+            renderPiecesDock();
+          });
+
+          slot.addEventListener("pointermove", (e) => {
+            if (!isDragging) return;
+            dragGhost.style.left = `${e.clientX}px`;
+            dragGhost.style.top = `${e.clientY}px`;
+
+            // Detect cell under pointer
+            const elem = document.elementFromPoint(e.clientX, e.clientY - 60);
+            const cell = elem ? elem.closest(".vault-cell") : null;
+            if (cell) {
+              const r = parseInt(cell.dataset.row, 10);
+              const c = parseInt(cell.dataset.col, 10);
+              highlightPlacement(r, c);
+            } else {
+              clearHighlights();
+            }
+          });
+
+          const endDrag = (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            try { slot.releasePointerCapture(e.pointerId); } catch(err) {}
+            dragGhost.classList.add("hidden");
+
+            const elem = document.elementFromPoint(e.clientX, e.clientY - 60);
+            const cell = elem ? elem.closest(".vault-cell") : null;
+            if (cell) {
+              const r = parseInt(cell.dataset.row, 10);
+              const c = parseInt(cell.dataset.col, 10);
+              if (canPlacePiece(pData, r, c)) {
+                placeSelectedPiece(r, c);
+                return;
+              }
+            }
+            clearHighlights();
+            renderPiecesDock();
+          };
+
+          slot.addEventListener("pointerup", endDrag);
+          slot.addEventListener("pointercancel", endDrag);
+
+          // HTML5 Drag support (Desktop)
+          slot.draggable = true;
+          slot.addEventListener("dragstart", (e) => {
+            sound.init();
+            STATE.selectedPieceIdx = idx;
+            e.dataTransfer.setData("text/plain", idx);
+          });
+        }
+
+        piecesDock.appendChild(slot);
+      });
+    }
+
+    // =========================================================================
+    // 5. PLACEMENT, VALIDATION & TUMBLER CRACKING LOGIC
+    // =========================================================================
+    function canPlacePiece(piece, startR, startC) {
+      if (!piece) return false;
+      const shape = piece.shape;
+      const rows = shape.length;
+      const cols = shape[0].length;
+
+      if (startR + rows > GRID_SIZE || startC + cols > GRID_SIZE) return false;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (shape[r][c] && STATE.board[startR + r][startC + c] !== null) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    function highlightPlacement(startR, startC) {
+      clearHighlights();
+      if (STATE.selectedPieceIdx === null) return;
+      const piece = STATE.dockPieces[STATE.selectedPieceIdx];
+      if (!piece) return;
+
+      const valid = canPlacePiece(piece, startR, startC);
+      const shape = piece.shape;
+      const rows = shape.length;
+      const cols = shape[0].length;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (shape[r][c]) {
+            const tr = startR + r;
+            const tc = startC + c;
+            if (tr < GRID_SIZE && tc < GRID_SIZE) {
+              const cell = vaultGrid.children[tr * GRID_SIZE + tc];
+              cell.classList.add(valid ? "highlight" : "invalid-highlight");
+            }
+          }
+        }
+      }
+    }
+
+    function clearHighlights() {
+      for (let i = 0; i < vaultGrid.children.length; i++) {
+        vaultGrid.children[i].classList.remove("highlight", "invalid-highlight");
+      }
+    }
+
+    function handleCellClick(startR, startC) {
+      if (STATE.selectedPieceIdx === null) return;
+      placeSelectedPiece(startR, startC);
+    }
+
+    function handlePieceDrop(startR, startC) {
+      if (STATE.selectedPieceIdx === null) return;
+      placeSelectedPiece(startR, startC);
+    }
+
+    function placeSelectedPiece(startR, startC) {
+      const piece = STATE.dockPieces[STATE.selectedPieceIdx];
+      if (!piece) return;
+
+      if (!canPlacePiece(piece, startR, startC)) {
+        return;
+      }
+
+      sound.playSnap();
+      const shape = piece.shape;
+      const rows = shape.length;
+      const cols = shape[0].length;
+
+      let placedExplosive = false;
+      let expR = 0, expC = 0;
+
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (shape[r][c]) {
+            STATE.board[startR + r][startC + c] = piece.token;
+            if (piece.token.isExplosive) {
+              placedExplosive = true;
+              expR = startR + r;
+              expC = startC + c;
             }
           }
         }
       }
 
-      wreckCop() {
-        this.isWrecked = true;
-        sound.playCrash();
-        triggerScreenShake();
-        STATE.copsWrecked++;
-        STATE.cash += 5000;
-        updateCashHUD();
-        showNotification("💥 LSPD VEHICLE WRECKED! +$5,000");
+      // Clear dock piece
+      STATE.dockPieces[STATE.selectedPieceIdx] = null;
+      STATE.selectedPieceIdx = null;
+      clearHighlights();
+      renderBoard();
+      renderPiecesDock();
 
-        // Spawn Explosion Fireballs
-        for (let i = 0; i < 18; i++) {
-          const p = createParticle(
-            this.group.position.x + (Math.random() - 0.5) * 6,
-            2 + Math.random() * 6,
-            this.group.position.z + (Math.random() - 0.5) * 6,
-            [0xef4444, 0xf97316, 0xfbbf24][Math.floor(Math.random() * 3)],
-            3.5, 0.05
-          );
-          STATE.particles.push(p);
-        }
-
-        scene.remove(this.group);
-      }
-    }
-
-    // Overhead Police Maverick Helicopter
-    class PoliceHelicopter {
-      constructor() {
-        this.group = new THREE.Group();
-        this.active = false;
-
-        // Fuselage
-        const fuseGeo = new THREE.ConeGeometry(4, 18, 8);
-        const fuseMat = new THREE.MeshStandardMaterial({ color: 0x09090b });
-        const fuse = new THREE.Mesh(fuseGeo, fuseMat);
-        fuse.rotation.x = Math.PI / 2;
-        this.group.add(fuse);
-
-        // Spinning Rotor Blade
-        const rotorGeo = new THREE.BoxGeometry(32, 0.4, 1.8);
-        const rotorMat = new THREE.MeshBasicMaterial({ color: 0x3f3f46 });
-        this.rotor = new THREE.Mesh(rotorGeo, rotorMat);
-        this.rotor.position.y = 4.5;
-        this.group.add(this.rotor);
-
-        // Searchlight Spotlight
-        this.spotlight = new THREE.SpotLight(0xfef08a, 4.0, 350, Math.PI * 0.16, 0.35);
-        this.spotlight.position.set(0, 0, 0);
-        this.group.add(this.spotlight);
-        scene.add(this.spotlight.target);
-
-        this.group.position.set(0, 95, 0);
-        scene.add(this.group);
+      // Trigger C4 Detonation if explosive
+      if (placedExplosive) {
+        setTimeout(() => detonateC4(expR, expC), 180);
+      } else {
+        processBoardTumblers();
       }
 
-      update() {
-        if (!this.active) {
-          this.spotlight.intensity = 0;
+      // Check SWAT moves countdown if in 5-star alert
+      if (STATE.isSwatAlert) {
+        STATE.swatCountdown--;
+        document.getElementById("swatMovesCountdown").innerText = STATE.swatCountdown;
+        if (STATE.swatCountdown <= 0) {
+          triggerGameOver("BUSTED BY SWAT!", false);
           return;
         }
+      }
 
-        this.spotlight.intensity = 4.0;
-        this.rotor.rotation.y += 0.45;
-
-        // Hover smoothly above player
-        this.group.position.x += (player.group.position.x - this.group.position.x) * 0.025;
-        this.group.position.z += (player.group.position.z - this.group.position.z) * 0.025;
-        this.group.position.y = 95 + Math.sin(Date.now() * 0.003) * 6;
-
-        this.spotlight.target.position.copy(player.group.position);
+      // If dock is empty, refill with 3 new pieces
+      if (STATE.dockPieces.every(p => p === null)) {
+        refillPiecesDock();
+      } else {
+        checkValidMovesRemaining();
       }
     }
 
-    const chopper = new PoliceHelicopter();
+    // Detonate C4 (Clears 3x3 radius and adds huge bonus loot)
+    function detonateC4(centerR, centerC) {
+      sound.playC4Explosion();
+      triggerScreenShake();
 
-    // Spawn Cops based on Wanted Stars
-    function updatePolicePursuit() {
-      const targetCops = Math.min(8, STATE.wantedStars * 2);
-
-      // Clean up wrecked or far cops
-      STATE.copCars = STATE.copCars.filter(c => {
-        if (c.isWrecked) return false;
-        const dist = Math.hypot(c.group.position.x - player.group.position.x, c.group.position.z - player.group.position.z);
-        if (dist > 450) {
-          scene.remove(c.group);
-          return false;
-        }
-        return true;
-      });
-
-      while (STATE.copCars.length < targetCops) {
-        let type = "patrol";
-        if (STATE.wantedStars >= 4 && Math.random() > 0.5) type = "swat";
-        else if (STATE.wantedStars >= 2 && Math.random() > 0.4) type = "interceptor";
-        STATE.copCars.push(new PoliceCruiser(type));
-      }
-
-      // 5-Star Helicopter
-      chopper.active = STATE.wantedStars >= 5;
-
-      // Audio Siren
-      sound.setSirenActive(STATE.wantedStars > 0 && STATE.copCars.length > 0);
-    }
-
-    // =========================================================================
-    // 7. PARTICLES ENGINE (Smoke, Sparks, Fire, Nitro)
-    // =========================================================================
-    const particleGeo = new THREE.SphereGeometry(1, 8, 8);
-
-    function createParticle(x, y, z, colorHex, initialScale, decayRate) {
-      const mat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 0.85 });
-      const mesh = new THREE.Mesh(particleGeo, mat);
-      mesh.position.set(x, y, z);
-      mesh.scale.set(initialScale, initialScale, initialScale);
-      scene.add(mesh);
-
-      return {
-        mesh: mesh,
-        decay: decayRate,
-        vy: 0.08 + Math.random() * 0.08
-      };
-    }
-
-    function updateParticles() {
-      for (let i = STATE.particles.length - 1; i >= 0; i--) {
-        const p = STATE.particles[i];
-        p.mesh.position.y += p.vy;
-        p.mesh.material.opacity -= p.decay;
-        p.mesh.scale.multiplyScalar(0.96);
-
-        if (p.mesh.material.opacity <= 0) {
-          scene.remove(p.mesh);
-          STATE.particles.splice(i, 1);
+      let clearedCount = 0;
+      for (let r = Math.max(0, centerR - 1); r <= Math.min(GRID_SIZE - 1, centerR + 1); r++) {
+        for (let c = Math.max(0, centerC - 1); c <= Math.min(GRID_SIZE - 1, centerC + 1); c++) {
+          if (STATE.board[r][c] !== null) {
+            clearedCount++;
+            STATE.board[r][c] = null;
+          }
         }
       }
+
+      const reward = 75000 + clearedCount * 25000;
+      addLoot(reward);
+      showFloatingBanner(`💥 C4 BREACH! +$${reward.toLocaleString()}`, "#ef4444");
+
+      // C4 is noisy -> Raises Heat!
+      increaseHeat(1);
+
+      renderBoard();
+      processBoardTumblers();
     }
 
-    // =========================================================================
-    // 8. RADAR MINIMAP ENGINE (2D Canvas HUD)
-    // =========================================================================
-    const radarCanvas = document.getElementById("radarCanvas");
-    const radarCtx = radarCanvas.getContext("2d");
+    // Process Row/Column Line Clears (Vault Tumblers)
+    function processBoardTumblers() {
+      const rowsToClear = [];
+      const colsToClear = [];
 
-    function updateRadarMinimap() {
-      const size = 140;
-      radarCanvas.width = size;
-      radarCanvas.height = size;
-
-      radarCtx.clearRect(0, 0, size, size);
-
-      // Radar Background
-      radarCtx.save();
-      radarCtx.translate(size / 2, size / 2);
-
-      // Rotate map counter to player angle so player always faces UP
-      radarCtx.rotate(-player.angle);
-
-      const scale = 0.12; // Zoom ratio
-
-      // Draw Streets on Radar
-      radarCtx.strokeStyle = "rgba(100, 116, 139, 0.45)";
-      radarCtx.lineWidth = 3;
-      for (let p = -600; p <= 600; p += 200) {
-        radarCtx.beginPath();
-        radarCtx.moveTo((p - player.group.position.x) * scale, (-CITY_BOUNDARY - player.group.position.z) * scale);
-        radarCtx.lineTo((p - player.group.position.x) * scale, (CITY_BOUNDARY - player.group.position.z) * scale);
-        radarCtx.stroke();
-
-        radarCtx.beginPath();
-        radarCtx.moveTo((-CITY_BOUNDARY - player.group.position.x) * scale, (p - player.group.position.z) * scale);
-        radarCtx.lineTo((CITY_BOUNDARY - player.group.position.x) * scale, (p - player.group.position.z) * scale);
-        radarCtx.stroke();
+      // Check Rows
+      for (let r = 0; r < GRID_SIZE; r++) {
+        let full = true;
+        for (let c = 0; c < GRID_SIZE; c++) {
+          if (STATE.board[r][c] === null || STATE.board[r][c].id === "locked") {
+            full = false;
+            break;
+          }
+        }
+        if (full) rowsToClear.push(r);
       }
 
-      // Draw Pay 'N' Spray Icon 🎨
-      const sprayX = (payNSprayZone.x - player.group.position.x) * scale;
-      const sprayZ = (payNSprayZone.z - player.group.position.z) * scale;
-      radarCtx.fillStyle = "#f59e0b";
-      radarCtx.beginPath();
-      radarCtx.arc(sprayX, sprayZ, 4.5, 0, Math.PI * 2);
-      radarCtx.fill();
+      // Check Cols
+      for (let c = 0; c < GRID_SIZE; c++) {
+        let full = true;
+        for (let r = 0; r < GRID_SIZE; r++) {
+          if (STATE.board[r][c] === null || STATE.board[r][c].id === "locked") {
+            full = false;
+            break;
+          }
+        }
+        if (full) colsToClear.push(c);
+      }
 
-      // Draw Cash Drops (Green Dots)
-      radarCtx.fillStyle = "#10b981";
-      STATE.cashDrops.forEach(cd => {
-        const cx = (cd.mesh.position.x - player.group.position.x) * scale;
-        const cz = (cd.mesh.position.z - player.group.position.z) * scale;
-        radarCtx.beginPath();
-        radarCtx.arc(cx, cz, 2.5, 0, Math.PI * 2);
-        radarCtx.fill();
-      });
+      const totalLines = rowsToClear.length + colsToClear.length;
+      if (totalLines > 0) {
+        sound.playTumblerCrack(totalLines);
+        triggerScreenShake();
+        STATE.crackedLines += totalLines;
+        document.getElementById("crackedLinesVal").innerText = STATE.crackedLines;
 
-      // Draw Cop Blips (Flashing Red/Blue Dots)
-      STATE.copCars.forEach(cop => {
-        if (cop.isWrecked) return;
-        const cpx = (cop.group.position.x - player.group.position.x) * scale;
-        const cpz = (cop.group.position.z - player.group.position.z) * scale;
-        radarCtx.fillStyle = cop.type === "swat" ? "#0f172a" : (Math.sin(Date.now() * 0.01) > 0 ? "#ef4444" : "#3b82f6");
-        radarCtx.beginPath();
-        radarCtx.arc(cpx, cpz, 3.5, 0, Math.PI * 2);
-        radarCtx.fill();
-      });
+        // Increase Multiplier on multi-line clears
+        STATE.multiplier = Math.min(5.0, (1.0 + (totalLines - 1) * 0.5).toFixed(1));
+        document.getElementById("multiplierVal").innerText = `${STATE.multiplier}X`;
 
-      radarCtx.restore();
+        let crackedSafes = 0;
+
+        // Clear Rows
+        rowsToClear.forEach(r => {
+          for (let c = 0; c < GRID_SIZE; c++) {
+            if (STATE.board[r][c]) {
+              if (STATE.board[r][c].isSafe) crackedSafes++;
+              lineLoot += STATE.board[r][c].val;
+              STATE.board[r][c] = null;
+            }
+          }
+        });
+
+        // Clear Cols
+        colsToClear.forEach(c => {
+          for (let r = 0; r < GRID_SIZE; r++) {
+            if (STATE.board[r][c]) {
+              if (STATE.board[r][c].isSafe) crackedSafes++;
+              lineLoot += STATE.board[r][c].val;
+              STATE.board[r][c] = null;
+            }
+          }
+        });
+
+        const totalEarned = Math.floor((lineLoot + totalLines * 30000) * STATE.multiplier);
+        addLoot(totalEarned);
+
+        if (crackedSafes > 0) {
+          showFloatingBanner(`🗄️ ${crackedSafes}x TITANIUM SAFE CRACKED! +$${(crackedSafes * 120000).toLocaleString()}`, "#38bdf8");
+        } else if (totalLines >= 2) {
+          showFloatingBanner(`🔥 ${totalLines}X VAULT SPREE! +$${totalEarned.toLocaleString()}`, "#f59e0b");
+        } else {
+          showFloatingBanner(`💰 VAULT CRACKED! +$${totalEarned.toLocaleString()}`, "#10b981");
+        }
+
+        renderBoard();
+      } else {
+        // Multiplier decays if no line cleared
+        STATE.multiplier = 1.0;
+        document.getElementById("multiplierVal").innerText = "1.0X";
+      }
     }
 
     // =========================================================================
-    // 9. STUNT JUMP & CASH DROP LOGIC
+    // 6. LOOT, PROGRESS & POLICE HEAT ESCALATION
     // =========================================================================
-    function checkStuntJumpLanding() {
-      if (STATE.inAir) {
-        STATE.inAir = false;
-        triggerStuntVignette(false);
-        const duration = ((Date.now() - STATE.airStartTime) / 1000).toFixed(1);
-        const dist = Math.hypot(player.group.position.x - STATE.airStartPos.x, player.group.position.z - STATE.airStartPos.z).toFixed(0);
+    function addLoot(amount) {
+      STATE.loot += amount;
+      document.getElementById("lootCounter").innerText = `$${STATE.loot.toLocaleString()}`;
 
-        if (duration >= 0.8 && dist >= 35) {
-          STATE.stuntsCompleted++;
-          const reward = 10000 + Math.floor(dist * 80);
-          STATE.cash += reward;
-          updateCashHUD();
-          showStuntBanner(`AIR TIME: ${duration}s | DISTANCE: ${dist}m | +$${reward.toLocaleString()}`);
+      // Progress bar towards Escape Target
+      const pct = Math.min(100, (STATE.loot / STATE.targetLoot) * 100);
+      document.getElementById("targetProgressBar").style.width = `${pct}%`;
+
+      // Enable Clean Escape button when target reached
+      if (STATE.loot >= STATE.targetLoot) {
+        const escBtn = document.getElementById("escapeBtn");
+        escBtn.disabled = false;
+        escBtn.classList.add("animate-bounce");
+      }
+
+      // Check Heat Escalation based on loot threshold
+      if (STATE.loot > 700000 && STATE.heatStars < 4) increaseHeat(4);
+      else if (STATE.loot > 400000 && STATE.heatStars < 3) increaseHeat(3);
+      else if (STATE.loot > 150000 && STATE.heatStars < 2) increaseHeat(2);
+    }
+
+    function increaseHeat(level) {
+      STATE.heatStars = Math.min(5, Math.max(STATE.heatStars, level));
+      sound.updateSirenHeat(STATE.heatStars);
+      updateHeatStarsUI();
+
+      if (STATE.heatStars >= 4) {
+        // SWAT locks down random 2 tiles with police caution tape!
+        spawnLockdownTiles(2);
+      }
+
+      if (STATE.heatStars >= 5 && !STATE.isSwatAlert) {
+        STATE.isSwatAlert = true;
+        STATE.swatCountdown = 5;
+        document.getElementById("swatMovesCountdown").innerText = STATE.swatCountdown;
+        document.getElementById("swatRaidBanner").classList.remove("hidden");
+      }
+    }
+
+    function spawnLockdownTiles(count) {
+      let placed = 0;
+      for (let attempt = 0; attempt < 30 && placed < count; attempt++) {
+        const r = Math.floor(Math.random() * GRID_SIZE);
+        const c = Math.floor(Math.random() * GRID_SIZE);
+        if (STATE.board[r][c] === null) {
+          STATE.board[r][c] = TOKEN_TYPES.LOCKED;
+          placed++;
         }
       }
+      renderBoard();
     }
 
-    function checkCashPickups() {
-      const time = Date.now() * 0.003;
-      for (let i = STATE.cashDrops.length - 1; i >= 0; i--) {
-        const cd = STATE.cashDrops[i];
-        cd.mesh.rotation.z += 0.04;
-        cd.mesh.position.y = 2.5 + Math.sin(time + cd.bobOffset) * 0.6;
-
-        const dist = Math.hypot(player.group.position.x - cd.mesh.position.x, player.group.position.z - cd.mesh.position.z);
-        if (dist < 10) {
-          sound.playCashChime();
-          STATE.cash += cd.val;
-          updateCashHUD();
-          showNotification(`💰 +$${cd.val.toLocaleString()} LOOT SECURED!`);
-          scene.remove(cd.mesh);
-          STATE.cashDrops.splice(i, 1);
-          spawnCashDrop(); // Respawn elsewhere
-        }
-      }
-    }
-
-    // =========================================================================
-    // 10. CAMERA CONTROLLER (Chase / Hood / Drone)
-    // =========================================================================
-    function updateCamera() {
-      const pPos = player.group.position;
-      const angle = player.angle;
-
-      if (STATE.cameraMode === "chase") {
-        // Third-Person Dynamic Chase Cam
-        const dist = 32 + (STATE.isNitro ? 8 : 0);
-        const height = 12 + player.y * 0.4;
-        const targetX = pPos.x - Math.sin(angle) * dist;
-        const targetZ = pPos.z - Math.cos(angle) * dist;
-
-        camera.position.x += (targetX - camera.position.x) * 0.12;
-        camera.position.z += (targetZ - camera.position.z) * 0.12;
-        camera.position.y += (height - camera.position.y) * 0.12;
-        camera.lookAt(pPos.x, pPos.y + 3, pPos.z);
-      } else if (STATE.cameraMode === "hood") {
-        // Cockpit / Hood Cam
-        camera.position.set(pPos.x + Math.sin(angle) * 4, pPos.y + 3.2, pPos.z + Math.cos(angle) * 4);
-        camera.lookAt(pPos.x + Math.sin(angle) * 60, pPos.y + 2.5, pPos.z + Math.cos(angle) * 60);
-      } else if (STATE.cameraMode === "drone") {
-        // High Aerial Drone Stunt Cam
-        camera.position.set(pPos.x - 45, 60, pPos.z - 45);
-        camera.lookAt(pPos.x, pPos.y, pPos.z);
-      }
-
-      // Dynamic FOV during Nitro
-      const targetFOV = STATE.isNitro ? 80 : 65;
-      camera.fov += (targetFOV - camera.fov) * 0.1;
-      camera.updateProjectionMatrix();
-    }
-
-    // =========================================================================
-    // 11. UI UPDATES, CLOCK, WANTED STARS & NOTIFICATIONS
-    // =========================================================================
-    function updateCashHUD() {
-      document.getElementById("cashVal").innerText = STATE.cash.toLocaleString();
-      if (STATE.cash > STATE.bestCash) {
-        STATE.bestCash = STATE.cash;
-        try { localStorage.setItem("gta_sa_best", STATE.bestCash); } catch(e) {}
-      }
-    }
-
-    function updateArmorHUD() {
-      const pct = Math.max(0, STATE.health);
-      const bar = document.getElementById("armorBar");
-      bar.style.width = `${pct}%`;
-      bar.className = pct < 35
-        ? "h-full bg-gradient-to-r from-rose-600 to-red-500 animate-pulse"
-        : "h-full bg-gradient-to-r from-emerald-500 to-green-400";
-    }
-
-    function updateNitroHUD() {
-      document.getElementById("nitroBar").style.width = `${STATE.nitro}%`;
-    }
-
-    function updateClockAndDistrict() {
-      STATE.elapsedSeconds = Math.floor((Date.now() - STATE.startTime) / 1000);
-      const totalMinutes = 45 + Math.floor(STATE.elapsedSeconds * 1.5);
-      const hrs = (21 + Math.floor(totalMinutes / 60)) % 24;
-      const mins = totalMinutes % 60;
-      document.getElementById("clockVal").innerText = `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
-
-      // Update Wanted Stars based on time survived & cops wrecked
-      let stars = 1;
-      if (STATE.elapsedSeconds > 90 || STATE.copsWrecked >= 8) stars = 5;
-      else if (STATE.elapsedSeconds > 60 || STATE.copsWrecked >= 5) stars = 4;
-      else if (STATE.elapsedSeconds > 35 || STATE.copsWrecked >= 3) stars = 3;
-      else if (STATE.elapsedSeconds > 15 || STATE.copsWrecked >= 1) stars = 2;
-      STATE.wantedStars = stars;
-      updateWantedStarsUI();
-
-      // Update District Banner based on player position
-      const px = player.group.position.x;
-      const pz = player.group.position.z;
-      let dName = "LOS SANTOS — DOWNTOWN";
-      if (pz > 320) dName = "GROVE STREET — GANTON";
-      else if (pz < -300) dName = "VINEWOOD HILLS";
-      else if (px < -300) dName = "PAY 'N' SPRAY DISTRICT";
-      document.getElementById("districtName").innerText = dName;
-    }
-
-    function updateWantedStarsUI() {
+    function updateHeatStarsUI() {
       const starNodes = document.querySelectorAll(".star-node");
       starNodes.forEach((node, idx) => {
-        if (idx < STATE.wantedStars) {
-          node.className = "star-node wanted-star-active";
+        if (idx < STATE.heatStars) {
+          node.className = "star-node star-active";
         } else {
-          node.className = "star-node wanted-star-inactive";
+          node.className = "star-node star-inactive";
         }
       });
 
       const body = document.getElementById("appBody");
-      if (STATE.wantedStars >= 4) {
-        body.classList.add("police-siren-strobe");
+      const warningLabel = document.getElementById("heatWarningLabel");
+
+      if (STATE.heatStars >= 5) {
+        body.classList.add("high-heat-strobe");
+        warningLabel.innerText = "SWAT RAID IN PROGRESS";
+        warningLabel.className = "text-[8px] text-rose-500 font-black uppercase tracking-wider mt-0.5 animate-pulse";
+      } else if (STATE.heatStars >= 3) {
+        body.classList.add("high-heat-strobe");
+        warningLabel.innerText = "POLICE INTERCEPTORS DISPATCHED";
+        warningLabel.className = "text-[8px] text-amber-400 font-bold uppercase tracking-wider mt-0.5";
       } else {
-        body.classList.remove("police-siren-strobe");
+        body.classList.remove("high-heat-strobe");
+        warningLabel.innerText = "PATROL MONITORING";
+        warningLabel.className = "text-[8px] text-slate-400 font-bold uppercase tracking-wider mt-0.5";
       }
     }
 
-    function showNotification(text) {
-      const banner = document.getElementById("hudNotify");
-      banner.innerText = text;
-      banner.classList.remove("hidden");
-      setTimeout(() => banner.classList.add("hidden"), 1600);
-    }
-
-    function showStuntBanner(statsText) {
-      const banner = document.getElementById("stuntBanner");
-      document.getElementById("stuntStats").innerText = statsText;
-      banner.classList.remove("hidden");
-      setTimeout(() => banner.classList.add("hidden"), 2800);
-    }
-
-    function triggerStuntVignette(active) {
-      const body = document.getElementById("appBody");
-      active ? body.classList.add("stunt-vignette") : body.classList.remove("stunt-vignette");
-    }
-
-    function triggerScreenShake() {
-      const container = document.getElementById("canvasContainer");
-      container.style.transform = `translate(${(Math.random() - 0.5) * 16}px, ${(Math.random() - 0.5) * 16}px)`;
-      setTimeout(() => container.style.transform = "translate(0, 0)", 140);
-    }
-
-    function triggerGameOver(title) {
-      STATE.isGameOver = true;
-      document.getElementById("gameOverTitle").innerText = title;
-      document.getElementById("finalLoot").innerText = `$${STATE.cash.toLocaleString()}`;
-      document.getElementById("finalCops").innerText = STATE.copsWrecked;
-      document.getElementById("finalStunts").innerText = STATE.stuntsCompleted;
-      document.getElementById("finalStars").innerText = "★ ".repeat(STATE.wantedStars).trim();
-      document.getElementById("gameOverModal").classList.remove("hidden");
-    }
-
     // =========================================================================
-    // 12. INPUT BINDINGS (Mobile Touch & Keyboard)
+    // 7. EMP JAMMER CREW ABILITY
     // =========================================================================
-    const steerLeftBtn = document.getElementById("touchSteerLeft");
-    const steerRightBtn = document.getElementById("touchSteerRight");
-    const gasBtn = document.getElementById("touchGas");
-    const brakeBtn = document.getElementById("touchBrake");
-    const nitroBtn = document.getElementById("touchNitroBtn");
-    const driftBtn = document.getElementById("touchDriftBtn");
-    const hopBtn = document.getElementById("touchHopBtn");
-    const radioBtn = document.getElementById("radioToggleBtn");
-    const camBtn = document.getElementById("camToggleBtn");
-    const soundBtn = document.getElementById("sirenSoundBtn");
-    const restartBtn = document.getElementById("restartBtn");
-
-    // Steer Left
-    steerLeftBtn.addEventListener("pointerdown", () => { sound.init(); STATE.steer = -1; });
-    steerLeftBtn.addEventListener("pointerup", () => STATE.steer = 0);
-    steerLeftBtn.addEventListener("pointerleave", () => STATE.steer = 0);
-    steerLeftBtn.addEventListener("pointercancel", () => STATE.steer = 0);
-
-    // Steer Right
-    steerRightBtn.addEventListener("pointerdown", () => { sound.init(); STATE.steer = 1; });
-    steerRightBtn.addEventListener("pointerup", () => STATE.steer = 0);
-    steerRightBtn.addEventListener("pointerleave", () => STATE.steer = 0);
-    steerRightBtn.addEventListener("pointercancel", () => STATE.steer = 0);
-
-    // Gas Pedal
-    gasBtn.addEventListener("pointerdown", () => { sound.init(); STATE.throttle = 1; });
-    gasBtn.addEventListener("pointerup", () => STATE.throttle = 0);
-    gasBtn.addEventListener("pointerleave", () => STATE.throttle = 0);
-    gasBtn.addEventListener("pointercancel", () => STATE.throttle = 0);
-
-    // Brake Pedal
-    brakeBtn.addEventListener("pointerdown", () => { sound.init(); STATE.throttle = -1; });
-    brakeBtn.addEventListener("pointerup", () => STATE.throttle = 0);
-    brakeBtn.addEventListener("pointerleave", () => STATE.throttle = 0);
-    brakeBtn.addEventListener("pointercancel", () => STATE.throttle = 0);
-
-    // Drift / Handbrake
-    driftBtn.addEventListener("pointerdown", () => { sound.init(); STATE.isDrifting = true; });
-    driftBtn.addEventListener("pointerup", () => STATE.isDrifting = false);
-    driftBtn.addEventListener("pointerleave", () => STATE.isDrifting = false);
-    driftBtn.addEventListener("pointercancel", () => STATE.isDrifting = false);
-
-    // Nitro Boost
-    nitroBtn.addEventListener("pointerdown", () => {
+    document.getElementById("empBlastBtn").addEventListener("click", () => {
       sound.init();
-      if (STATE.nitro > 15) {
-        STATE.isNitro = true;
-        sound.playNitroBurst();
+      if (STATE.empJammers > 0) {
+        STATE.empJammers--;
+        document.getElementById("empCountBadge").innerText = STATE.empJammers;
+        sound.playEmpPulse();
         triggerScreenShake();
+
+        // 1. Clear all lockdown locked tiles
+        for (let r = 0; r < GRID_SIZE; r++) {
+          for (let c = 0; c < GRID_SIZE; c++) {
+            if (STATE.board[r][c] && STATE.board[r][c].id === "locked") {
+              STATE.board[r][c] = null;
+            }
+          }
+        }
+
+        // 2. Reduce Heat by 2 Stars
+        STATE.heatStars = Math.max(1, STATE.heatStars - 2);
+        STATE.isSwatAlert = false;
+        document.getElementById("swatRaidBanner").classList.add("hidden");
+        sound.updateSirenHeat(STATE.heatStars);
+        updateHeatStarsUI();
+
+        showFloatingBanner("⚡ EMP JAMMER ACTIVATED! HEAT -2 STARS", "#c084fc");
+        renderBoard();
       }
     });
-    nitroBtn.addEventListener("pointerup", () => STATE.isNitro = false);
-    nitroBtn.addEventListener("pointerleave", () => STATE.isNitro = false);
-    nitroBtn.addEventListener("pointercancel", () => STATE.isNitro = false);
 
-    // Hydraulics Hop
-    hopBtn.addEventListener("click", () => {
+    // =========================================================================
+    // 8. GAME OVER & CLEAN ESCAPE EXTRACTION
+    // =========================================================================
+    function checkValidMovesRemaining() {
+      // Check if any available dock piece can be placed anywhere on board
+      let anyMovePossible = false;
+
+      for (let i = 0; i < 3; i++) {
+        const piece = STATE.dockPieces[i];
+        if (piece) {
+          for (let r = 0; r < GRID_SIZE; r++) {
+            for (let c = 0; c < GRID_SIZE; c++) {
+              if (canPlacePiece(piece, r, c)) {
+                anyMovePossible = true;
+                break;
+              }
+            }
+            if (anyMovePossible) break;
+          }
+        }
+        if (anyMovePossible) break;
+      }
+
+      if (!anyMovePossible && STATE.dockPieces.some(p => p !== null)) {
+        // No moves remaining!
+        triggerGameOver("NO MOVES — BUSTED!", false);
+      }
+    }
+
+    document.getElementById("escapeBtn").addEventListener("click", () => {
       sound.init();
-      player.hopHydraulics();
+      triggerGameOver("CLEAN GETAWAY EXECUTED!", true);
     });
 
-    // Radio Station Toggle
-    radioBtn.addEventListener("click", () => {
+    function triggerGameOver(title, isVictory) {
+      STATE.isGameOver = true;
+      if (isVictory) sound.playHeistVictory();
+
+      document.getElementById("resultTitle").innerText = title;
+      document.getElementById("resultTitle").className = isVictory
+        ? "font-gta text-3xl sm:text-4xl font-black text-emerald-400 tracking-wider"
+        : "font-gta text-3xl sm:text-4xl font-black text-rose-500 tracking-wider";
+
+      document.getElementById("resultIcon").innerText = isVictory ? "🚁" : "🚨";
+      document.getElementById("resultSubtitle").innerText = isVictory
+        ? "SYNDICATE HAULED MILLIONS UNTOUCHED"
+        : "SWAT FORCES BREACHED THE VAULT";
+
+      document.getElementById("finalLoot").innerText = `$${STATE.loot.toLocaleString()}`;
+      document.getElementById("finalTumblers").innerText = STATE.crackedLines;
+      document.getElementById("finalHeatStars").innerText = "★ ".repeat(STATE.heatStars).trim();
+      document.getElementById("finalRank").innerText = isVictory ? "S-TIER MASTER HEIST" : "HEIST COMPROMISED";
+
+      if (STATE.loot > STATE.bestLoot) {
+        STATE.bestLoot = STATE.loot;
+        try { localStorage.setItem("gta_heist_best", STATE.bestLoot); } catch(e) {}
+      }
+
+      document.getElementById("heistResultModal").classList.remove("hidden");
+    }
+
+    document.getElementById("nextHeistBtn").addEventListener("click", () => {
       sound.init();
-      const station = sound.nextRadioStation();
-      document.getElementById("radioStationName").innerText = station;
+      document.getElementById("heistResultModal").classList.add("hidden");
+      resetHeist();
     });
 
-    // Camera Toggle
-    camBtn.addEventListener("click", () => {
-      sound.init();
-      const modes = ["chase", "hood", "drone"];
-      const nextIdx = (modes.indexOf(STATE.cameraMode) + 1) % modes.length;
-      STATE.cameraMode = modes[nextIdx];
-      camBtn.innerText = `📷 CAM: ${STATE.cameraMode.toUpperCase()}`;
-    });
+    function resetHeist() {
+      STATE.isGameOver = false;
+      STATE.loot = 0;
+      STATE.heatStars = 1;
+      STATE.swatCountdown = 5;
+      STATE.isSwatAlert = false;
+      STATE.multiplier = 1.0;
+      STATE.crackedLines = 0;
+      STATE.empJammers = 1;
+      STATE.board = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(null));
+      STATE.dockPieces = [null, null, null];
+      STATE.selectedPieceIdx = null;
 
-    // Audio Toggle
-    soundBtn.addEventListener("click", () => {
+      document.getElementById("swatRaidBanner").classList.add("hidden");
+      document.getElementById("lootCounter").innerText = "$0";
+      document.getElementById("targetProgressBar").style.width = "0%";
+      document.getElementById("multiplierVal").innerText = "1.0X";
+      document.getElementById("crackedLinesVal").innerText = "0";
+      document.getElementById("empCountBadge").innerText = "1";
+      document.getElementById("escapeBtn").disabled = true;
+      document.getElementById("escapeBtn").classList.remove("animate-bounce");
+
+      updateHeatStarsUI();
+      sound.updateSirenHeat(1);
+      initBoard();
+
+      // Spawn 2 initial Titanium Safes on board for strategic heist targets
+      STATE.board[2][2] = TOKEN_TYPES.SAFE;
+      STATE.board[3][3] = TOKEN_TYPES.SAFE;
+
+      renderBoard();
+      refillPiecesDock();
+    }
+
+    // =========================================================================
+    // 9. SCREEN SHAKE & FLOATING BANNERS
+    // =========================================================================
+    function triggerScreenShake() {
+      const body = document.getElementById("appBody");
+      body.classList.remove("screen-shake");
+      void body.offsetWidth; // Reflow
+      body.classList.add("screen-shake");
+    }
+
+    function showFloatingBanner(text, glowColor = "#10b981") {
+      const overlay = document.getElementById("floatingOverlay");
+      const pill = document.createElement("div");
+      pill.className = "floating-loot font-hud text-xs sm:text-sm font-black uppercase tracking-wider text-white px-4 py-1.5 rounded-full bg-black/90 border shadow-2xl mb-2";
+      pill.style.borderColor = glowColor;
+      pill.style.boxShadow = `0 0 20px ${glowColor}`;
+      pill.innerText = text;
+
+      overlay.appendChild(pill);
+      setTimeout(() => pill.remove(), 1100);
+    }
+
+    // Sound Toggle Button
+    document.getElementById("soundBtn").addEventListener("click", () => {
       sound.init();
       const on = sound.toggleMute();
-      soundBtn.innerText = on ? "🔊 AUDIO" : "🔇 MUTED";
+      document.getElementById("soundBtn").innerText = on ? "🔊" : "🔇";
     });
 
-    // Restart
-    restartBtn.addEventListener("click", () => {
-      sound.init();
-      document.getElementById("gameOverModal").classList.add("hidden");
-      resetGameState();
-    });
-
-    // Keyboard support for desktop testing
+    // START GAME ENGINE
     window.addEventListener("pointerdown", () => sound.init(), { once: true });
-    window.addEventListener("keydown", (e) => {
-      sound.init();
-      if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") STATE.throttle = 1;
-      if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") STATE.throttle = -1;
-      if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") STATE.steer = -1;
-      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") STATE.steer = 1;
-      if (e.key === " " || e.key === "Control") STATE.isDrifting = true;
-      if (e.key === "Shift") {
-        if (STATE.nitro > 15) {
-          STATE.isNitro = true;
-          sound.playNitroBurst();
-        }
-      }
-      if (e.key === "h" || e.key === "H") player.hopHydraulics();
-      if (e.key === "c" || e.key === "C") camBtn.click();
-      if (e.key === "r" || e.key === "R") radioBtn.click();
-    });
-
-    window.addEventListener("keyup", (e) => {
-      if (["ArrowUp", "w", "W", "ArrowDown", "s", "S"].includes(e.key)) STATE.throttle = 0;
-      if (["ArrowLeft", "a", "A", "ArrowRight", "d", "D"].includes(e.key)) STATE.steer = 0;
-      if (e.key === " " || e.key === "Control") STATE.isDrifting = false;
-      if (e.key === "Shift") STATE.isNitro = false;
-    });
-
-    // Resize Handler
-    window.addEventListener("resize", () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    // =========================================================================
-    // 13. RESET & MAIN 3D ANIMATION LOOP
-    // =========================================================================
-    function resetGameState() {
-      STATE.isGameOver = false;
-      STATE.cash = 125000;
-      STATE.health = 100;
-      STATE.nitro = 100;
-      STATE.respect = 100;
-      STATE.wantedStars = 1;
-      STATE.copsWrecked = 0;
-      STATE.stuntsCompleted = 0;
-      STATE.startTime = Date.now();
-
-      // Respawn in Grove Street
-      player.group.position.set(0, 0, 440);
-      player.angle = 0;
-      player.speed = 0;
-      player.setPaintColor(0xf59e0b);
-
-      // Clean up cops
-      STATE.copCars.forEach(c => scene.remove(c.group));
-      STATE.copCars = [];
-
-      updateCashHUD();
-      updateArmorHUD();
-      updateWantedStarsUI();
-    }
-
-    function animate() {
-      requestAnimationFrame(animate);
-
-      if (!STATE.isGameOver) {
-        player.update();
-        STATE.copCars.forEach(cop => cop.update());
-        chopper.update();
-        updatePolicePursuit();
-        updateParticles();
-        checkCashPickups();
-        updateClockAndDistrict();
-      }
-
-      updateCamera();
-      updateRadarMinimap();
-
-      renderer.render(scene, camera);
-    }
-
-    // INIT EVERYTHING
-    buildSanAndreasCity();
-    resetGameState();
-    animate();
+    initBoard();
+    resetHeist();
   </script>
 </body>
 </html>
