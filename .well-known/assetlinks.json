@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.ballia.mochidrop",
+        "sha256_cert_fingerprints": ["1A:42:3F:E8:23:4A:E4:33:49:DD:84:F8:71:C6:20:45:47:62:BE:37:C8:4C:32:20:13:E1:3A:0C:D2:3A:D0:A3"]
+      }
+    }]
