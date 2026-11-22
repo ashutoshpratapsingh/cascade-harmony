@@ -47,11 +47,48 @@
 
   <style>
     * {
-      touch-action: none;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       user-select: none;
       font-family: 'Fredoka', 'Quicksand', sans-serif;
+    }
+
+    /* Prevent unwanted pull-to-refresh & browser bounce on game */
+    html, body {
+      touch-action: none;
+      overscroll-behavior: none;
+    }
+
+    #gameCanvas, .jar-container {
+      touch-action: none !important;
+    }
+
+    /* Enable Smooth Touch Scrolling in Modals & Settings */
+    .modal-scroll,
+    .overflow-y-auto,
+    .overflow-y-auto * {
+      touch-action: pan-y !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+
+    /* Custom Smooth Scrollbar Styling */
+    .modal-scroll::-webkit-scrollbar,
+    .overflow-y-auto::-webkit-scrollbar {
+      width: 5px;
+    }
+    .modal-scroll::-webkit-scrollbar-track,
+    .overflow-y-auto::-webkit-scrollbar-track {
+      background: rgba(251, 191, 36, 0.15);
+      border-radius: 999px;
+    }
+    .modal-scroll::-webkit-scrollbar-thumb,
+    .overflow-y-auto::-webkit-scrollbar-thumb {
+      background: rgba(217, 119, 6, 0.5);
+      border-radius: 999px;
+    }
+
+    input[type="range"] {
+      touch-action: pan-x !important;
     }
 
     .font-fun {
@@ -337,7 +374,7 @@
   <!-- GAME SETTINGS MODAL (RESUME, SOUND, RESOLUTION, HAPTICS, BIOMES & MORE)   -->
   <!-- ========================================================================= -->
   <div id="settingsModal" class="fixed inset-0 bg-black/65 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm hidden select-none">
-    <div class="max-w-sm w-full bg-[#fffcf5] border-3 border-amber-300 rounded-3xl p-5 sm:p-6 shadow-2xl text-center space-y-3.5 max-h-[92dvh] overflow-y-auto">
+    <div class="modal-scroll max-w-sm w-full bg-[#fffcf5] border-3 border-amber-300 rounded-3xl p-5 sm:p-6 shadow-2xl text-center space-y-3.5 max-h-[85dvh] overflow-y-auto overscroll-contain">
       <!-- Modal Header -->
       <div class="flex items-center justify-between border-b border-amber-200/80 pb-2.5">
         <div class="flex items-center gap-2">
@@ -609,7 +646,7 @@
   <!-- HOW TO PLAY / TUTORIAL MODAL (GUIDES NEW PLAYERS STEP-BY-STEP)           -->
   <!-- ========================================================================= -->
   <div id="tutorialModal" class="fixed inset-0 bg-black/65 z-50 flex items-center justify-center p-4 backdrop-blur-sm hidden select-none">
-    <div class="max-w-sm w-full bg-[#fffcf5] border-3 border-amber-300 rounded-3xl p-5 shadow-2xl space-y-3.5 transform transition-all duration-300 scale-95 relative max-h-[92vh] overflow-y-auto">
+    <div class="modal-scroll max-w-sm w-full bg-[#fffcf5] border-3 border-amber-300 rounded-3xl p-5 shadow-2xl space-y-3.5 transform transition-all duration-300 scale-95 relative max-h-[85dvh] overflow-y-auto overscroll-contain">
       <!-- Close X button -->
       <button id="closeTutorialBtn" class="touch-btn absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-amber-100 border border-amber-300 text-amber-950 font-black text-xs flex items-center justify-center shadow-sm hover:bg-amber-200 transition">
         ✕
@@ -703,7 +740,7 @@
   <!-- CREATOR PROFILE MODAL (VIP AUTEUR CARD: BALLIA WALA ASHUTOSH)             -->
   <!-- ========================================================================= -->
   <div id="creatorModal" class="fixed inset-0 bg-black/85 z-50 flex items-center justify-center p-4 backdrop-blur-xl hidden select-none">
-    <div class="relative w-full max-w-sm sm:max-w-md bg-gradient-to-b from-zinc-950 via-zinc-900 to-black border-2 border-amber-400/80 rounded-3xl p-5 sm:p-6 shadow-[0_0_50px_rgba(251,191,36,0.35)] text-center space-y-4 text-white overflow-hidden">
+    <div class="modal-scroll relative w-full max-w-sm sm:max-w-md bg-gradient-to-b from-zinc-950 via-zinc-900 to-black border-2 border-amber-400/80 rounded-3xl p-5 sm:p-6 shadow-[0_0_50px_rgba(251,191,36,0.35)] text-center space-y-4 text-white max-h-[85dvh] overflow-y-auto overscroll-contain">
       
       <!-- Golden Shimmer Glow Top -->
       <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-48 h-48 bg-amber-400/20 rounded-full blur-3xl pointer-events-none"></div>
