@@ -163,6 +163,14 @@
       cursor: crosshair !important;
       animation: pulse 1s infinite;
     }
+
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin-slow {
+      animation: spinSlow 14s linear infinite;
+    }
   </style>
 </head>
 <body id="appBody" class="flex flex-col justify-between items-center h-full max-h-[100dvh] w-full overflow-hidden select-none">
@@ -170,98 +178,83 @@
   <!-- ========================================================================= -->
   <!-- TOP BAR: SCORE, HIGH SCORE, NEXT PET PREVIEW & SOUND CONTROLS            -->
   <!-- ========================================================================= -->
-  <header class="w-full max-w-md mx-auto flex flex-col z-20 px-3.5 pt-2 pb-1">
-    <div class="flex items-center justify-between">
-      <!-- CURRENT SCORE -->
-      <div class="flex items-center gap-2">
-        <div class="bg-amber-100/90 border-2 border-amber-300 px-3 py-1 rounded-2xl shadow-sm">
-          <div class="text-[8.5px] font-bold text-amber-900/70 uppercase tracking-widest leading-none">SCORE</div>
-          <div id="scoreVal" class="text-xl sm:text-2xl font-black text-amber-950 font-fun leading-tight tabular-nums">
-            0
-          </div>
+  <header class="w-full max-w-md mx-auto flex flex-col z-20 px-3 pt-2 pb-1 gap-1.5 flex-shrink-0">
+    <!-- Top Row: Score | Next Preview + Creator | Equal-Distance Action Buttons -->
+    <div class="grid grid-cols-3 items-center gap-2">
+      <!-- Left: Score Card -->
+      <div class="flex items-center gap-1.5">
+        <div class="flex-1 bg-amber-100/90 border-2 border-amber-300 px-2 py-1 rounded-2xl shadow-sm text-center">
+          <div class="text-[7.5px] font-bold text-amber-900/70 uppercase tracking-widest leading-none">SCORE</div>
+          <div id="scoreVal" class="text-base sm:text-lg font-black text-amber-950 font-fun leading-tight tabular-nums">0</div>
         </div>
-
-        <!-- HIGH SCORE -->
-        <div class="bg-amber-50/80 border border-amber-200 px-2.5 py-1 rounded-2xl shadow-sm">
-          <div class="text-[8px] font-bold text-amber-800/60 uppercase tracking-widest leading-none">BEST</div>
-          <div id="bestScoreVal" class="text-sm font-extrabold text-amber-900 font-fun leading-tight tabular-nums">
-            0
-          </div>
+        <div class="bg-amber-50/80 border border-amber-200 px-2 py-1 rounded-2xl shadow-sm text-center">
+          <div class="text-[7px] font-bold text-amber-800/60 uppercase tracking-widest leading-none">BEST</div>
+          <div id="bestScoreVal" class="text-xs sm:text-sm font-extrabold text-amber-900 font-fun leading-tight tabular-nums">0</div>
         </div>
       </div>
 
-      <!-- NEXT ANIMAL PREVIEW & CREATOR BADGE -->
-      <div class="flex items-center gap-1.5">
-        <!-- CREATOR PROFILE BUTTON -->
-        <button id="headerCreatorBtn" title="Ballia wala Ashutosh" class="touch-btn group flex items-center bg-amber-100/90 hover:bg-amber-200/90 border border-amber-300 px-2.5 py-1 rounded-2xl shadow-xs text-amber-950 font-bold font-fun text-[10.5px] sm:text-xs transition-all active:scale-95">
-          <span>Ballia wala Ashutosh</span>
-        </button>
-
-        <!-- NEXT ANIMAL PREVIEW -->
-        <div class="flex items-center gap-1.5 bg-amber-100/80 border-2 border-amber-300 px-2.5 py-1 rounded-2xl shadow-sm">
+      <!-- Center: Next Pet Drop Preview & Creator Signature -->
+      <div class="flex flex-col items-center justify-center">
+        <div class="flex items-center gap-1.5 bg-amber-100/90 border-2 border-amber-300 px-2.5 py-1 rounded-2xl shadow-sm">
           <div class="text-right">
-            <div class="text-[7.5px] font-bold text-amber-900/70 uppercase tracking-widest leading-none">NEXT</div>
-            <div id="nextPetName" class="text-[9.5px] font-black text-amber-950 leading-tight">Bunny</div>
+            <div class="text-[7px] font-bold text-amber-900/70 uppercase tracking-wider leading-none">NEXT</div>
+            <div id="nextPetName" class="text-[9px] font-black text-amber-950 leading-tight">Bunny</div>
           </div>
-          <div id="nextPetIcon" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/90 border border-amber-300 flex items-center justify-center text-lg sm:text-xl shadow-inner">
+          <div id="nextPetIcon" class="w-7 h-7 rounded-xl bg-white/95 border border-amber-300 flex items-center justify-center text-lg shadow-inner">
             🐰
           </div>
         </div>
+        <button id="headerCreatorBtn" class="text-[8px] text-amber-900/80 hover:text-amber-950 font-fun font-bold tracking-tight mt-0.5 truncate max-w-full">
+          By Ballia wala Ashutosh
+        </button>
       </div>
 
-      <!-- HOME, TUTORIAL, SOUND & RESET -->
-      <div class="flex items-center gap-1 sm:gap-1.5">
-        <button id="homeTitleBtn" title="Back to Title Screen" class="touch-btn w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-amber-100/90 border-2 border-amber-300 text-amber-900 text-sm font-black flex items-center justify-center shadow-sm hover:bg-amber-200 transition">
+      <!-- Right: Action Buttons (Equal Size, Equal Spacing: Home, Restart, Settings) -->
+      <div class="flex items-center justify-end gap-1.5 sm:gap-2">
+        <button id="homeTitleBtn" title="Back to Title Screen" class="touch-btn w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-amber-100/90 hover:bg-amber-200 border-2 border-amber-300 text-amber-900 text-sm sm:text-base font-black flex items-center justify-center shadow-sm transition active:scale-90">
           🏠
         </button>
-        <button id="tutorialBtn" title="How to Play Tutorial" class="touch-btn w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-amber-100/90 border-2 border-amber-300 text-amber-900 text-sm font-black flex items-center justify-center shadow-sm hover:bg-amber-200 transition">
-          ❓
-        </button>
-        <button id="soundToggleBtn" class="touch-btn w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-amber-100/90 border-2 border-amber-300 text-amber-900 text-sm font-black flex items-center justify-center shadow-sm">
-          🔊
-        </button>
-        <button id="restartBtn" class="touch-btn w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-amber-100/90 border-2 border-amber-300 text-amber-900 text-sm font-black flex items-center justify-center shadow-sm">
+        <button id="restartBtn" title="Restart Game" class="touch-btn w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-amber-100/90 hover:bg-amber-200 border-2 border-amber-300 text-amber-900 text-sm sm:text-base font-black flex items-center justify-center shadow-sm transition active:scale-90">
           🔄
         </button>
+        <!-- ⚙️ SETTINGS BUTTON (REPLACES STANDALONE SOUND EMOJI!) -->
+        <button id="settingsBtn" title="Game Settings" class="touch-btn w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-amber-100/90 hover:bg-amber-200 border-2 border-amber-300 text-amber-900 text-base sm:text-lg font-black flex items-center justify-center shadow-sm transition active:scale-90">
+          ⚙️
+        </button>
       </div>
     </div>
 
-    <!-- EVOLUTION TIER ROADMAP (Progress Guide) -->
-    <div class="mt-1.5 flex items-center justify-between gap-1 bg-amber-200/50 p-1 rounded-xl text-xs overflow-x-auto border border-amber-300/60">
-      <span class="text-[9px] font-bold text-amber-900/80 uppercase px-1">EVOLUTION:</span>
-      <div class="flex items-center gap-1 text-sm leading-none">
-        <span title="Tier 1: Bunny">🐰</span>➔
-        <span title="Tier 2: Chick">🐥</span>➔
-        <span title="Tier 3: Hamster">🐹</span>➔
-        <span title="Tier 4: Shiba">🐶</span>➔
-        <span title="Tier 5: Cat">🐱</span>➔
-        <span title="Tier 6: Panda">🐼</span>➔
-        <span title="Tier 7: Seal">🦭</span>➔
-        <span title="Tier 8: Capybara">🐹</span>➔
-        <span title="Tier 9: Honey Bear">🐻</span>➔
-        <span title="Tier 10: Chonk King">👑</span>
+    <!-- Row 2: Unified Objective & Fever Bar (Compact, Balanced & 100% Equal Distance) -->
+    <div class="grid grid-cols-2 gap-2 items-center">
+      <!-- Target Objective Card -->
+      <div id="levelMissionBar" class="bg-amber-100/90 border-2 border-amber-300 rounded-2xl px-2.5 py-1 flex items-center justify-between text-xs font-bold text-amber-950 shadow-sm min-w-0">
+        <div class="flex items-center gap-1.5 min-w-0">
+          <span id="levelBadge" class="bg-amber-800 text-amber-100 text-[8.5px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0">LVL 1</span>
+          <span id="headerLevelBadge" class="hidden">LVL 1</span>
+          <div id="levelGoalText" class="text-[10px] font-black text-amber-950 truncate">Unlock Chick 🐥</div>
+        </div>
+        <div class="flex items-center gap-1.5 flex-shrink-0">
+          <div id="dailyStreakBadge" class="bg-amber-200/90 px-1 py-0.2 rounded-lg text-[7.5px] font-black text-amber-900 flex items-center gap-0.5" title="Daily 5 Quest Streak">
+            <span>🔥</span><span id="dailyStreakText">0/5</span>
+          </div>
+          <div id="dropsVal" class="text-xs font-black text-rose-600 font-fun tabular-nums">15</div>
+          <span id="levelStars" class="text-[9px] text-amber-500 font-black">★☆☆</span>
+        </div>
       </div>
-    </div>
 
-    <!-- JAR BIOME THEME PICKER (Unique Customizable Terrarium Vibes) -->
-    <div class="mt-1 flex items-center justify-between gap-1 bg-amber-100/70 px-2 py-0.5 rounded-xl border border-amber-300/60 text-[9px] font-bold text-amber-950">
-      <span class="text-[8px] uppercase tracking-wider text-amber-800/80 font-black">BIOME:</span>
-      <div class="flex items-center gap-1">
-        <button id="themeSakuraBtn" class="theme-pill px-2 py-0.5 rounded-lg bg-rose-200 border border-rose-300 text-rose-950 font-black shadow-xs transition active:scale-95">🌸 Sakura</button>
-        <button id="themeMatchaBtn" class="theme-pill px-2 py-0.5 rounded-lg bg-emerald-100/60 border border-emerald-300/60 text-emerald-950 font-black shadow-xs transition opacity-60 active:scale-95">🍵 Matcha</button>
-        <button id="themeGalaxyBtn" class="theme-pill px-2 py-0.5 rounded-lg bg-indigo-100/60 border border-indigo-300/60 text-indigo-950 font-black shadow-xs transition opacity-60 active:scale-95">🌌 Galaxy</button>
+      <!-- Chonk Fever Rush Card -->
+      <div id="feverBarContainer" class="bg-amber-100/90 border-2 border-amber-300 rounded-2xl px-2.5 py-1 flex items-center gap-1.5 shadow-sm min-w-0">
+        <div class="flex items-center gap-0.5 text-[8.5px] font-black text-amber-950 uppercase tracking-wider flex-shrink-0">
+          <span id="feverIcon" class="animate-bounce">⚡</span>
+          <span id="feverLabel" class="hidden sm:inline">FEVER</span>
+        </div>
+        <div class="flex-1 h-2 bg-amber-950/20 rounded-full overflow-hidden p-0.5 border border-amber-400/40 relative">
+          <div id="feverFill" class="h-full bg-gradient-to-r from-amber-400 via-rose-400 to-purple-500 rounded-full transition-all duration-300 w-0 relative overflow-hidden">
+            <div class="absolute inset-0 bg-white/30 animate-pulse"></div>
+          </div>
+        </div>
+        <span id="feverPercent" class="text-[9px] font-black text-amber-950 tabular-nums flex-shrink-0">0%</span>
       </div>
-    </div>
-
-    <!-- MODE TOGGLE: LEVEL QUEST vs ENDLESS SUIKA -->
-    <div class="mt-1 flex items-center justify-between gap-1 bg-amber-200/50 p-0.5 rounded-2xl border border-amber-300/80">
-      <button id="modeQuestBtn" class="touch-btn flex-1 py-1 rounded-xl text-[11px] font-black transition bg-amber-900 text-amber-50 shadow-sm flex items-center justify-center gap-1.5">
-        <span>⭐ LEVEL QUESTS</span>
-        <span id="headerLevelBadge" class="bg-amber-400 text-amber-950 text-[9px] px-1.5 py-0.2 rounded-full font-black">LVL 1</span>
-      </button>
-      <button id="modeEndlessBtn" class="touch-btn flex-1 py-1 rounded-xl text-[11px] font-black transition text-amber-900 hover:bg-amber-300/60 flex items-center justify-center gap-1">
-        <span>🏆 ENDLESS SUIKA</span>
-      </button>
     </div>
   </header>
 
@@ -274,45 +267,8 @@
       ✨ 2X SUIKA COMBO! +100
     </div>
 
-    <!-- CHONK FEVER RUSH METER -->
-    <div id="feverBarContainer" class="w-[330px] sm:w-[370px] mb-1 bg-amber-200/60 p-1 rounded-xl border border-amber-300/80 flex items-center gap-2 shadow-xs">
-      <div class="flex items-center gap-1 text-[9px] font-black text-amber-950 uppercase tracking-wider pl-1">
-        <span id="feverIcon" class="animate-bounce">⚡</span>
-        <span id="feverLabel">FEVER</span>
-      </div>
-      <div class="flex-1 h-3 bg-amber-950/20 rounded-full overflow-hidden p-0.5 border border-amber-400/40 relative">
-        <div id="feverFill" class="h-full bg-gradient-to-r from-amber-400 via-rose-400 to-purple-500 rounded-full transition-all duration-300 w-0 relative overflow-hidden">
-          <div class="absolute inset-0 bg-white/30 animate-pulse"></div>
-        </div>
-      </div>
-      <span id="feverPercent" class="text-[9.5px] font-black text-amber-950 tabular-nums pr-1">0%</span>
-    </div>
-
-    <!-- TARGET GOAL POV MISSION BAR (Always visible with Daily 5 Streak!) -->
-    <div id="levelMissionBar" class="w-[330px] sm:w-[370px] mb-1.5 bg-gradient-to-r from-amber-100 via-yellow-100 to-amber-100 border-2 border-amber-300 rounded-2xl px-3 py-1 flex items-center justify-between text-xs font-bold text-amber-950 shadow-sm z-30 transition-all duration-300">
-      <div class="flex items-center gap-2 min-w-0">
-        <span id="levelBadge" class="bg-amber-800 text-amber-100 text-[9.5px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex-shrink-0">LVL 1</span>
-        <div class="min-w-0 truncate">
-          <div class="text-[7.5px] font-bold text-amber-800/70 uppercase tracking-widest leading-none">TARGET OBJECTIVE</div>
-          <div id="levelGoalText" class="text-xs font-black text-amber-950 leading-tight truncate">Unlock Chick 🐥</div>
-        </div>
-      </div>
-      <div class="flex items-center gap-2 text-right flex-shrink-0">
-        <!-- Daily 5 Quest Streak Indicator -->
-        <div id="dailyStreakBadge" class="flex flex-col items-center bg-amber-200/80 px-1.5 py-0.5 rounded-xl border border-amber-300/90 text-[7.5px] font-black text-amber-900 leading-none shadow-xs" title="Daily 5 Quest: Clear 5 levels today for Bonus Power-ups!">
-          <span class="flex items-center gap-0.5"><span>🔥</span><span>DAILY</span></span>
-          <span id="dailyStreakText" class="text-[9px] text-amber-950 font-black mt-0.5">0/5</span>
-        </div>
-        <div>
-          <div class="text-[7.5px] font-bold text-amber-800/70 uppercase tracking-widest leading-none">DROPS LEFT</div>
-          <div id="dropsVal" class="text-sm font-black text-rose-600 font-fun leading-tight tabular-nums">15</div>
-        </div>
-        <div id="levelStars" class="text-xs text-amber-500 font-black tracking-widest">★☆☆</div>
-      </div>
-    </div>
-
-    <!-- SUIKA GLASS JAR CONTAINER -->
-    <div id="jarWrapper" class="relative jar-container w-[330px] sm:w-[370px] h-[415px] sm:h-[490px] max-h-[55dvh] flex items-center justify-center overflow-hidden">
+    <!-- SUIKA GLASS JAR CONTAINER (Responsive Height - 100% Visible on All Phones) -->
+    <div id="jarWrapper" class="relative jar-container w-full max-w-[340px] sm:max-w-[370px] h-[415px] sm:h-[480px] max-h-[52dvh] flex items-center justify-center overflow-hidden">
       <!-- CHONK FEVER RUSH CELEBRATION BANNER -->
       <div id="feverRushBanner" class="hidden absolute top-4 z-40 bg-gradient-to-r from-yellow-400 via-rose-500 to-purple-500 text-white px-4 py-1.5 rounded-full font-fun text-xs sm:text-sm font-black shadow-2xl border-2 border-white animate-bounce text-center">
         🔥 CHONK FEVER RUSH! 2X SCORE & LOW-G! 🔥
@@ -327,7 +283,7 @@
         <span id="dangerCountdown" class="hidden text-rose-600 font-black animate-pulse">OVERFLOW IN 3s!</span>
       </div>
 
-      <!-- IN-JAR FIRST-DROP TUTORIAL HINT (Guides new players on where to aim & drop) -->
+      <!-- IN-JAR FIRST-DROP TUTORIAL HINT -->
       <div id="firstDropHint" class="absolute top-[135px] left-0 right-0 z-30 flex flex-col items-center pointer-events-none transition-all duration-500">
         <div class="bg-amber-950/85 text-amber-100 px-3.5 py-1.5 rounded-full text-[11px] font-black shadow-xl border border-amber-300/50 flex items-center gap-2 backdrop-blur-xs animate-bounce">
           <span>👈</span>
@@ -342,30 +298,190 @@
   </main>
 
   <!-- ========================================================================= -->
-  <!-- BOTTOM ACTION BAR: POWER-UPS (SHAKE, HAMMER, RAINBOW)                     -->
+  <!-- BOTTOM ACTION BAR: POWER-UPS (100% EQUALLY DISTANCED & VISIBLE)           -->
   <!-- ========================================================================= -->
-  <footer class="w-full max-w-md mx-auto flex items-center justify-between gap-1.5 sm:gap-2 z-20 px-2 sm:px-4 pb-2.5 pt-1 flex-shrink-0">
+  <footer class="w-full max-w-md mx-auto grid grid-cols-3 gap-2 z-20 px-3 pb-3 pt-1 flex-shrink-0">
     <!-- SHAKE JAR BUTTON (GENTLE SETTLE NUDGE) -->
-    <button id="shakeBtn" class="touch-btn flex-1 min-w-0 py-2 px-1 sm:px-2 rounded-2xl bg-gradient-to-r from-amber-300 to-yellow-300 border-2 border-amber-400 shadow-md flex items-center justify-center gap-1 text-amber-950 font-black text-[11px] sm:text-xs active:scale-95 transition whitespace-nowrap">
-      <span class="text-sm sm:text-base flex-shrink-0">📳</span>
-      <span class="truncate">SHAKE</span>
-      <span id="shakeCooldownBadge" class="bg-amber-900 text-amber-100 text-[8.5px] font-black px-1.5 py-0.2 rounded-full flex-shrink-0">READY</span>
+    <button id="shakeBtn" class="touch-btn w-full py-2.5 px-1 rounded-2xl bg-gradient-to-r from-amber-300 to-yellow-300 border-2 border-amber-400 shadow-md flex items-center justify-center gap-1.5 text-amber-950 font-black text-xs active:scale-95 transition">
+      <span class="text-sm">📳</span>
+      <span>SHAKE</span>
+      <span id="shakeCooldownBadge" class="bg-amber-900 text-amber-100 text-[8px] font-black px-1.5 py-0.2 rounded-full">READY</span>
     </button>
 
     <!-- SQUEAKY HAMMER (POP OBSTACLE PET) -->
-    <button id="hammerBtn" class="touch-btn flex-1 min-w-0 py-2 px-1 sm:px-2 rounded-2xl bg-gradient-to-r from-rose-200 to-pink-300 border-2 border-rose-400 shadow-md flex items-center justify-center gap-1 text-rose-950 font-black text-[11px] sm:text-xs active:scale-95 transition whitespace-nowrap">
-      <span class="text-sm sm:text-base flex-shrink-0">🔨</span>
-      <span class="truncate">HAMMER</span>
-      <span id="hammerCountBadge" class="bg-rose-600 text-white text-[8.5px] font-black px-1.5 py-0.2 rounded-full flex-shrink-0">2</span>
+    <button id="hammerBtn" class="touch-btn w-full py-2.5 px-1 rounded-2xl bg-gradient-to-r from-rose-200 to-pink-300 border-2 border-rose-400 shadow-md flex items-center justify-center gap-1.5 text-rose-950 font-black text-xs active:scale-95 transition">
+      <span class="text-sm">🔨</span>
+      <span>HAMMER</span>
+      <span id="hammerCountBadge" class="bg-rose-600 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full">2</span>
     </button>
 
-    <!-- RAINBOW JELLY (UNIVERSAL MERGE - VIBRANT & 100% VISIBLE ON PHONES) -->
-    <button id="rainbowBtn" class="touch-btn flex-1 min-w-0 py-2 px-1 sm:px-2 rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-sky-400 border-2 border-purple-400 shadow-md flex items-center justify-center gap-1 text-white font-black text-[11px] sm:text-xs active:scale-95 transition whitespace-nowrap">
-      <span class="text-sm sm:text-base flex-shrink-0">🌈</span>
-      <span class="truncate">RAINBOW</span>
-      <span id="rainbowCountBadge" class="bg-purple-950 text-purple-100 text-[8.5px] font-black px-1.5 py-0.2 rounded-full flex-shrink-0 shadow-xs">1</span>
+    <!-- RAINBOW JELLY (UNIVERSAL MERGE) -->
+    <button id="rainbowBtn" class="touch-btn w-full py-2.5 px-1 rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-sky-400 border-2 border-purple-400 shadow-md flex items-center justify-center gap-1.5 text-white font-black text-xs active:scale-95 transition">
+      <span class="text-sm">🌈</span>
+      <span>RAINBOW</span>
+      <span id="rainbowCountBadge" class="bg-purple-950 text-purple-100 text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-xs">1</span>
     </button>
   </footer>
+
+  <!-- ========================================================================= -->
+  <!-- GAME SETTINGS MODAL (RESUME, SOUND, RESOLUTION, HAPTICS, BIOMES & MORE)   -->
+  <!-- ========================================================================= -->
+  <div id="settingsModal" class="fixed inset-0 bg-black/65 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm hidden select-none">
+    <div class="max-w-sm w-full bg-[#fffcf5] border-3 border-amber-300 rounded-3xl p-5 sm:p-6 shadow-2xl text-center space-y-3.5 max-h-[92dvh] overflow-y-auto">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-amber-200/80 pb-2.5">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">⚙️</span>
+          <h2 class="font-fun text-xl sm:text-2xl font-black text-amber-950">GAME SETTINGS</h2>
+        </div>
+        <button id="closeSettingsBtn" class="touch-btn w-8 h-8 rounded-full bg-amber-100 border border-amber-300 text-amber-900 font-black text-xs flex items-center justify-center hover:bg-amber-200 transition">
+          ✕
+        </button>
+      </div>
+
+      <!-- 1. RESUME GAME BUTTON (Big, Golden, Top priority!) -->
+      <button id="resumeGameBtn" class="touch-btn w-full py-3 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 border-3 border-amber-500 rounded-2xl text-amber-950 font-fun font-black text-lg shadow-md hover:scale-101 active:scale-95 transition flex items-center justify-center gap-2">
+        <span class="text-xl">▶️</span>
+        <span class="tracking-wide">RESUME GAME</span>
+      </button>
+
+      <!-- Settings Controls Group -->
+      <div class="space-y-2.5 text-left text-xs font-bold text-amber-950">
+
+        <!-- 2. AUDIO SETTINGS: SOUND ON / OFF & VOLUME -->
+        <div class="bg-amber-100/60 p-3 rounded-2xl border border-amber-200/90 space-y-2.5">
+          <div class="text-[9px] font-black text-amber-900/70 uppercase tracking-widest">AUDIO CONTROLS</div>
+          
+          <!-- Sound FX Toggle -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-base" id="soundIconDisplay">🔊</span>
+              <div>
+                <div class="font-black text-xs">Sound Effects (SFX)</div>
+                <div class="text-[9.5px] text-amber-800/70 font-normal">Authentic animal vocals, drops & merge pops</div>
+              </div>
+            </div>
+            <button id="soundToggleSettingBtn" class="touch-btn px-3 py-1 rounded-xl font-black text-xs transition bg-amber-800 text-amber-100 shadow-xs">
+              ON
+            </button>
+          </div>
+
+          <!-- Master Volume Slider -->
+          <div class="pt-1.5 border-t border-amber-200/60">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-[10px] font-black text-amber-900">Master Volume</span>
+              <span id="volumePercentVal" class="text-[10px] font-black text-amber-950 tabular-nums">80%</span>
+            </div>
+            <input id="volumeSlider" type="range" min="0" max="100" value="80" class="w-full accent-amber-600 cursor-pointer h-1.5 bg-amber-200 rounded-lg">
+          </div>
+        </div>
+
+        <!-- 3. RESOLUTION & GRAPHICS QUALITY ADJUST -->
+        <div class="bg-amber-100/60 p-3 rounded-2xl border border-amber-200/90 space-y-2">
+          <div class="text-[9px] font-black text-amber-900/70 uppercase tracking-widest">GRAPHICS RESOLUTION</div>
+          <div class="text-[9.5px] text-amber-800/70 font-normal">Scale rendering sharpness for maximum battery saving or ultra-crisp display:</div>
+          <div class="grid grid-cols-3 gap-1.5 pt-0.5">
+            <button id="resLowBtn" class="res-btn touch-btn py-1.5 px-1 rounded-xl text-center border font-black text-[10px] transition bg-white/70 border-amber-300 text-amber-900 hover:bg-amber-100">
+              <div>🔋 LOW</div>
+              <div class="text-[8px] font-normal text-amber-800/60">1.0x Save</div>
+            </button>
+            <button id="resMedBtn" class="res-btn touch-btn py-1.5 px-1 rounded-xl text-center border font-black text-[10px] transition bg-amber-800 text-amber-50 border-amber-800 shadow-xs">
+              <div>⚡ NORMAL</div>
+              <div class="text-[8px] font-normal text-amber-200">1.5x Smooth</div>
+            </button>
+            <button id="resHighBtn" class="res-btn touch-btn py-1.5 px-1 rounded-xl text-center border font-black text-[10px] transition bg-white/70 border-amber-300 text-amber-900 hover:bg-amber-100">
+              <div>💎 ULTRA</div>
+              <div class="text-[8px] font-normal text-amber-800/60">2.0x Retina</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. HAPTICS & SCREEN SHAKE FX -->
+        <div class="bg-amber-100/60 p-3 rounded-2xl border border-amber-200/90 space-y-2">
+          <div class="text-[9px] font-black text-amber-900/70 uppercase tracking-widest">TACTILE & VISUAL FX</div>
+          
+          <!-- Vibration Toggle -->
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-base">📳</span>
+              <div>
+                <div class="font-black text-xs">Haptic Vibration</div>
+                <div class="text-[9.5px] text-amber-800/70 font-normal">Physical phone vibration on merges & jar shake</div>
+              </div>
+            </div>
+            <button id="hapticToggleBtn" class="touch-btn px-3 py-1 rounded-xl font-black text-xs transition bg-amber-800 text-amber-100 shadow-xs">
+              ON
+            </button>
+          </div>
+
+          <!-- Screen Shake Toggle -->
+          <div class="flex items-center justify-between pt-1.5 border-t border-amber-200/60">
+            <div class="flex items-center gap-2">
+              <span class="text-base">💥</span>
+              <div>
+                <div class="font-black text-xs">Screen Shake Effects</div>
+                <div class="text-[9.5px] text-amber-800/70 font-normal">Juicy impact tremors on big animal merges</div>
+              </div>
+            </div>
+            <button id="screenShakeToggleBtn" class="touch-btn px-3 py-1 rounded-xl font-black text-xs transition bg-amber-800 text-amber-100 shadow-xs">
+              ON
+            </button>
+          </div>
+        </div>
+
+        <!-- 5. TERRARIUM BIOME PICKER -->
+        <div class="bg-amber-100/60 p-3 rounded-2xl border border-amber-200/90 space-y-1.5">
+          <div class="text-[9px] font-black text-amber-900/70 uppercase tracking-widest">TERRARIUM BIOME THEME</div>
+          <div class="grid grid-cols-3 gap-1.5 pt-0.5">
+            <button id="themeSakuraBtn" class="touch-btn py-1.5 px-1 rounded-xl text-center border font-black text-[10px] bg-rose-200 border-rose-300 text-rose-950 shadow-xs">🌸 Sakura</button>
+            <button id="themeMatchaBtn" class="touch-btn py-1.5 px-1 rounded-xl text-center border font-black text-[10px] bg-white/70 border-amber-300 text-emerald-950 hover:bg-emerald-100 opacity-60">🍵 Matcha</button>
+            <button id="themeGalaxyBtn" class="touch-btn py-1.5 px-1 rounded-xl text-center border font-black text-[10px] bg-white/70 border-amber-300 text-indigo-950 hover:bg-indigo-100 opacity-60">🌌 Galaxy</button>
+          </div>
+        </div>
+
+        <!-- 6. GAME MODE TOGGLE -->
+        <div class="bg-amber-100/60 p-3 rounded-2xl border border-amber-200/90 space-y-1.5">
+          <div class="text-[9px] font-black text-amber-900/70 uppercase tracking-widest">GAMEPLAY MODE</div>
+          <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+            <button id="modeQuestBtn" class="touch-btn py-1.5 px-1 rounded-xl text-center border font-black text-[10.5px] bg-amber-900 text-amber-50 border-amber-900 shadow-xs">⭐ Level Quests</button>
+            <button id="modeEndlessBtn" class="touch-btn py-1.5 px-1 rounded-xl text-center border font-black text-[10.5px] bg-white/70 border-amber-300 text-amber-950 hover:bg-amber-100">🏆 Endless Suika</button>
+          </div>
+        </div>
+
+        <!-- 7. EVOLUTION ROADMAP ACCORDION -->
+        <div class="bg-amber-100/60 p-3 rounded-2xl border border-amber-200/90 space-y-1">
+          <div class="text-[9px] font-black text-amber-900/70 uppercase tracking-widest">ANIMAL EVOLUTION ORDER</div>
+          <div class="flex items-center justify-between text-xs py-1 px-0.5 overflow-x-auto text-amber-950">
+            <span>🐰</span>➔<span>🐥</span>➔<span>🐹</span>➔<span>🐶</span>➔<span>🐱</span>➔<span>🐼</span>➔<span>🦭</span>➔<span>🐹</span>➔<span>🐻</span>➔<span>👑</span>
+          </div>
+        </div>
+
+        <!-- 8. QUICK ACTIONS: HOW TO PLAY, RESTART, HOME -->
+        <div class="grid grid-cols-3 gap-2 pt-1">
+          <button id="tutorialBtn" class="touch-btn py-2 px-1 rounded-xl bg-amber-200/80 hover:bg-amber-300 border border-amber-300 text-amber-950 font-black text-[10px] flex flex-col items-center justify-center gap-0.5 shadow-xs">
+            <span class="text-sm">❓</span>
+            <span>How to Play</span>
+          </button>
+          <button id="settingsRestartBtn" class="touch-btn py-2 px-1 rounded-xl bg-amber-200/80 hover:bg-amber-300 border border-amber-300 text-amber-950 font-black text-[10px] flex flex-col items-center justify-center gap-0.5 shadow-xs">
+            <span class="text-sm">🔄</span>
+            <span>Restart</span>
+          </button>
+          <button id="settingsHomeBtn" class="touch-btn py-2 px-1 rounded-xl bg-amber-200/80 hover:bg-amber-300 border border-amber-300 text-amber-950 font-black text-[10px] flex flex-col items-center justify-center gap-0.5 shadow-xs">
+            <span class="text-sm">🏠</span>
+            <span>Title Screen</span>
+          </button>
+        </div>
+
+        <!-- 9. CREATOR PROFILE CREDIT -->
+        <div class="text-center pt-2 border-t border-amber-200/60">
+          <button id="settingsCreatorBtn" class="touch-btn text-xs font-bold text-amber-900 hover:text-amber-950 font-fun">
+            Created by Ballia wala Ashutosh 💖
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <!-- ========================================================================= -->
   <!-- GAME OVER / HIGH SCORE MODAL                                              -->
@@ -749,6 +865,10 @@
       constructor() {
         this.ctx = null;
         this.enabled = true;
+        this.sfxEnabled = true;
+        this.masterVolume = 0.8;
+        this.hapticsEnabled = true;
+        this.screenShakeEnabled = true;
         this.coverMusicPlaying = false;
         this.coverAudio = null;
       }
@@ -765,6 +885,12 @@
         }
       }
 
+      vibrate(pattern = 25) {
+        if (this.hapticsEnabled && "vibrate" in navigator) {
+          try { navigator.vibrate(pattern); } catch(e) {}
+        }
+      }
+
       getCoverAudio() {
         if (!this.coverAudio) {
           this.coverAudio = document.getElementById("coverMusicAudio");
@@ -774,6 +900,7 @@
 
       toggle() {
         this.enabled = !this.enabled;
+        this.sfxEnabled = this.enabled;
         if (!this.enabled && this.coverMusicPlaying) {
           this.stopCoverMusic();
         } else if (this.enabled && splashScreen && !splashScreen.classList.contains("hidden")) {
@@ -784,14 +911,14 @@
 
       // Soft Cute Drop Sound (Subtle Physics Thud)
       playDrop() {
-        if (!this.enabled || !this.ctx) return;
+        if (!this.enabled || !this.sfxEnabled || !this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = "sine";
         osc.frequency.setValueAtTime(420, now);
         osc.frequency.exponentialRampToValueAtTime(220, now + 0.1);
-        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.setValueAtTime(0.18 * this.masterVolume, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
@@ -801,7 +928,7 @@
 
       // 100% ORIGINAL REAL ANIMAL SOUND PLAYBACK (ZERO AI VOICE, ZERO MUSIC CHIMES)
       playAnimalVoice(tier, x, y) {
-        if (!this.enabled) return;
+        if (!this.enabled || !this.sfxEnabled) return;
         this.init();
 
         // 1. Play Original Authentic Animal Audio Recording
@@ -809,7 +936,7 @@
         if (audio) {
           try {
             audio.currentTime = 0;
-            audio.volume = 1.0;
+            audio.volume = Math.max(0, Math.min(1, this.masterVolume));
             const playPromise = audio.play();
             if (playPromise !== undefined) {
               playPromise.catch(() => {
@@ -1170,7 +1297,7 @@
         const audio = this.getCoverAudio();
         if (audio) {
           audio.loop = true;
-          audio.volume = 0.65;
+          audio.volume = Math.max(0, Math.min(1, 0.65 * this.masterVolume));
           const playPromise = audio.play();
           if (playPromise !== undefined) {
             playPromise.then(() => {
@@ -1574,8 +1701,22 @@
       jarTheme: "sakura", // "sakura" | "matcha" | "galaxy"
 
       // Danger overflow timer
-      overflowStartTime: null
+      overflowStartTime: null,
+
+      // Game Pause State for Settings Modal
+      isPaused: false
     };
+
+    // GAME SETTINGS & LOCAL STORAGE PERSISTENCE
+    const SETTINGS = {
+      soundEnabled: true,
+      masterVolume: 0.8,
+      resolutionQuality: "medium", // low (1.0x), medium (1.5x), high (2.0x)
+      hapticsEnabled: true,
+      screenShakeEnabled: true
+    };
+
+    let currentResolutionScale = 1.5;
 
     try {
       STATE.bestScore = parseInt(localStorage.getItem("mochi_drop_best") || "0", 10);
@@ -1588,15 +1729,127 @@
       if (savedTheme) {
         STATE.jarTheme = savedTheme;
       }
+
+      // Load saved user settings
+      const savedSettings = JSON.parse(localStorage.getItem("mochi_drop_settings") || "{}");
+      if (typeof savedSettings.soundEnabled === "boolean") SETTINGS.soundEnabled = savedSettings.soundEnabled;
+      if (typeof savedSettings.masterVolume === "number") SETTINGS.masterVolume = savedSettings.masterVolume;
+      if (savedSettings.resolutionQuality) SETTINGS.resolutionQuality = savedSettings.resolutionQuality;
+      if (typeof savedSettings.hapticsEnabled === "boolean") SETTINGS.hapticsEnabled = savedSettings.hapticsEnabled;
+      if (typeof savedSettings.screenShakeEnabled === "boolean") SETTINGS.screenShakeEnabled = savedSettings.screenShakeEnabled;
     } catch(e) {}
+
+    sound.enabled = SETTINGS.soundEnabled;
+    sound.sfxEnabled = SETTINGS.soundEnabled;
+    sound.masterVolume = SETTINGS.masterVolume;
+    sound.hapticsEnabled = SETTINGS.hapticsEnabled;
+    sound.screenShakeEnabled = SETTINGS.screenShakeEnabled;
+
+    if (SETTINGS.resolutionQuality === "low") currentResolutionScale = 1.0;
+    else if (SETTINGS.resolutionQuality === "high") currentResolutionScale = Math.max(window.devicePixelRatio || 1, 2.0);
+    else currentResolutionScale = 1.5;
+
+    function saveSettings() {
+      try {
+        localStorage.setItem("mochi_drop_settings", JSON.stringify({
+          soundEnabled: sound.enabled,
+          masterVolume: sound.masterVolume,
+          resolutionQuality: SETTINGS.resolutionQuality,
+          hapticsEnabled: sound.hapticsEnabled,
+          screenShakeEnabled: sound.screenShakeEnabled
+        }));
+      } catch(e) {}
+    }
+
+    function setResolutionQuality(quality) {
+      SETTINGS.resolutionQuality = quality;
+      if (quality === "low") currentResolutionScale = 1.0;
+      else if (quality === "high") currentResolutionScale = Math.max(window.devicePixelRatio || 1, 2.0);
+      else currentResolutionScale = 1.5;
+
+      saveSettings();
+      resizeCanvas();
+      updateResolutionUI(quality);
+      sound.vibrate(20);
+    }
+
+    function updateResolutionUI(quality) {
+      const lowBtn = document.getElementById("resLowBtn");
+      const medBtn = document.getElementById("resMedBtn");
+      const highBtn = document.getElementById("resHighBtn");
+
+      const activeClass = "res-btn touch-btn py-1.5 px-1 rounded-xl text-center border font-black text-[10px] transition bg-amber-800 text-amber-50 border-amber-800 shadow-xs";
+      const inactiveClass = "res-btn touch-btn py-1.5 px-1 rounded-xl text-center border font-black text-[10px] transition bg-white/70 border-amber-300 text-amber-900 hover:bg-amber-100";
+
+      if (lowBtn) lowBtn.className = quality === "low" ? activeClass : inactiveClass;
+      if (medBtn) medBtn.className = quality === "medium" ? activeClass : inactiveClass;
+      if (highBtn) highBtn.className = quality === "high" ? activeClass : inactiveClass;
+    }
+
+    function syncSettingsUI() {
+      // Sound Toggle
+      const sToggleBtn = document.getElementById("soundToggleSettingBtn");
+      const sIcon = document.getElementById("soundIconDisplay");
+      if (sToggleBtn) {
+        sToggleBtn.innerText = sound.enabled ? "ON" : "OFF";
+        sToggleBtn.className = sound.enabled
+          ? "touch-btn px-3 py-1 rounded-xl font-black text-xs transition bg-amber-800 text-amber-100 shadow-xs"
+          : "touch-btn px-3 py-1 rounded-xl font-black text-xs transition bg-zinc-400 text-white shadow-xs";
+      }
+      if (sIcon) sIcon.innerText = sound.enabled ? "🔊" : "🔇";
+
+      // Volume Slider
+      const vSlider = document.getElementById("volumeSlider");
+      const vText = document.getElementById("volumePercentVal");
+      if (vSlider) vSlider.value = Math.round(sound.masterVolume * 100);
+      if (vText) vText.innerText = `${Math.round(sound.masterVolume * 100)}%`;
+
+      // Resolution buttons
+      updateResolutionUI(SETTINGS.resolutionQuality);
+
+      // Haptic Toggle
+      const hBtn = document.getElementById("hapticToggleBtn");
+      if (hBtn) {
+        hBtn.innerText = sound.hapticsEnabled ? "ON" : "OFF";
+        hBtn.className = sound.hapticsEnabled
+          ? "touch-btn px-3 py-1 rounded-xl font-black text-xs transition bg-amber-800 text-amber-100 shadow-xs"
+          : "touch-btn px-3 py-1 rounded-xl font-black text-xs transition bg-zinc-400 text-white shadow-xs";
+      }
+
+      // Screen Shake Toggle
+      const shakeBtn = document.getElementById("screenShakeToggleBtn");
+      if (shakeBtn) {
+        shakeBtn.innerText = sound.screenShakeEnabled ? "ON" : "OFF";
+        shakeBtn.className = sound.screenShakeEnabled
+          ? "touch-btn px-3 py-1 rounded-xl font-black text-xs transition bg-amber-800 text-amber-100 shadow-xs"
+          : "touch-btn px-3 py-1 rounded-xl font-black text-xs transition bg-zinc-400 text-white shadow-xs";
+      }
+    }
+
+    function openSettings() {
+      sound.init();
+      STATE.isPaused = true;
+      const modal = document.getElementById("settingsModal");
+      if (modal) {
+        modal.classList.remove("hidden");
+        syncSettingsUI();
+      }
+    }
+
+    function closeSettings() {
+      STATE.isPaused = false;
+      const modal = document.getElementById("settingsModal");
+      if (modal) modal.classList.add("hidden");
+    }
 
     function resizeCanvas() {
       const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
+      const deviceDpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(deviceDpr, currentResolutionScale);
       canvasW = rect.width;
       canvasH = rect.height;
-      canvas.width = canvasW * dpr;
-      canvas.height = canvasH * dpr;
+      canvas.width = Math.floor(canvasW * dpr);
+      canvas.height = Math.floor(canvasH * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       STATE.dropX = canvasW / 2;
@@ -1683,6 +1936,7 @@
 
       STATE.isDropping = true;
       sound.playDrop();
+      sound.vibrate(18);
 
       // Clamp drop X inside jar boundaries
       const curDef = TIERS[STATE.currentTier];
@@ -1767,6 +2021,7 @@
                 // 🌟 CELESTIAL ASCENSION / CHONK SUPERNOVA (APEX MERGE REBIRTH!)
                 // =====================================================================
                 triggerScreenShake(20);
+                sound.vibrate([60, 30, 60, 30, 90]);
                 spawnMergeParticles(midX, midY, "#fde047", 50);
                 showComboBanner("🌟 CELESTIAL ASCENSION!", 5000);
                 sound.playKingVocal();
@@ -1811,6 +2066,7 @@
               // Animal Voice Engine: Pure Animal Vocal (Speech Voice + Acoustic Vocal + Comic Speech Bubble)
               // ZERO music chimes or arpeggios so the animal voice is 100% front and center!
               sound.playAnimalVoice(nextTier, midX, midY);
+              sound.vibrate([25, 15, 25]);
               triggerScreenShake();
               spawnMergeParticles(midX, midY, TIERS[nextTier].color);
 
@@ -3488,6 +3744,7 @@
     }
 
     canvas.addEventListener("pointerdown", (e) => {
+      if (STATE.isPaused) return;
       sound.init();
       const pos = getPointerPos(e);
 
@@ -3499,6 +3756,7 @@
             const dist = Math.hypot(b.position.x - pos.x, b.position.y - pos.y);
             if (dist < TIERS[b.tier].radius) {
               sound.playHammer();
+              sound.vibrate([35, 15, 35]);
               spawnMergeParticles(b.position.x, b.position.y, "#f43f5e");
               Matter.World.remove(world, b);
               STATE.hammersRemaining--;
@@ -3522,6 +3780,7 @@
           if (dist < TIERS[b.tier].radius) {
             b.wobble = 0.9;
             sound.playAnimalVoice(b.tier, b.position.x, b.position.y);
+            sound.vibrate(20);
             Matter.Body.setVelocity(b, {
               x: (Math.random() - 0.5) * 2.0,
               y: -2.4
@@ -3537,12 +3796,14 @@
     });
 
     canvas.addEventListener("pointermove", (e) => {
+      if (STATE.isPaused) return;
       if (!STATE.hammerActive) {
         STATE.dropX = getPointerX(e);
       }
     });
 
     canvas.addEventListener("pointerup", () => {
+      if (STATE.isPaused) return;
       if (!STATE.hammerActive) {
         dropCurrentPet();
       }
@@ -3552,17 +3813,23 @@
     // 10. JUICE, PARTICLES & ANIMATIONS
     // =========================================================================
     function triggerScreenShake() {
+      if (!sound.screenShakeEnabled) return;
       const jar = document.getElementById("jarWrapper");
-      jar.classList.remove("jar-shake");
-      void jar.offsetWidth;
-      jar.classList.add("jar-shake");
+      if (jar) {
+        jar.classList.remove("jar-shake");
+        void jar.offsetWidth;
+        jar.classList.add("jar-shake");
+      }
     }
 
     function triggerJarShake() {
+      if (!sound.screenShakeEnabled) return;
       const jar = document.getElementById("jarWrapper");
-      jar.classList.remove("jar-shake");
-      void jar.offsetWidth;
-      jar.classList.add("jar-shake");
+      if (jar) {
+        jar.classList.remove("jar-shake");
+        void jar.offsetWidth;
+        jar.classList.add("jar-shake");
+      }
     }
 
     function showFloatingScore(text, x, y) {
@@ -3619,10 +3886,70 @@
     // =========================================================================
     // 11. BUTTONS & MAIN RAF LOOP
     // =========================================================================
-    document.getElementById("soundToggleBtn").addEventListener("click", () => {
+    // ⚙️ SETTINGS BUTTON & SETTINGS MODAL CONTROLLERS
+    document.getElementById("settingsBtn").addEventListener("click", openSettings);
+    document.getElementById("closeSettingsBtn").addEventListener("click", closeSettings);
+    document.getElementById("resumeGameBtn").addEventListener("click", closeSettings);
+
+    document.getElementById("soundToggleSettingBtn").addEventListener("click", () => {
       sound.init();
       const on = sound.toggle();
-      document.getElementById("soundToggleBtn").innerText = on ? "🔊" : "🔇";
+      SETTINGS.soundEnabled = on;
+      saveSettings();
+      syncSettingsUI();
+    });
+
+    const vSlider = document.getElementById("volumeSlider");
+    if (vSlider) {
+      vSlider.addEventListener("input", (e) => {
+        const val = parseInt(e.target.value, 10) / 100;
+        sound.masterVolume = val;
+        SETTINGS.masterVolume = val;
+        saveSettings();
+        const vText = document.getElementById("volumePercentVal");
+        if (vText) vText.innerText = `${Math.round(val * 100)}%`;
+      });
+    }
+
+    document.getElementById("resLowBtn").addEventListener("click", () => setResolutionQuality("low"));
+    document.getElementById("resMedBtn").addEventListener("click", () => setResolutionQuality("medium"));
+    document.getElementById("resHighBtn").addEventListener("click", () => setResolutionQuality("high"));
+
+    document.getElementById("hapticToggleBtn").addEventListener("click", () => {
+      sound.hapticsEnabled = !sound.hapticsEnabled;
+      SETTINGS.hapticsEnabled = sound.hapticsEnabled;
+      if (sound.hapticsEnabled) sound.vibrate(30);
+      saveSettings();
+      syncSettingsUI();
+    });
+
+    document.getElementById("screenShakeToggleBtn").addEventListener("click", () => {
+      sound.screenShakeEnabled = !sound.screenShakeEnabled;
+      SETTINGS.screenShakeEnabled = sound.screenShakeEnabled;
+      saveSettings();
+      syncSettingsUI();
+    });
+
+    document.getElementById("settingsRestartBtn").addEventListener("click", () => {
+      sound.init();
+      closeSettings();
+      resetGame();
+    });
+
+    document.getElementById("settingsHomeBtn").addEventListener("click", () => {
+      sound.init();
+      closeSettings();
+      if (splashScreen) {
+        splashScreen.classList.remove("hidden");
+        void splashScreen.offsetWidth;
+        splashScreen.classList.remove("opacity-0", "scale-105", "pointer-events-none");
+        if (sound.enabled) sound.startCoverMusic();
+      }
+    });
+
+    document.getElementById("settingsCreatorBtn").addEventListener("click", () => {
+      closeSettings();
+      openCreatorProfile();
     });
 
     document.getElementById("restartBtn").addEventListener("click", () => {
@@ -3852,7 +4179,9 @@
 
     // MAIN 60 FPS GAME LOOP
     function gameLoop() {
-      Matter.Engine.update(engine, 1000 / 60);
+      if (!STATE.isPaused && !STATE.isGameOver) {
+        Matter.Engine.update(engine, 1000 / 60);
+      }
       drawScene();
       requestAnimationFrame(gameLoop);
     }
