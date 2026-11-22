@@ -683,8 +683,8 @@
     <!-- Ambient Floating Sakura Blossom Petals Canvas -->
     <canvas id="splashPetalCanvas" class="absolute inset-0 pointer-events-none z-15 w-full h-full"></canvas>
 
-    <!-- TOP SECTION: ULTRA-COOL STUDIO CREATOR BRANDING & MUSIC CONTROLS -->
-    <div class="relative z-20 w-full max-w-lg px-4 pt-4 sm:pt-6 flex items-start justify-between gap-2">
+    <!-- TOP SECTION: ULTRA-COOL STUDIO CREATOR BRANDING -->
+    <div class="relative z-20 w-full max-w-lg px-4 pt-4 sm:pt-6 flex items-start justify-center">
       <!-- High-End Studio Creator Badge (Ballia wala Ashutosh) -->
       <button id="splashCreatorBtn" class="touch-btn group relative flex items-center gap-2.5 sm:gap-3 bg-gradient-to-r from-zinc-950/95 via-black/90 to-zinc-950/95 backdrop-blur-xl border-2 border-amber-400/80 hover:border-amber-300 p-2 sm:px-3 sm:py-2 rounded-2xl shadow-[0_0_30px_rgba(251,191,36,0.35)] transition-all active:scale-95 hover:shadow-[0_0_40px_rgba(251,191,36,0.7)] text-left">
         <!-- Glowing Royal Crest -->
@@ -716,30 +716,10 @@
           🏆
         </div>
       </button>
-
-      <!-- Top Right Controls: Cute Music Toggle & Sound FX Toggle -->
-      <div class="flex flex-col items-end gap-1.5 sm:gap-2 flex-shrink-0">
-        <!-- Cute Music Pill -->
-        <button id="splashMusicToggleBtn" class="touch-btn flex items-center gap-1.5 bg-black/75 hover:bg-black/90 border border-amber-400/50 px-2.5 py-1.5 rounded-full backdrop-blur-md shadow-lg active:scale-95 transition" title="Toggle Title Screen Music">
-          <span id="splashMusicIcon" class="text-xs sm:text-sm">🎵</span>
-          <span id="splashMusicLabel" class="text-[9px] sm:text-[10px] font-bold text-amber-200 uppercase tracking-wider">Cute BGM</span>
-          <div id="splashMusicBars" class="flex items-center gap-0.5 h-2.5">
-            <span class="w-0.5 bg-amber-400 rounded-full h-full animate-bounce"></span>
-            <span class="w-0.5 bg-amber-300 rounded-full h-2/3 animate-pulse"></span>
-            <span class="w-0.5 bg-amber-400 rounded-full h-4/5 animate-bounce"></span>
-          </div>
-        </button>
-
-        <!-- Sound FX Toggle -->
-        <button id="splashSoundBtn" class="touch-btn w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/70 border border-amber-400/50 text-amber-200 text-xs sm:text-sm flex items-center justify-center backdrop-blur-md shadow-lg active:scale-95 transition" title="Toggle Sound FX">
-          🔊
-        </button>
-      </div>
     </div>
 
-    <!-- MIDDLE TRANSPARENT TAP HITBOX: Player can tap anywhere on the cute animals to start! -->
-    <div id="splashCenterHitbox" class="relative z-20 flex-1 w-full max-w-lg cursor-pointer flex items-center justify-center">
-    </div>
+    <!-- MIDDLE SPACER -->
+    <div class="relative z-10 flex-1 w-full pointer-events-none"></div>
 
     <!-- BOTTOM SECTION: TAP TO PLAY BUTTON & INNOVATION PILLS -->
     <div class="relative z-20 w-full max-w-md px-4 pb-6 sm:pb-8 flex flex-col items-center gap-3">
@@ -849,8 +829,9 @@
         this.enabled = true;
         this.coverMusicPlaying = false;
         this.coverMusicGain = null;
-        this.coverMusicTimer = null;
-        this.coverMusicStep = 0;
+        this.coverMusicSource = null;
+        this.coverMusicBuffer = null;
+        this.isGeneratingBuffer = false;
       }
 
       init() {
@@ -1251,59 +1232,61 @@
       }
 
       // =========================================================================
-      // CUTE TITLE SCREEN MUSIC METHODS (SYNTHESIZED MARIMBA & MUSIC-BOX BGM)
+      // TITLE SCREEN MUSIC: SEAMLESS NATIVE LOOP BUFFER (Continuous in Background!)
       // =========================================================================
       startCoverMusic() {
         if (!this.enabled) return;
         this.init();
         if (!this.ctx) return;
-        if (this.coverMusicPlaying) return;
         this.coverMusicPlaying = true;
-        this.coverMusicStep = 0;
+
+        if (this.ctx.state === "suspended") {
+          this.ctx.resume().then(() => {
+            if (this.coverMusicPlaying) this._playCoverMusicLoop();
+          }).catch(() => {});
+        } else {
+          this._playCoverMusicLoop();
+        }
+      }
+
+      _playCoverMusicLoop() {
+        if (!this.coverMusicPlaying || !this.ctx) return;
 
         // Master Gain node for title screen music with smooth fade-in
-        this.coverMusicGain = this.ctx.createGain();
+        if (!this.coverMusicGain) {
+          this.coverMusicGain = this.ctx.createGain();
+          this.coverMusicGain.connect(this.ctx.destination);
+        }
         const now = this.ctx.currentTime;
-        this.coverMusicGain.gain.setValueAtTime(0.001, now);
-        this.coverMusicGain.gain.linearRampToValueAtTime(0.18, now + 0.6);
-        this.coverMusicGain.connect(this.ctx.destination);
+        this.coverMusicGain.gain.cancelScheduledValues(now);
+        this.coverMusicGain.gain.setValueAtTime(this.coverMusicGain.gain.value || 0.001, now);
+        this.coverMusicGain.gain.linearRampToValueAtTime(0.24, now + 0.4);
 
-        const stepDuration = 0.24; // ~125 BPM bouncy tempo
-
-        const playStep = () => {
-          if (!this.coverMusicPlaying || !this.ctx) return;
-          const item = COVER_MELODY[this.coverMusicStep];
-          const t = this.ctx.currentTime;
-
-          if (item) {
-            if (item.bass) {
-              this.synthBassNote(item.bass, t, 0.35, this.coverMusicGain);
-            }
-            if (item.type === "marimba") {
-              this.synthMarimbaNote(item.note, t, 0.25, this.coverMusicGain);
-            } else if (item.type === "bell") {
-              this.synthBellNote(item.note, t, 0.3, this.coverMusicGain);
-            } else if (item.type === "chimeChord") {
-              this.synthChord(item.note, t, 0.45, this.coverMusicGain);
-            } else if (item.type === "sparkle") {
-              this.synthSparkleNote(item.note, t, 0.3, this.coverMusicGain);
-            }
+        // If buffer is already rendered, start looping immediately!
+        if (this.coverMusicBuffer) {
+          if (this.coverMusicSource) {
+            try { this.coverMusicSource.stop(); } catch(e) {}
+            try { this.coverMusicSource.disconnect(); } catch(e) {}
           }
-
-          this.coverMusicStep = (this.coverMusicStep + 1) % COVER_MELODY.length;
-          this.coverMusicTimer = setTimeout(playStep, stepDuration * 1000);
-        };
-
-        playStep();
+          this.coverMusicSource = this.ctx.createBufferSource();
+          this.coverMusicSource.buffer = this.coverMusicBuffer;
+          this.coverMusicSource.loop = true; // Continuous seamless hardware-native loop!
+          this.coverMusicSource.connect(this.coverMusicGain);
+          this.coverMusicSource.start(0);
+        } else if (!this.isGeneratingBuffer) {
+          this.isGeneratingBuffer = true;
+          this._generateCoverBuffer().then(buf => {
+            this.coverMusicBuffer = buf;
+            this.isGeneratingBuffer = false;
+            if (this.coverMusicPlaying && this.ctx && this.ctx.state === "running") {
+              this._playCoverMusicLoop();
+            }
+          });
+        }
       }
 
       stopCoverMusic() {
-        if (!this.coverMusicPlaying) return;
         this.coverMusicPlaying = false;
-        if (this.coverMusicTimer) {
-          clearTimeout(this.coverMusicTimer);
-          this.coverMusicTimer = null;
-        }
         if (this.coverMusicGain && this.ctx) {
           const now = this.ctx.currentTime;
           try {
@@ -1311,113 +1294,155 @@
             this.coverMusicGain.gain.setValueAtTime(this.coverMusicGain.gain.value, now);
             this.coverMusicGain.gain.linearRampToValueAtTime(0.0001, now + 0.35); // Smooth 350ms fade-out
           } catch(e) {}
+        }
+        if (this.coverMusicSource) {
+          const src = this.coverMusicSource;
+          this.coverMusicSource = null;
           setTimeout(() => {
-            try {
-              if (this.coverMusicGain) this.coverMusicGain.disconnect();
-            } catch (e) {}
-            this.coverMusicGain = null;
-          }, 400);
+            try { src.stop(); } catch(e) {}
+            try { src.disconnect(); } catch(e) {}
+          }, 380);
         }
       }
 
-      synthMarimbaNote(freq, t, dur, dest) {
-        if (!this.ctx || !dest) return;
-        const osc = this.ctx.createOscillator();
-        const overtone = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        const oGain = this.ctx.createGain();
-        const filter = this.ctx.createBiquadFilter();
+      _generateCoverBuffer() {
+        return new Promise((resolve) => {
+          const OfflineContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+          const sampleRate = (this.ctx && this.ctx.sampleRate) ? this.ctx.sampleRate : 44100;
+          const bpm = 124;
+          const stepDur = 60 / bpm / 2; // ~0.2419s
+          const totalDuration = COVER_MELODY.length * stepDur;
+          const totalFrames = Math.ceil(sampleRate * totalDuration);
 
-        filter.type = "lowpass";
-        filter.frequency.setValueAtTime(2400, t);
+          if (OfflineContext) {
+            try {
+              const offline = new OfflineContext(2, totalFrames, sampleRate);
+              const master = offline.createGain();
+              master.gain.setValueAtTime(0.75, 0);
+              master.connect(offline.destination);
 
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, t);
+              for (let i = 0; i < COVER_MELODY.length; i++) {
+                const item = COVER_MELODY[i];
+                const t = i * stepDur;
+                if (!item) continue;
 
-        overtone.type = "sine";
-        overtone.frequency.setValueAtTime(freq * 2.76, t);
+                if (item.bass) {
+                  const osc = offline.createOscillator();
+                  const gain = offline.createGain();
+                  const filter = offline.createBiquadFilter();
+                  filter.type = "lowpass";
+                  filter.frequency.setValueAtTime(260, t);
+                  osc.type = "sine";
+                  osc.frequency.setValueAtTime(item.bass, t);
+                  gain.gain.setValueAtTime(0.3, t);
+                  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+                  osc.connect(filter);
+                  filter.connect(gain);
+                  gain.connect(master);
+                  osc.start(t);
+                  osc.stop(t + 0.36);
+                }
 
-        gain.gain.setValueAtTime(0.24, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+                if (item.type === "marimba") {
+                  const osc = offline.createOscillator();
+                  const overtone = offline.createOscillator();
+                  const gain = offline.createGain();
+                  const oGain = offline.createGain();
+                  const filter = offline.createBiquadFilter();
+                  filter.type = "lowpass";
+                  filter.frequency.setValueAtTime(2400, t);
+                  osc.type = "sine";
+                  osc.frequency.setValueAtTime(item.note, t);
+                  overtone.type = "sine";
+                  overtone.frequency.setValueAtTime(item.note * 2.76, t);
+                  gain.gain.setValueAtTime(0.24, t);
+                  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+                  oGain.gain.setValueAtTime(0.08, t);
+                  oGain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+                  osc.connect(gain);
+                  overtone.connect(oGain);
+                  gain.connect(filter);
+                  oGain.connect(filter);
+                  filter.connect(master);
+                  osc.start(t);
+                  overtone.start(t);
+                  osc.stop(t + 0.26);
+                  overtone.stop(t + 0.09);
+                } else if (item.type === "bell") {
+                  const osc = offline.createOscillator();
+                  const gain = offline.createGain();
+                  osc.type = "triangle";
+                  osc.frequency.setValueAtTime(item.note, t);
+                  gain.gain.setValueAtTime(0.18, t);
+                  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+                  osc.connect(gain);
+                  gain.connect(master);
+                  osc.start(t);
+                  osc.stop(t + 0.31);
+                } else if (item.type === "chimeChord") {
+                  const freqs = [item.note, item.note * 1.25, item.note * 1.5, item.note * 2.0];
+                  freqs.forEach((f, fi) => {
+                    const osc = offline.createOscillator();
+                    const gain = offline.createGain();
+                    const noteTime = t + fi * 0.035;
+                    osc.type = "triangle";
+                    osc.frequency.setValueAtTime(f, noteTime);
+                    gain.gain.setValueAtTime(0.14, noteTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.45);
+                    osc.connect(gain);
+                    gain.connect(master);
+                    osc.start(noteTime);
+                    osc.stop(noteTime + 0.46);
+                  });
+                } else if (item.type === "sparkle") {
+                  const osc = offline.createOscillator();
+                  const gain = offline.createGain();
+                  osc.type = "sine";
+                  osc.frequency.setValueAtTime(item.note, t);
+                  osc.frequency.exponentialRampToValueAtTime(item.note * 1.25, t + 0.3);
+                  gain.gain.setValueAtTime(0.15, t);
+                  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+                  osc.connect(gain);
+                  gain.connect(master);
+                  osc.start(t);
+                  osc.stop(t + 0.31);
+                }
+              }
 
-        oGain.gain.setValueAtTime(0.08, t);
-        oGain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+              offline.startRendering().then(resolve).catch(() => resolve(null));
+              return;
+            } catch(e) {}
+          }
 
-        osc.connect(gain);
-        overtone.connect(oGain);
-        gain.connect(filter);
-        oGain.connect(filter);
-        filter.connect(dest);
+          // Direct PCM Fallback
+          try {
+            if (this.ctx && this.ctx.createBuffer) {
+              const buffer = this.ctx.createBuffer(2, totalFrames, sampleRate);
+              const l = buffer.getChannelData(0);
+              const r = buffer.getChannelData(1);
+              for (let i = 0; i < COVER_MELODY.length; i++) {
+                const item = COVER_MELODY[i];
+                if (!item) continue;
+                const startSample = Math.floor(i * stepDur * sampleRate);
+                const durSamples = Math.floor(0.28 * sampleRate);
+                for (let s = 0; s < durSamples; s++) {
+                  const idx = startSample + s;
+                  if (idx >= totalFrames) break;
+                  const t = s / sampleRate;
+                  const env = (1 - Math.exp(-t * 150)) * Math.exp(-t * 12);
+                  const freq = item.note || 440;
+                  const val = (Math.sin(2 * Math.PI * freq * t) * 0.7 + Math.sin(2 * Math.PI * freq * 2 * t) * 0.3) * env * 0.2;
+                  l[idx] += val;
+                  r[idx] += val;
+                }
+              }
+              resolve(buffer);
+              return;
+            }
+          } catch(e) {}
 
-        osc.start(t);
-        overtone.start(t);
-        osc.stop(t + dur + 0.05);
-        overtone.stop(t + 0.1);
-      }
-
-      synthBellNote(freq, t, dur, dest) {
-        if (!this.ctx || !dest) return;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(freq, t);
-        gain.gain.setValueAtTime(0.18, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
-        osc.connect(gain);
-        gain.connect(dest);
-        osc.start(t);
-        osc.stop(t + dur + 0.05);
-      }
-
-      synthBassNote(freq, t, dur, dest) {
-        if (!this.ctx || !dest) return;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = "lowpass";
-        filter.frequency.setValueAtTime(260, t);
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, t);
-        gain.gain.setValueAtTime(0.28, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(dest);
-        osc.start(t);
-        osc.stop(t + dur + 0.05);
-      }
-
-      synthChord(rootFreq, t, dur, dest) {
-        if (!this.ctx || !dest) return;
-        const freqs = [rootFreq, rootFreq * 1.25, rootFreq * 1.5, rootFreq * 2.0];
-        freqs.forEach((f, i) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          const noteTime = t + i * 0.035;
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(f, noteTime);
-          gain.gain.setValueAtTime(0.14, noteTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, noteTime + dur);
-          osc.connect(gain);
-          gain.connect(dest);
-          osc.start(noteTime);
-          osc.stop(noteTime + dur + 0.05);
+          resolve(null);
         });
-      }
-
-      synthSparkleNote(freq, t, dur, dest) {
-        if (!this.ctx || !dest) return;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, t);
-        osc.frequency.exponentialRampToValueAtTime(freq * 1.25, t + dur);
-        gain.gain.setValueAtTime(0.15, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
-        osc.connect(gain);
-        gain.connect(dest);
-        osc.start(t);
-        osc.stop(t + dur + 0.05);
       }
     }
 
@@ -3931,20 +3956,7 @@
     document.getElementById("closeCreatorBtn").addEventListener("click", () => closeCreatorProfile(false));
     document.getElementById("dismissCreatorBtn").addEventListener("click", () => closeCreatorProfile(true));
 
-    // Cover Music UI Updater
-    function updateCoverMusicUI(playing) {
-      const icon = document.getElementById("splashMusicIcon");
-      const label = document.getElementById("splashMusicLabel");
-      const bars = document.getElementById("splashMusicBars");
-      if (icon) icon.innerText = playing ? "🎵" : "🔇";
-      if (label) label.innerText = playing ? "Cute BGM" : "BGM Muted";
-      if (bars) {
-        if (playing) bars.classList.remove("opacity-25");
-        else bars.classList.add("opacity-25");
-      }
-    }
-
-    // Auto-start cover music safely on initial player interaction
+    // Auto-start cover music continuously in background
     function ensureCoverMusic() {
       if (splashScreen && !splashScreen.classList.contains("hidden") && sound.enabled) {
         sound.init();
@@ -3955,32 +3967,29 @@
       }
     }
 
-    // Attempt to start cute music on the title screen on first touch anywhere
-    document.addEventListener("pointerdown", function onTitleScreenPointer(e) {
-      // Don't start music if player directly taps start or hitbox
-      if (e.target.closest("#splashStartBtn") || e.target.closest("#splashCenterHitbox")) {
-        return;
-      }
-      ensureCoverMusic();
-    });
-
-    // Cute Music Toggle Button on Cover Screen
-    const splashMusicToggleBtn = document.getElementById("splashMusicToggleBtn");
-    if (splashMusicToggleBtn) {
-      splashMusicToggleBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
+    // Auto-start cover music continuously in background
+    function ensureCoverMusic() {
+      if (splashScreen && !splashScreen.classList.contains("hidden") && sound.enabled) {
         sound.init();
-        if (sound.coverMusicPlaying) {
-          sound.stopCoverMusic();
-          updateCoverMusicUI(false);
-        } else {
-          sound.startCoverMusic();
-          updateCoverMusicUI(true);
-        }
-      });
+        sound.startCoverMusic();
+      }
     }
 
-    // Master Game Start Function (From Tap to Play or Center Screen Tap)
+    // Auto-trigger on page load
+    setTimeout(ensureCoverMusic, 100);
+
+    // Any user touch/click/key safely unlocks and plays the background music continuously
+    function onFirstUserGesture() {
+      if (splashScreen && !splashScreen.classList.contains("hidden")) {
+        ensureCoverMusic();
+      }
+    }
+    window.addEventListener("pointerdown", onFirstUserGesture, { passive: true });
+    window.addEventListener("touchstart", onFirstUserGesture, { passive: true });
+    window.addEventListener("mousedown", onFirstUserGesture, { passive: true });
+    window.addEventListener("keydown", onFirstUserGesture, { passive: true });
+
+    // Master Game Start Function (From Tap to Play)
     function startGameFromTitle() {
       sound.init();
       // Pre-unlock all audio elements
@@ -3988,9 +3997,8 @@
         try { aud.load(); } catch(e) {}
       });
 
-      // STOP THE CUTE COVER MUSIC IMMEDIATELY (100% pure animal voices in game!)
+      // STOP THE COVER MUSIC IMMEDIATELY (100% pure animal voices in game!)
       sound.stopCoverMusic();
-      updateCoverMusicUI(false);
 
       // Play cute cheerful welcoming fanfare
       sound.playAnimalVoice(0, canvasW / 2, canvasH / 2);
@@ -4007,12 +4015,6 @@
     // Splash Start Button ("TAP TO PLAY")
     document.getElementById("splashStartBtn").addEventListener("click", startGameFromTitle);
 
-    // Center Transparent Hitbox (Tap on animals to start!)
-    const centerHitbox = document.getElementById("splashCenterHitbox");
-    if (centerHitbox) {
-      centerHitbox.addEventListener("click", startGameFromTitle);
-    }
-
     // Home / Title Button in gameplay header
     document.getElementById("homeTitleBtn").addEventListener("click", () => {
       sound.init();
@@ -4020,27 +4022,10 @@
         splashScreen.classList.remove("hidden");
         void splashScreen.offsetWidth;
         splashScreen.classList.remove("opacity-0", "scale-105", "pointer-events-none");
-        // Resume cute music when returning to title cover screen!
+        // Resume continuous background music when returning to title cover screen!
         if (sound.enabled) {
           sound.startCoverMusic();
-          updateCoverMusicUI(true);
         }
-      }
-    });
-
-    // Splash Sound Toggle (Master Mute/Unmute)
-    document.getElementById("splashSoundBtn").addEventListener("click", (e) => {
-      e.stopPropagation();
-      sound.init();
-      const on = sound.toggle();
-      document.getElementById("splashSoundBtn").innerText = on ? "🔊" : "🔇";
-      document.getElementById("soundToggleBtn").innerText = on ? "🔊" : "🔇";
-      if (!on) {
-        sound.stopCoverMusic();
-        updateCoverMusicUI(false);
-      } else {
-        sound.startCoverMusic();
-        updateCoverMusicUI(true);
       }
     });
 
