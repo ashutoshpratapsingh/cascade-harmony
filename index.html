@@ -14,6 +14,16 @@
   <link rel="icon" type="image/jpeg" href="splash_cover.jpg">
   <link rel="apple-touch-icon" href="splash_cover.jpg">
 
+  <!-- Web App Manifest & Mobile Autoplay Privileges -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#fef3c7">
+
+  <!-- Immediate High-Priority Audio Preload -->
+  <link rel="preload" href="audio/cover_music.wav" as="audio" type="audio/wav">
+
   <!-- OpenGraph / Social Media Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Mochi Drop: Chonky Animal Merge — Created By Ballia wala Ashutosh">
@@ -816,6 +826,34 @@
 
   <!-- Seamless Native Background Cover Music Audio Element -->
   <audio id="coverMusicAudio" src="audio/cover_music.wav" preload="auto" loop playsinline autoplay></audio>
+  <script>
+    // Immediate Microsecond Autoplay Pipeline
+    (function() {
+      var a = document.getElementById("coverMusicAudio");
+      if (a) {
+        a.volume = 0.65;
+        var p = a.play();
+        if (p !== undefined) {
+          p.catch(function() {
+            // If browser blocks unmuted audio on 0-interaction page load,
+            // immediately start muted playback so the audio pipeline and buffer are active!
+            a.muted = true;
+            a.play().then(function() {
+              function unmuteImmediately() {
+                a.muted = false;
+                ["pointerdown", "touchstart", "mousedown", "keydown", "click"].forEach(function(evt) {
+                  window.removeEventListener(evt, unmuteImmediately, true);
+                });
+              }
+              ["pointerdown", "touchstart", "mousedown", "keydown", "click"].forEach(function(evt) {
+                window.addEventListener(evt, unmuteImmediately, { capture: true, once: true });
+              });
+            }).catch(function() {});
+          });
+        }
+      }
+    })();
+  </script>
 
   <!-- ========================================================================= -->
   <!-- JAVASCRIPT: THE COMPLETE MOCHI DROP 2D PHYSICS ENGINE                     -->
@@ -1297,6 +1335,7 @@
         const audio = this.getCoverAudio();
         if (audio) {
           audio.loop = true;
+          audio.muted = false;
           audio.volume = Math.max(0, Math.min(1, 0.65 * this.masterVolume));
           const playPromise = audio.play();
           if (playPromise !== undefined) {

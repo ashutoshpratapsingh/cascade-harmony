@@ -1,0 +1,18 @@
+{
+  "name": "Mochi Drop: Chonky Animal Merge",
+  "short_name": "Mochi Drop",
+  "description": "Adorable Suika-style physics puzzle game created by Ballia wala Ashutosh",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fffcf5",
+  "theme_color": "#fef3c7",
+  "icons": [
+    {
+      "src": "splash_cover.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
