@@ -861,35 +861,17 @@
     </div>
   </div>
 
-  <!-- Seamless Native Background Cover Music Audio Element -->
-  <audio id="coverMusicAudio" src="audio/cover_music.wav" preload="auto" loop playsinline autoplay></audio>
+  <!-- Suppress Android OS MediaSession Notification (no music widget in phone notification tray) -->
   <script>
-    // Immediate Microsecond Autoplay Pipeline
-    (function() {
-      var a = document.getElementById("coverMusicAudio");
-      if (a) {
-        a.volume = 0.65;
-        var p = a.play();
-        if (p !== undefined) {
-          p.catch(function() {
-            // If browser blocks unmuted audio on 0-interaction page load,
-            // immediately start muted playback so the audio pipeline and buffer are active!
-            a.muted = true;
-            a.play().then(function() {
-              function unmuteImmediately() {
-                a.muted = false;
-                ["pointerdown", "touchstart", "mousedown", "keydown", "click"].forEach(function(evt) {
-                  window.removeEventListener(evt, unmuteImmediately, true);
-                });
-              }
-              ["pointerdown", "touchstart", "mousedown", "keydown", "click"].forEach(function(evt) {
-                window.addEventListener(evt, unmuteImmediately, { capture: true, once: true });
-              });
-            }).catch(function() {});
-          });
-        }
-      }
-    })();
+    if ('mediaSession' in navigator) {
+      try {
+        navigator.mediaSession.metadata = null;
+        navigator.mediaSession.playbackState = 'none';
+        ['play', 'pause', 'seekto', 'seekbackward', 'seekforward', 'previoustrack', 'nexttrack', 'stop'].forEach(function(act) {
+          try { navigator.mediaSession.setActionHandler(act, null); } catch(e) {}
+        });
+      } catch(e) {}
+    }
   </script>
 
   <!-- ========================================================================= -->
@@ -945,7 +927,10 @@
         this.hapticsEnabled = true;
         this.screenShakeEnabled = true;
         this.coverMusicPlaying = false;
-        this.coverAudio = null;
+        this.coverBuffer = null;
+        this.coverSource = null;
+        this.coverGain = null;
+        this.isCoverLoading = false;
       }
 
       init() {
@@ -958,6 +943,34 @@
         if (this.ctx && this.ctx.state === "suspended") {
           this.ctx.resume().catch(() => {});
         }
+        if (!this.coverBuffer && !this.isCoverLoading) {
+          this.loadCoverMusic();
+        }
+      }
+
+      async loadCoverMusic() {
+        if (this.coverBuffer || this.isCoverLoading) return;
+        this.isCoverLoading = true;
+        try {
+          const resp = await fetch('audio/cover_music.wav');
+          const arrayBuf = await resp.arrayBuffer();
+          if (!this.ctx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) this.ctx = new AudioContext();
+          }
+          if (this.ctx) {
+            this.coverBuffer = await this.ctx.decodeAudioData(arrayBuf);
+            if (this.coverMusicPlaying && !this.coverSource) {
+              const splash = document.getElementById("splashScreen");
+              if (splash && !splash.classList.contains("hidden")) {
+                this.startCoverMusic();
+              }
+            }
+          }
+        } catch(e) {}
+        finally {
+          this.isCoverLoading = false;
+        }
       }
 
       vibrate(pattern = 25) {
@@ -966,20 +979,16 @@
         }
       }
 
-      getCoverAudio() {
-        if (!this.coverAudio) {
-          this.coverAudio = document.getElementById("coverMusicAudio");
-        }
-        return this.coverAudio;
-      }
-
       toggle() {
         this.enabled = !this.enabled;
         this.sfxEnabled = this.enabled;
         if (!this.enabled && this.coverMusicPlaying) {
           this.stopCoverMusic();
-        } else if (this.enabled && splashScreen && !splashScreen.classList.contains("hidden")) {
-          this.startCoverMusic();
+        } else if (this.enabled) {
+          const splash = document.getElementById("splashScreen");
+          if (splash && !splash.classList.contains("hidden")) {
+            this.startCoverMusic();
+          }
         }
         return this.enabled;
       }
@@ -1364,43 +1373,53 @@
       }
 
       // =========================================================================
-      // TITLE SCREEN MUSIC: SEAMLESS NATIVE HARDWARE LOOP (Continuous in Background!)
+      // TITLE SCREEN MUSIC: PURE WEB AUDIO DSP LOOP (ZERO ANDROID NOTIFICATIONS!)
       // =========================================================================
       startCoverMusic() {
         if (!this.enabled) return;
         this.coverMusicPlaying = true;
-        const audio = this.getCoverAudio();
-        if (audio) {
-          audio.loop = true;
-          audio.muted = false;
-          audio.volume = Math.max(0, Math.min(1, 0.65 * this.masterVolume));
-          const playPromise = audio.play();
-          if (playPromise !== undefined) {
-            playPromise.then(() => {
-              this.coverMusicPlaying = true;
-            }).catch(() => {
-              // Browser may restrict unmuted autoplay until user interaction
-            });
-          }
+        this.init();
+
+        if (!this.coverBuffer) {
+          this.loadCoverMusic();
+          return;
         }
+
+        if (this.coverSource) {
+          return; // Already playing
+        }
+
+        try {
+          const src = this.ctx.createBufferSource();
+          src.buffer = this.coverBuffer;
+          src.loop = true;
+
+          const gain = this.ctx.createGain();
+          gain.gain.setValueAtTime(Math.max(0, Math.min(1, 0.65 * this.masterVolume)), this.ctx.currentTime);
+
+          src.connect(gain);
+          gain.connect(this.ctx.destination);
+          src.start(0);
+
+          this.coverSource = src;
+          this.coverGain = gain;
+        } catch(e) {}
       }
 
       stopCoverMusic() {
         this.coverMusicPlaying = false;
-        const audio = this.getCoverAudio();
-        if (audio) {
+        if (this.coverSource) {
           try {
-            audio.pause();
-            audio.currentTime = 0;
+            this.coverSource.stop();
+            this.coverSource.disconnect();
           } catch(e) {}
+          this.coverSource = null;
+          this.coverGain = null;
         }
       }
 
       pauseAll() {
-        const audio = this.getCoverAudio();
-        if (audio) {
-          try { audio.pause(); } catch(e) {}
-        }
+        this.stopCoverMusic();
         if (this.ctx && this.ctx.state === "running") {
           try { this.ctx.suspend(); } catch(e) {}
         }
@@ -3980,6 +3999,11 @@
       vSlider.addEventListener("input", (e) => {
         const val = parseInt(e.target.value, 10) / 100;
         sound.masterVolume = val;
+        if (sound.coverGain && sound.ctx) {
+          try {
+            sound.coverGain.gain.setValueAtTime(Math.max(0, Math.min(1, 0.65 * val)), sound.ctx.currentTime);
+          } catch(err) {}
+        }
         SETTINGS.masterVolume = val;
         saveSettings();
         const vText = document.getElementById("volumePercentVal");
@@ -4120,6 +4144,7 @@
     // Auto-start cover music continuously in background on game opening
     function ensureCoverMusic() {
       if (splashScreen && !splashScreen.classList.contains("hidden") && sound.enabled) {
+        sound.init();
         sound.startCoverMusic();
       }
     }
@@ -4134,6 +4159,7 @@
     // Any first user gesture (touch, click, key, scroll) seamlessly unlocks and plays if blocked by strict browser policy
     function onFirstUserGesture() {
       if (splashScreen && !splashScreen.classList.contains("hidden") && sound.enabled) {
+        sound.init();
         sound.startCoverMusic();
       }
     }
