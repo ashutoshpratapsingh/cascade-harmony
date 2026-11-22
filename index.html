@@ -698,6 +698,9 @@
     </div>
   </div>
 
+  <!-- Seamless Native Background Cover Music Audio Element -->
+  <audio id="coverMusicAudio" src="audio/cover_music.wav" preload="auto" loop playsinline autoplay></audio>
+
   <!-- ========================================================================= -->
   <!-- JAVASCRIPT: THE COMPLETE MOCHI DROP 2D PHYSICS ENGINE                     -->
   <!-- ========================================================================= -->
@@ -742,69 +745,39 @@
       { tier: 9, name: "CHONK KING", icon: "👑", onomatopoeia: "💬 ROAR! KING! 👑", color: "#ca8a04" }
     ];
 
-    // =========================================================================
-    // CUTE TITLE SCREEN MUSIC SEQUENCE (Plays ONLY on start screen, stops in game!)
-    // =========================================================================
-    const COVER_MELODY = [
-      { note: 523.25, bass: 130.81, type: "marimba" },
-      { note: 659.25, type: "bell" },
-      { note: 783.99, type: "marimba" },
-      { note: 1046.50, type: "bell" },
-      { note: 880.00, bass: 110.00, type: "marimba" },
-      { note: 783.99, type: "bell" },
-      { note: 659.25, type: "marimba" },
-      { note: 587.33, type: "bell" },
-      { note: 659.25, bass: 87.31, type: "marimba" },
-      { note: 783.99, type: "bell" },
-      { note: 880.00, type: "marimba" },
-      { note: 1046.50, type: "bell" },
-      { note: 1174.66, bass: 98.00, type: "marimba" },
-      { note: 987.77, type: "bell" },
-      { note: 783.99, type: "marimba" },
-      null,
-      { note: 1046.50, bass: 130.81, type: "marimba" },
-      { note: 880.00, type: "bell" },
-      { note: 783.99, type: "marimba" },
-      { note: 659.25, type: "bell" },
-      { note: 698.46, bass: 87.31, type: "marimba" },
-      { note: 783.99, type: "bell" },
-      { note: 880.00, type: "marimba" },
-      { note: 1046.50, type: "bell" },
-      { note: 987.77, bass: 98.00, type: "marimba" },
-      { note: 880.00, type: "bell" },
-      { note: 783.99, type: "marimba" },
-      { note: 587.33, type: "bell" },
-      { note: 523.25, bass: 130.81, type: "chimeChord" },
-      null,
-      { note: 1318.51, type: "sparkle" },
-      null
-    ];
-
     class MochiSoundEngine {
       constructor() {
         this.ctx = null;
         this.enabled = true;
         this.coverMusicPlaying = false;
-        this.coverMusicGain = null;
-        this.coverMusicSource = null;
-        this.coverMusicBuffer = null;
-        this.isGeneratingBuffer = false;
+        this.coverAudio = null;
       }
 
       init() {
         if (!this.ctx) {
           const AudioContext = window.AudioContext || window.webkitAudioContext;
-          this.ctx = new AudioContext();
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
         }
         if (this.ctx && this.ctx.state === "suspended") {
-          this.ctx.resume();
+          this.ctx.resume().catch(() => {});
         }
+      }
+
+      getCoverAudio() {
+        if (!this.coverAudio) {
+          this.coverAudio = document.getElementById("coverMusicAudio");
+        }
+        return this.coverAudio;
       }
 
       toggle() {
         this.enabled = !this.enabled;
         if (!this.enabled && this.coverMusicPlaying) {
           this.stopCoverMusic();
+        } else if (this.enabled && splashScreen && !splashScreen.classList.contains("hidden")) {
+          this.startCoverMusic();
         }
         return this.enabled;
       }
@@ -1189,217 +1162,45 @@
       }
 
       // =========================================================================
-      // TITLE SCREEN MUSIC: SEAMLESS NATIVE LOOP BUFFER (Continuous in Background!)
+      // TITLE SCREEN MUSIC: SEAMLESS NATIVE HARDWARE LOOP (Continuous in Background!)
       // =========================================================================
       startCoverMusic() {
         if (!this.enabled) return;
-        this.init();
-        if (!this.ctx) return;
         this.coverMusicPlaying = true;
-
-        if (this.ctx.state === "suspended") {
-          this.ctx.resume().then(() => {
-            if (this.coverMusicPlaying) this._playCoverMusicLoop();
-          }).catch(() => {});
-        } else {
-          this._playCoverMusicLoop();
-        }
-      }
-
-      _playCoverMusicLoop() {
-        if (!this.coverMusicPlaying || !this.ctx) return;
-
-        // Master Gain node for title screen music with smooth fade-in
-        if (!this.coverMusicGain) {
-          this.coverMusicGain = this.ctx.createGain();
-          this.coverMusicGain.connect(this.ctx.destination);
-        }
-        const now = this.ctx.currentTime;
-        this.coverMusicGain.gain.cancelScheduledValues(now);
-        this.coverMusicGain.gain.setValueAtTime(this.coverMusicGain.gain.value || 0.001, now);
-        this.coverMusicGain.gain.linearRampToValueAtTime(0.24, now + 0.4);
-
-        // If buffer is already rendered, start looping immediately!
-        if (this.coverMusicBuffer) {
-          if (this.coverMusicSource) {
-            try { this.coverMusicSource.stop(); } catch(e) {}
-            try { this.coverMusicSource.disconnect(); } catch(e) {}
+        const audio = this.getCoverAudio();
+        if (audio) {
+          audio.loop = true;
+          audio.volume = 0.65;
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              this.coverMusicPlaying = true;
+            }).catch(() => {
+              // Browser may restrict unmuted autoplay until user interaction
+            });
           }
-          this.coverMusicSource = this.ctx.createBufferSource();
-          this.coverMusicSource.buffer = this.coverMusicBuffer;
-          this.coverMusicSource.loop = true; // Continuous seamless hardware-native loop!
-          this.coverMusicSource.connect(this.coverMusicGain);
-          this.coverMusicSource.start(0);
-        } else if (!this.isGeneratingBuffer) {
-          this.isGeneratingBuffer = true;
-          this._generateCoverBuffer().then(buf => {
-            this.coverMusicBuffer = buf;
-            this.isGeneratingBuffer = false;
-            if (this.coverMusicPlaying && this.ctx && this.ctx.state === "running") {
-              this._playCoverMusicLoop();
-            }
-          });
         }
       }
 
       stopCoverMusic() {
         this.coverMusicPlaying = false;
-        if (this.coverMusicGain && this.ctx) {
-          const now = this.ctx.currentTime;
+        const audio = this.getCoverAudio();
+        if (audio) {
           try {
-            this.coverMusicGain.gain.cancelScheduledValues(now);
-            this.coverMusicGain.gain.setValueAtTime(this.coverMusicGain.gain.value, now);
-            this.coverMusicGain.gain.linearRampToValueAtTime(0.0001, now + 0.35); // Smooth 350ms fade-out
+            audio.pause();
+            audio.currentTime = 0;
           } catch(e) {}
-        }
-        if (this.coverMusicSource) {
-          const src = this.coverMusicSource;
-          this.coverMusicSource = null;
-          setTimeout(() => {
-            try { src.stop(); } catch(e) {}
-            try { src.disconnect(); } catch(e) {}
-          }, 380);
         }
       }
 
-      _generateCoverBuffer() {
-        return new Promise((resolve) => {
-          const OfflineContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-          const sampleRate = (this.ctx && this.ctx.sampleRate) ? this.ctx.sampleRate : 44100;
-          const bpm = 124;
-          const stepDur = 60 / bpm / 2; // ~0.2419s
-          const totalDuration = COVER_MELODY.length * stepDur;
-          const totalFrames = Math.ceil(sampleRate * totalDuration);
-
-          if (OfflineContext) {
-            try {
-              const offline = new OfflineContext(2, totalFrames, sampleRate);
-              const master = offline.createGain();
-              master.gain.setValueAtTime(0.75, 0);
-              master.connect(offline.destination);
-
-              for (let i = 0; i < COVER_MELODY.length; i++) {
-                const item = COVER_MELODY[i];
-                const t = i * stepDur;
-                if (!item) continue;
-
-                if (item.bass) {
-                  const osc = offline.createOscillator();
-                  const gain = offline.createGain();
-                  const filter = offline.createBiquadFilter();
-                  filter.type = "lowpass";
-                  filter.frequency.setValueAtTime(260, t);
-                  osc.type = "sine";
-                  osc.frequency.setValueAtTime(item.bass, t);
-                  gain.gain.setValueAtTime(0.3, t);
-                  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-                  osc.connect(filter);
-                  filter.connect(gain);
-                  gain.connect(master);
-                  osc.start(t);
-                  osc.stop(t + 0.36);
-                }
-
-                if (item.type === "marimba") {
-                  const osc = offline.createOscillator();
-                  const overtone = offline.createOscillator();
-                  const gain = offline.createGain();
-                  const oGain = offline.createGain();
-                  const filter = offline.createBiquadFilter();
-                  filter.type = "lowpass";
-                  filter.frequency.setValueAtTime(2400, t);
-                  osc.type = "sine";
-                  osc.frequency.setValueAtTime(item.note, t);
-                  overtone.type = "sine";
-                  overtone.frequency.setValueAtTime(item.note * 2.76, t);
-                  gain.gain.setValueAtTime(0.24, t);
-                  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-                  oGain.gain.setValueAtTime(0.08, t);
-                  oGain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
-                  osc.connect(gain);
-                  overtone.connect(oGain);
-                  gain.connect(filter);
-                  oGain.connect(filter);
-                  filter.connect(master);
-                  osc.start(t);
-                  overtone.start(t);
-                  osc.stop(t + 0.26);
-                  overtone.stop(t + 0.09);
-                } else if (item.type === "bell") {
-                  const osc = offline.createOscillator();
-                  const gain = offline.createGain();
-                  osc.type = "triangle";
-                  osc.frequency.setValueAtTime(item.note, t);
-                  gain.gain.setValueAtTime(0.18, t);
-                  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-                  osc.connect(gain);
-                  gain.connect(master);
-                  osc.start(t);
-                  osc.stop(t + 0.31);
-                } else if (item.type === "chimeChord") {
-                  const freqs = [item.note, item.note * 1.25, item.note * 1.5, item.note * 2.0];
-                  freqs.forEach((f, fi) => {
-                    const osc = offline.createOscillator();
-                    const gain = offline.createGain();
-                    const noteTime = t + fi * 0.035;
-                    osc.type = "triangle";
-                    osc.frequency.setValueAtTime(f, noteTime);
-                    gain.gain.setValueAtTime(0.14, noteTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.45);
-                    osc.connect(gain);
-                    gain.connect(master);
-                    osc.start(noteTime);
-                    osc.stop(noteTime + 0.46);
-                  });
-                } else if (item.type === "sparkle") {
-                  const osc = offline.createOscillator();
-                  const gain = offline.createGain();
-                  osc.type = "sine";
-                  osc.frequency.setValueAtTime(item.note, t);
-                  osc.frequency.exponentialRampToValueAtTime(item.note * 1.25, t + 0.3);
-                  gain.gain.setValueAtTime(0.15, t);
-                  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-                  osc.connect(gain);
-                  gain.connect(master);
-                  osc.start(t);
-                  osc.stop(t + 0.31);
-                }
-              }
-
-              offline.startRendering().then(resolve).catch(() => resolve(null));
-              return;
-            } catch(e) {}
-          }
-
-          // Direct PCM Fallback
-          try {
-            if (this.ctx && this.ctx.createBuffer) {
-              const buffer = this.ctx.createBuffer(2, totalFrames, sampleRate);
-              const l = buffer.getChannelData(0);
-              const r = buffer.getChannelData(1);
-              for (let i = 0; i < COVER_MELODY.length; i++) {
-                const item = COVER_MELODY[i];
-                if (!item) continue;
-                const startSample = Math.floor(i * stepDur * sampleRate);
-                const durSamples = Math.floor(0.28 * sampleRate);
-                for (let s = 0; s < durSamples; s++) {
-                  const idx = startSample + s;
-                  if (idx >= totalFrames) break;
-                  const t = s / sampleRate;
-                  const env = (1 - Math.exp(-t * 150)) * Math.exp(-t * 12);
-                  const freq = item.note || 440;
-                  const val = (Math.sin(2 * Math.PI * freq * t) * 0.7 + Math.sin(2 * Math.PI * freq * 2 * t) * 0.3) * env * 0.2;
-                  l[idx] += val;
-                  r[idx] += val;
-                }
-              }
-              resolve(buffer);
-              return;
-            }
-          } catch(e) {}
-
-          resolve(null);
-        });
+      pauseAll() {
+        const audio = this.getCoverAudio();
+        if (audio) {
+          try { audio.pause(); } catch(e) {}
+        }
+        if (this.ctx && this.ctx.state === "running") {
+          try { this.ctx.suspend(); } catch(e) {}
+        }
       }
     }
 
@@ -3913,38 +3714,45 @@
     document.getElementById("closeCreatorBtn").addEventListener("click", () => closeCreatorProfile(false));
     document.getElementById("dismissCreatorBtn").addEventListener("click", () => closeCreatorProfile(true));
 
-    // Auto-start cover music continuously in background
+    // Auto-start cover music continuously in background on game opening
     function ensureCoverMusic() {
       if (splashScreen && !splashScreen.classList.contains("hidden") && sound.enabled) {
-        sound.init();
-        if (!sound.coverMusicPlaying) {
-          sound.startCoverMusic();
-          updateCoverMusicUI(true);
-        }
-      }
-    }
-
-    // Auto-start cover music continuously in background
-    function ensureCoverMusic() {
-      if (splashScreen && !splashScreen.classList.contains("hidden") && sound.enabled) {
-        sound.init();
         sound.startCoverMusic();
       }
     }
 
-    // Auto-trigger on page load
+    // Proactive immediate autoplay triggers on game load
+    ensureCoverMusic();
+    document.addEventListener("DOMContentLoaded", ensureCoverMusic);
+    window.addEventListener("load", ensureCoverMusic);
     setTimeout(ensureCoverMusic, 100);
+    setTimeout(ensureCoverMusic, 400);
 
-    // Any user touch/click/key safely unlocks and plays the background music continuously
+    // Any first user gesture (touch, click, key, scroll) seamlessly unlocks and plays if blocked by strict browser policy
     function onFirstUserGesture() {
-      if (splashScreen && !splashScreen.classList.contains("hidden")) {
-        ensureCoverMusic();
+      if (splashScreen && !splashScreen.classList.contains("hidden") && sound.enabled) {
+        sound.startCoverMusic();
       }
     }
-    window.addEventListener("pointerdown", onFirstUserGesture, { passive: true });
-    window.addEventListener("touchstart", onFirstUserGesture, { passive: true });
-    window.addEventListener("mousedown", onFirstUserGesture, { passive: true });
-    window.addEventListener("keydown", onFirstUserGesture, { passive: true });
+    ["pointerdown", "touchstart", "mousedown", "keydown", "wheel"].forEach(evt => {
+      window.addEventListener(evt, onFirstUserGesture, { passive: true });
+    });
+
+    // COMPLETE STOP WHEN USER EXITS OR SWITCHES TABS
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        // Player minimized the browser, switched tabs, or exited: STOP completely!
+        sound.pauseAll();
+      } else {
+        // Player returned to tab: resume ONLY if player is still on the title/cover screen!
+        if (splashScreen && !splashScreen.classList.contains("hidden") && sound.enabled) {
+          sound.startCoverMusic();
+        }
+      }
+    });
+
+    window.addEventListener("pagehide", () => sound.stopCoverMusic());
+    window.addEventListener("beforeunload", () => sound.stopCoverMusic());
 
     // Master Game Start Function (From Tap to Play)
     function startGameFromTitle() {
