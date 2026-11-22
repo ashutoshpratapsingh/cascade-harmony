@@ -291,16 +291,21 @@
       <span id="feverPercent" class="text-[9.5px] font-black text-amber-950 tabular-nums pr-1">0%</span>
     </div>
 
-    <!-- TARGET GOAL POV MISSION BAR (Always visible!) -->
+    <!-- TARGET GOAL POV MISSION BAR (Always visible with Daily 5 Streak!) -->
     <div id="levelMissionBar" class="w-[330px] sm:w-[370px] mb-1.5 bg-gradient-to-r from-amber-100 via-yellow-100 to-amber-100 border-2 border-amber-300 rounded-2xl px-3 py-1 flex items-center justify-between text-xs font-bold text-amber-950 shadow-sm z-30 transition-all duration-300">
-      <div class="flex items-center gap-2">
-        <span id="levelBadge" class="bg-amber-800 text-amber-100 text-[9.5px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">LVL 1</span>
-        <div>
+      <div class="flex items-center gap-2 min-w-0">
+        <span id="levelBadge" class="bg-amber-800 text-amber-100 text-[9.5px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex-shrink-0">LVL 1</span>
+        <div class="min-w-0 truncate">
           <div class="text-[7.5px] font-bold text-amber-800/70 uppercase tracking-widest leading-none">TARGET OBJECTIVE</div>
-          <div id="levelGoalText" class="text-xs font-black text-amber-950 leading-tight">Unlock Chick 🐥</div>
+          <div id="levelGoalText" class="text-xs font-black text-amber-950 leading-tight truncate">Unlock Chick 🐥</div>
         </div>
       </div>
-      <div class="flex items-center gap-2 text-right">
+      <div class="flex items-center gap-2 text-right flex-shrink-0">
+        <!-- Daily 5 Quest Streak Indicator -->
+        <div id="dailyStreakBadge" class="flex flex-col items-center bg-amber-200/80 px-1.5 py-0.5 rounded-xl border border-amber-300/90 text-[7.5px] font-black text-amber-900 leading-none shadow-xs" title="Daily 5 Quest: Clear 5 levels today for Bonus Power-ups!">
+          <span class="flex items-center gap-0.5"><span>🔥</span><span>DAILY</span></span>
+          <span id="dailyStreakText" class="text-[9px] text-amber-950 font-black mt-0.5">0/5</span>
+        </div>
         <div>
           <div class="text-[7.5px] font-bold text-amber-800/70 uppercase tracking-widest leading-none">DROPS LEFT</div>
           <div id="dropsVal" class="text-sm font-black text-rose-600 font-fun leading-tight tabular-nums">15</div>
@@ -1672,6 +1677,82 @@
       }
     ];
 
+    // =========================================================================
+    // INFINITE LEVEL GENERATOR (LEVEL 1 THROUGH LEVEL ∞)
+    // Seamless progression with dynamic goals, escalating difficulty & power-up rewards
+    // =========================================================================
+    function getLevelConfig(lvlNum) {
+      const lvl = Math.max(1, lvlNum);
+      if (lvl <= LEVELS.length) {
+        return LEVELS[lvl - 1];
+      }
+
+      // Procedural Generation for Level 11, 12, ... 10,000+!
+      const cycle = Math.floor((lvl - 1) / 10);
+      const subLevel = ((lvl - 1) % 10) + 1; // 1 to 10 within chapter
+
+      const CHAPTERS = [
+        "Sakura Meadow", "Matcha Zen Sanctuary", "Cosmic Terrarium", "Sunset Gold Coast",
+        "Emerald Rainforest", "Starlight Peaks", "Mystic Hot Springs", "Celestial Haven"
+      ];
+      const chapterName = CHAPTERS[cycle % CHAPTERS.length];
+
+      let targetTier, targetCount, maxDrops, title;
+
+      if (subLevel === 10) {
+        // Chapter Grand Finale: Chonk King / Ascension Trial
+        targetTier = 9; // Chonk King 👑
+        targetCount = (cycle % 2 === 0) ? 2 : 1;
+        maxDrops = 75 + Math.min(30, cycle * 3);
+        title = `${chapterName} Pinnacle: ${targetCount}x Chonk King 👑`;
+      } else if (subLevel >= 8) {
+        targetTier = 8; // Honey Bear 🐻
+        targetCount = (subLevel === 9) ? 2 : 1;
+        maxDrops = 54 + Math.min(22, cycle * 2);
+        title = `${chapterName} Stage ${subLevel}: Honey Bear Feast 🐻`;
+      } else if (subLevel >= 6) {
+        targetTier = 7; // Chill Capybara 🐹
+        targetCount = (subLevel === 7) ? 2 : 1;
+        maxDrops = 46 + Math.min(18, cycle * 2);
+        title = `${chapterName} Stage ${subLevel}: Zen Capybara 🐹`;
+      } else if (subLevel >= 4) {
+        targetTier = 6; // Chubby Seal 🦭
+        targetCount = 1;
+        maxDrops = 38 + Math.min(14, cycle * 2);
+        title = `${chapterName} Stage ${subLevel}: Seal Splash 🦭`;
+      } else {
+        targetTier = 5; // Baby Panda 🐼
+        targetCount = (subLevel === 2) ? 2 : 1;
+        maxDrops = 32 + Math.min(10, cycle * 2);
+        title = `${chapterName} Stage ${subLevel}: Panda Discovery 🐼`;
+      }
+
+      const targetName = targetCount > 1 
+        ? `${targetCount}x ${TIERS[targetTier].name} ${TIERS[targetTier].icon}` 
+        : `${TIERS[targetTier].name} ${TIERS[targetTier].icon}`;
+
+      const isRainbowReward = (subLevel % 2 === 0);
+      const rewardAmount = (subLevel === 10) ? 3 : (subLevel >= 5 ? 2 : 1);
+      const rewardType = isRainbowReward ? "rainbow" : "hammer";
+      const rewardName = isRainbowReward ? `+${rewardAmount} Rainbow Jelly 🌈` : `+${rewardAmount} Squeaky Hammer 🔨`;
+
+      return {
+        level: lvl,
+        chapter: chapterName,
+        title: title,
+        targetTier: targetTier,
+        targetCount: targetCount,
+        targetName: targetName,
+        desc: `Merge and create ${targetName} within ${maxDrops} drops!`,
+        maxDrops: maxDrops,
+        rewardType: rewardType,
+        rewardAmount: rewardAmount,
+        rewardName: rewardName,
+        threeStarDrops: Math.floor(maxDrops * 0.42),
+        twoStarDrops: Math.floor(maxDrops * 0.20)
+      };
+    }
+
     // Game Variables
     const STATE = {
       score: 0,
@@ -1717,7 +1798,7 @@
       STATE.bestScore = parseInt(localStorage.getItem("mochi_drop_best") || "0", 10);
       document.getElementById("bestScoreVal").innerText = STATE.bestScore.toLocaleString();
       const savedLvl = parseInt(localStorage.getItem("mochi_drop_current_level") || "1", 10);
-      if (savedLvl >= 1 && savedLvl <= 10) {
+      if (savedLvl >= 1) {
         STATE.currentLevel = savedLvl;
       }
       const savedTheme = localStorage.getItem("mochi_drop_theme");
@@ -1883,6 +1964,7 @@
           const hasRainbow = bodyA.isRainbow || bodyB.isRainbow;
 
           if ((bodyA.tier === bodyB.tier || hasRainbow) && !bodyA.isMerging && !bodyB.isMerging) {
+            const isKingAscension = (bodyA.tier === 9 && bodyB.tier === 9) || (hasRainbow && (bodyA.tier === 9 || bodyB.tier === 9));
             const nextTier = Math.min(TIERS.length - 1, Math.max(bodyA.tier, bodyB.tier) + 1);
 
             // Mark merging to avoid double execution
@@ -1896,6 +1978,40 @@
             // Remove bodies next tick
             setTimeout(() => {
               Matter.World.remove(world, [bodyA, bodyB]);
+
+              if (isKingAscension) {
+                // =====================================================================
+                // 🌟 CELESTIAL ASCENSION / CHONK SUPERNOVA (APEX MERGE REBIRTH!)
+                // =====================================================================
+                triggerScreenShake(20);
+                spawnMergeParticles(midX, midY, "#fde047", 50);
+                showComboBanner("🌟 CELESTIAL ASCENSION!", 5000);
+                sound.playKingVocal();
+                addScore(5000, midX, midY);
+
+                // Vaporize 2-3 smallest bottom pets (tier <= 2) to free up jar space
+                const allBodies = Matter.Composite.allBodies(world);
+                const smallPets = allBodies.filter(b => b.tier !== undefined && b.tier <= 2 && !b.isMerging);
+                smallPets.slice(0, 3).forEach(b => {
+                  spawnMergeParticles(b.position.x, b.position.y, TIERS[b.tier].color, 10);
+                  Matter.World.remove(world, b);
+                  addScore(150, b.position.x, b.position.y);
+                });
+
+                // Trigger Instant Chonk Fever Rush Supercharge!
+                activateFeverMode();
+
+                // Check Level Quest Objective Progress
+                if (STATE.gameMode === "quest" && !STATE.isLevelCleared) {
+                  STATE.levelAchievedCount += 2;
+                  updateLevelUI();
+                  if (STATE.levelAchievedCount >= STATE.levelTargetCount) {
+                    STATE.isLevelCleared = true;
+                    setTimeout(() => triggerLevelClear(), 600);
+                  }
+                }
+                return;
+              }
 
               // Spawn upgraded pet
               const upgradedPet = createPetBody(midX, midY, nextTier);
@@ -3263,17 +3379,28 @@
     }
 
     // =========================================================================
-    // LEVEL SYSTEM: STAGE GOALS, DROPS COUNTER, STARS & REWARD LOGIC
+    // LEVEL SYSTEM: INFINITE STAGES, DAILY 5 QUEST, DROPS & POWER-UP REWARDS
     // =========================================================================
     function updateLevelUI() {
       if (STATE.gameMode === "quest") {
-        const cfg = LEVELS[STATE.currentLevel - 1];
+        const cfg = getLevelConfig(STATE.currentLevel);
         if (!cfg) return;
 
         document.getElementById("levelBadge").innerText = `LVL ${STATE.currentLevel}`;
         document.getElementById("headerLevelBadge").innerText = `LVL ${STATE.currentLevel}`;
         document.getElementById("levelGoalText").innerText = `${cfg.targetName} (${STATE.levelAchievedCount}/${cfg.targetCount})`;
         document.getElementById("dropsVal").innerText = Math.max(0, STATE.dropsRemaining);
+
+        // Update Daily 5 Quest Progress Badge
+        const dailyElem = document.getElementById("dailyStreakText");
+        if (dailyElem) {
+          try {
+            const todayKey = new Date().toISOString().slice(0, 10);
+            const stored = JSON.parse(localStorage.getItem("mochi_drop_daily_streak") || "{}");
+            const count = (stored.date === todayKey) ? (stored.clearedToday || 0) : 0;
+            dailyElem.innerText = `${Math.min(5, count)}/5`;
+          } catch(e) {}
+        }
 
         // Compute Live Stars preview
         let starsStr = "★☆☆";
@@ -3293,12 +3420,12 @@
     }
 
     function initLevel(lvlNum) {
-      STATE.currentLevel = Math.max(1, Math.min(LEVELS.length, lvlNum));
+      STATE.currentLevel = Math.max(1, lvlNum);
       try {
         localStorage.setItem("mochi_drop_current_level", STATE.currentLevel);
       } catch(e) {}
 
-      const cfg = LEVELS[STATE.currentLevel - 1];
+      const cfg = getLevelConfig(STATE.currentLevel);
       STATE.dropsRemaining = cfg.maxDrops;
       STATE.levelTargetTier = cfg.targetTier;
       STATE.levelTargetCount = cfg.targetCount;
@@ -3308,6 +3435,13 @@
       STATE.isGameOver = false;
       STATE.isDropping = false;
       STATE.overflowStartTime = null;
+
+      // Auto-shift terrarium biome every 10 levels for endless visual delight!
+      const biomes = ["sakura", "matcha", "galaxy"];
+      const biomeIndex = Math.floor((STATE.currentLevel - 1) / 10) % biomes.length;
+      if (typeof setBiomeTheme === "function") {
+        setBiomeTheme(biomes[biomeIndex]);
+      }
 
       // Hide all modals
       document.getElementById("levelClearModal").classList.add("hidden");
@@ -3329,7 +3463,7 @@
 
     function triggerLevelClear() {
       STATE.isGameOver = true;
-      const cfg = LEVELS[STATE.currentLevel - 1];
+      const cfg = getLevelConfig(STATE.currentLevel);
 
       let starsHtml = '<span class="star-pop">★</span><span class="text-zinc-300">★</span><span class="text-zinc-300">★</span>';
       if (STATE.dropsRemaining >= cfg.threeStarDrops) {
@@ -3346,6 +3480,30 @@
         STATE.rainbowRemaining += cfg.rewardAmount;
         document.getElementById("rainbowCountBadge").innerText = STATE.rainbowRemaining;
       }
+
+      // Track Daily 5 Quest Streak Progress
+      try {
+        const todayKey = new Date().toISOString().slice(0, 10);
+        let dailyData = { date: todayKey, clearedToday: 0, streak: 1, claimedBonus: false };
+        const stored = JSON.parse(localStorage.getItem("mochi_drop_daily_streak") || "{}");
+        if (stored.date === todayKey) {
+          dailyData = stored;
+        } else {
+          const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+          const streakIntact = (stored.date === yesterday && stored.clearedToday >= 5);
+          dailyData = { date: todayKey, clearedToday: 0, streak: streakIntact ? (stored.streak + 1) : 1, claimedBonus: false };
+        }
+        dailyData.clearedToday++;
+        if (dailyData.clearedToday === 5 && !dailyData.claimedBonus) {
+          dailyData.claimedBonus = true;
+          STATE.rainbowRemaining += 1;
+          STATE.hammersRemaining += 2;
+          document.getElementById("rainbowCountBadge").innerText = STATE.rainbowRemaining;
+          document.getElementById("hammerCountBadge").innerText = STATE.hammersRemaining;
+          showComboBanner("🔥 DAILY 5 COMPLETED! +1 🌈 +2 🔨", 1000);
+        }
+        localStorage.setItem("mochi_drop_daily_streak", JSON.stringify(dailyData));
+      } catch(e) {}
 
       document.getElementById("clearLevelBadge").innerText = `STAGE ${STATE.currentLevel} COMPLETE!`;
       document.getElementById("clearStarsDisplay").innerHTML = starsHtml;
@@ -3373,11 +3531,8 @@
 
     function startNextLevel() {
       document.getElementById("levelClearModal").classList.add("hidden");
-      if (STATE.currentLevel < LEVELS.length) {
-        initLevel(STATE.currentLevel + 1);
-      } else {
-        initLevel(1);
-      }
+      // Infinite Progression: Level 11, 12, 13... up to Infinity!
+      initLevel(STATE.currentLevel + 1);
     }
 
     function retryLevel() {
