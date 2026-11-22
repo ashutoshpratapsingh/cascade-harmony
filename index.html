@@ -519,12 +519,6 @@
           </button>
         </div>
 
-        <!-- DOWNLOAD GAME & OFFLINE APP BUTTON -->
-        <button id="openDownloadModalBtn" class="touch-btn w-full py-2.5 px-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition transform active:scale-95">
-          <span class="text-base">📥</span>
-          <span>Download Game & Offline App</span>
-        </button>
-
         <!-- 9. CREATOR PROFILE CREDIT -->
         <div class="text-center pt-2 border-t border-amber-200/60">
           <button id="settingsCreatorBtn" class="touch-btn text-xs font-bold text-amber-900 hover:text-amber-950 font-fun">
@@ -828,92 +822,6 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- DOWNLOAD GAME MODAL (OFFLINE ZIP, PWA APP INSTALL & APK BUILDER)          -->
-  <!-- ========================================================================= -->
-  <div id="downloadModal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm hidden select-none">
-    <div class="modal-scroll max-w-sm w-full bg-[#fffcf5] border-3 border-emerald-400 rounded-3xl p-5 sm:p-6 shadow-2xl text-center space-y-3.5 max-h-[85dvh] overflow-y-auto overscroll-contain relative">
-      
-      <!-- Close X button -->
-      <button id="closeDownloadBtn" class="touch-btn absolute top-3.5 right-3.5 w-8 h-8 rounded-full bg-emerald-50 border border-emerald-300 text-emerald-950 font-black text-xs flex items-center justify-center shadow-sm hover:bg-emerald-100 transition">
-        ✕
-      </button>
-
-      <!-- Modal Header -->
-      <div class="border-b border-emerald-200/80 pb-2.5">
-        <div class="w-12 h-12 mx-auto mb-1.5 rounded-2xl bg-gradient-to-tr from-emerald-400 to-teal-300 flex items-center justify-center text-2xl shadow-md">
-          📥
-        </div>
-        <h2 class="font-fun text-xl sm:text-2xl font-black text-emerald-950 tracking-wide">
-          Download Mochi Drop
-        </h2>
-        <p class="text-[11px] font-bold text-emerald-800/80 mt-0.5">
-          Play offline anytime • Install to home screen or get source!
-        </p>
-      </div>
-
-      <!-- Option 1: Mobile / Desktop App Install (PWA) -->
-      <div class="bg-emerald-50/80 p-3 rounded-2xl border border-emerald-200 text-left space-y-2">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">📲</span>
-          <div>
-            <div class="text-xs font-black text-emerald-950">Install as Mobile App (PWA)</div>
-            <div class="text-[10px] text-emerald-800">Runs full screen like a native phone app</div>
-          </div>
-        </div>
-        <button id="pwaInstallBtn" class="touch-btn w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition">
-          <span>⚡</span>
-          <span id="pwaInstallBtnText">Install App to Phone</span>
-        </button>
-        <p id="pwaHelpText" class="text-[9.5px] text-emerald-700/90 text-center font-medium">
-          iPhone: Tap Share <span class="font-bold">⎋</span> then <span class="font-bold">"Add to Home Screen"</span>
-        </p>
-      </div>
-
-      <!-- Option 2: Direct Offline Game Files (ZIP) -->
-      <div class="bg-amber-50/80 p-3 rounded-2xl border border-amber-200 text-left space-y-2">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">📦</span>
-          <div>
-            <div class="text-xs font-black text-amber-950">Download Complete Game (ZIP)</div>
-            <div class="text-[10px] text-amber-800">All HTML, audio, artwork & code in one archive</div>
-          </div>
-        </div>
-        <a id="directZipDownloadBtn" href="https://github.com/ashutoshpratapsingh/cascade-harmony/archive/refs/heads/main.zip" target="_blank" rel="noopener noreferrer" class="touch-btn w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 font-black text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition">
-          <span>💾</span>
-          <span>Download Game ZIP (Offline Package)</span>
-        </a>
-      </div>
-
-      <!-- Option 3: Android APK Builder -->
-      <div class="bg-blue-50/80 p-3 rounded-2xl border border-blue-200 text-left space-y-2">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">🤖</span>
-          <div>
-            <div class="text-xs font-black text-blue-950">Android APK Builder</div>
-            <div class="text-[10px] text-blue-800">Generate installable APK via PWABuilder</div>
-          </div>
-        </div>
-        <a id="apkBuilderBtn" href="https://www.pwabuilder.com/reportcard?site=https://cascade-harmony-4awh.vercel.app" target="_blank" rel="noopener noreferrer" class="touch-btn w-full py-2 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95 transition">
-          <span>🚀</span>
-          <span>Generate Android APK</span>
-        </a>
-      </div>
-
-      <!-- Option 4: Share Link -->
-      <button id="copyGameLinkBtn" class="touch-btn w-full py-2 px-3 rounded-xl bg-zinc-100 hover:bg-zinc-200 border border-zinc-300 text-zinc-800 font-bold text-xs flex items-center justify-center gap-1.5 transition">
-        <span>🔗</span>
-        <span id="copyGameLinkText">Copy Game Link to Share</span>
-      </button>
-
-      <!-- Creator Footer -->
-      <div class="text-center pt-1 border-t border-emerald-200/60 text-[10px] text-emerald-900/70 font-fun font-bold">
-        Mochi Drop • Created by Ballia wala Ashutosh
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
   <!-- OPENING SPLASH SCREEN / FULL-SCREEN HERO TITLE COVER (STORE READY!)       -->
   <!-- ========================================================================= -->
   <div id="splashScreen" class="fixed inset-0 z-50 flex flex-col justify-between items-center overflow-hidden select-none transition-all duration-700 bg-[#060b13]">
@@ -931,13 +839,8 @@
     <!-- Ambient Floating Sakura Blossom Petals Canvas -->
     <canvas id="splashPetalCanvas" class="absolute inset-0 pointer-events-none z-15 w-full h-full"></canvas>
 
-    <!-- TOP BAR (DOWNLOAD BUTTON) -->
-    <div class="relative z-30 w-full px-4 pt-3 flex items-center justify-end pointer-events-none">
-      <button id="splashDownloadBtn" class="touch-btn pointer-events-auto flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/40 hover:bg-black/60 border border-amber-300/40 text-amber-200 text-xs font-bold backdrop-blur-md transition shadow-md">
-        <span>📥</span>
-        <span>Download Game</span>
-      </button>
-    </div>
+    <!-- TOP SPACER -->
+    <div class="relative z-10 w-full h-10 pointer-events-none"></div>
 
     <!-- MIDDLE SPACER (Allows full-screen artwork to shine unobstructed!) -->
     <div class="relative z-10 flex-1 w-full pointer-events-none"></div>
@@ -4213,83 +4116,6 @@
     document.getElementById("headerCreatorBtn").addEventListener("click", openCreatorProfile);
     document.getElementById("closeCreatorBtn").addEventListener("click", () => closeCreatorProfile(false));
     document.getElementById("dismissCreatorBtn").addEventListener("click", () => closeCreatorProfile(true));
-
-    // =========================================================================
-    // DOWNLOAD GAME MODAL & PWA OFFLINE INSTALL PIPELINE
-    // =========================================================================
-    const downloadModal = document.getElementById("downloadModal");
-    let deferredInstallPrompt = null;
-
-    window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault();
-      deferredInstallPrompt = e;
-      const btnText = document.getElementById("pwaInstallBtnText");
-      if (btnText) btnText.textContent = "Install App to Home Screen Now";
-    });
-
-    function openDownloadModal() {
-      sound.init();
-      if (downloadModal) downloadModal.classList.remove("hidden");
-    }
-
-    function closeDownloadModal() {
-      sound.init();
-      if (downloadModal) downloadModal.classList.add("hidden");
-    }
-
-    document.getElementById("openDownloadModalBtn")?.addEventListener("click", () => {
-      closeSettings();
-      openDownloadModal();
-    });
-    document.getElementById("splashDownloadBtn")?.addEventListener("click", openDownloadModal);
-    document.getElementById("closeDownloadBtn")?.addEventListener("click", closeDownloadModal);
-
-    document.getElementById("pwaInstallBtn")?.addEventListener("click", async () => {
-      sound.init();
-      if (deferredInstallPrompt) {
-        deferredInstallPrompt.prompt();
-        try {
-          const choice = await deferredInstallPrompt.userChoice;
-          if (choice && choice.outcome === "accepted") {
-            deferredInstallPrompt = null;
-            const btnText = document.getElementById("pwaInstallBtnText");
-            if (btnText) btnText.textContent = "App Installed! 🎉";
-          }
-        } catch(err) {}
-      } else {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIOS) {
-          alert("To install on iPhone/iPad:\n1. Tap the Share button (⎋) at the bottom of Safari\n2. Tap 'Add to Home Screen'\n3. Enjoy Mochi Drop as a native app!");
-        } else {
-          alert("To install as an app:\nTap your browser menu (⋮) and choose 'Install app' or 'Add to Home screen' to put Mochi Drop on your home screen!");
-        }
-      }
-    });
-
-    document.getElementById("copyGameLinkBtn")?.addEventListener("click", () => {
-      sound.init();
-      const liveUrl = "https://cascade-harmony-4awh.vercel.app";
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(liveUrl).then(() => {
-          const span = document.getElementById("copyGameLinkText");
-          if (span) {
-            span.textContent = "Link Copied to Clipboard! 🎉";
-            setTimeout(() => { span.textContent = "Copy Game Link to Share"; }, 2500);
-          }
-        }).catch(() => {
-          prompt("Copy this link to share the game:", liveUrl);
-        });
-      } else {
-        prompt("Copy this link to share the game:", liveUrl);
-      }
-    });
-
-    // Register Service Worker for Instant Offline Play
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-      });
-    }
 
     // Auto-start cover music continuously in background on game opening
     function ensureCoverMusic() {
